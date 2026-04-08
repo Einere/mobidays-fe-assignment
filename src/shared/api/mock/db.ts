@@ -1,21 +1,21 @@
-import type { Campaign } from "@/entities/campaign/model/types";
-import type { DailyStat } from "@/entities/daily-stat/model/types";
-
-interface MockDb {
-	campaigns: Campaign[];
-	dailyStats: DailyStat[];
-}
+import dbJson from "@/db.json";
+import type { MockDb } from "@/shared/api/mock/types";
 
 export const mockDb: MockDb = {
 	campaigns: [],
-	dailyStats: [],
+	daily_stats: [],
 };
 
 export function seedMockDb(data: MockDb) {
 	mockDb.campaigns = [...data.campaigns];
-	mockDb.dailyStats = [...data.dailyStats];
+	mockDb.daily_stats = [...data.daily_stats];
 }
 
 export function resetMockDb() {
-	seedMockDb({ campaigns: [], dailyStats: [] });
+	seedMockDb({
+		campaigns: [...dbJson.campaigns],
+		daily_stats: [...dbJson.daily_stats],
+	});
 }
+
+resetMockDb();

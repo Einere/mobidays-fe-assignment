@@ -28,7 +28,7 @@ describe("fetchDashboardData", () => {
 					endDate: "2026-04-30",
 				},
 			],
-			dailyStats: [
+			daily_stats: [
 				{
 					id: "d1",
 					campaignId: "1",
@@ -78,6 +78,59 @@ describe("fetchDashboardData", () => {
 				platforms: ["Google"],
 			}),
 		).rejects.toThrow("Request failed: 500");
+	});
+
+	it("parses raw responses without coercing invalid dashboard enum values", async () => {
+		server.use(
+			http.get("/campaigns", () => {
+				return HttpResponse.json([
+					{
+						id: "1",
+						name: "Unexpected Platform",
+						platform: "Facebook",
+						status: "running",
+						budget: "2000000원",
+						startDate: "2026/04/12",
+						endDate: null,
+					},
+				]);
+			}),
+			http.get("/daily_stats", () => {
+				return HttpResponse.json([
+					{
+						id: "d1",
+						campaignId: "1",
+						date: "2026-04-12",
+						impressions: 10,
+						clicks: 1,
+						conversions: 0,
+						cost: 100,
+						conversionsValue: 300,
+					},
+				]);
+			}),
+		);
+
+		const result = await fetchDashboardData({
+			dateRange: { startDate: "2026-04-01", endDate: "2026-04-30" },
+			statuses: ["active"],
+			platforms: ["Google"],
+		});
+
+		expect(result.campaigns).toEqual([
+			expect.objectContaining({
+				id: "1",
+				platform: null,
+				status: null,
+				budget: null,
+				startDate: "2026/04/12",
+				raw: expect.objectContaining({
+					platform: "Facebook",
+					status: "running",
+				}),
+			}),
+		]);
+		expect(result.dailyStats[0]?.campaignId).toBe("1");
 	});
 
 	it("builds the same query key for logically identical filters", () => {

@@ -235,7 +235,7 @@ describe("GlobalFilterBar", () => {
 					endDate: "2026-04-30",
 				},
 			],
-			dailyStats: [
+			daily_stats: [
 				{
 					id: "d1",
 					campaignId: "1",

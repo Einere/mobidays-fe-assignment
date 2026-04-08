@@ -1,11 +1,15 @@
-import type { Campaign } from "@/entities/campaign/model/types";
-import type { DailyStat } from "@/entities/daily-stat/model/types";
+import {
+	type DashboardCampaign,
+	type DashboardDailyStat,
+	parseCampaignResponse,
+	parseDailyStatResponse,
+} from "@/entities/dashboard/api/parse-dashboard-data";
 import { serializeFilterList } from "@/entities/global-filter/lib/date-range";
 import type { GlobalFilterState } from "@/entities/global-filter/model/types";
 
 export interface DashboardData {
-	campaigns: Campaign[];
-	dailyStats: DailyStat[];
+	campaigns: DashboardCampaign[];
+	dailyStats: DashboardDailyStat[];
 }
 
 async function fetchJson<T>(url: URL): Promise<T> {
@@ -33,7 +37,8 @@ export async function fetchDashboardData(
 		serializeFilterList(filter.platforms),
 	);
 
-	const campaigns = await fetchJson<Campaign[]>(campaignsUrl);
+	const campaignsResponse = await fetchJson<unknown>(campaignsUrl);
+	const campaigns = parseCampaignResponse(campaignsResponse);
 
 	const dailyStatsUrl = new URL("/daily_stats", window.location.origin);
 	dailyStatsUrl.searchParams.set("startDate", filter.dateRange.startDate);
@@ -43,7 +48,8 @@ export async function fetchDashboardData(
 		campaigns.map((campaign) => campaign.id).join(","),
 	);
 
-	const dailyStats = await fetchJson<DailyStat[]>(dailyStatsUrl);
+	const dailyStatsResponse = await fetchJson<unknown>(dailyStatsUrl);
+	const dailyStats = parseDailyStatResponse(dailyStatsResponse);
 
 	return { campaigns, dailyStats };
 }
