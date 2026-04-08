@@ -16,9 +16,13 @@ export function createDashboardDataQueryKey(filter: GlobalFilterState) {
 	] as const;
 }
 
-export function useDashboardData(filter: GlobalFilterState) {
-	return useQuery({
+export function getDashboardDataQueryOptions(filter: GlobalFilterState) {
+	return {
 		queryKey: createDashboardDataQueryKey(filter),
 		queryFn: () => fetchDashboardData(filter),
-	});
+	};
+}
+
+export function useDashboardData(filter: GlobalFilterState) {
+	return useQuery(getDashboardDataQueryOptions(filter));
 }

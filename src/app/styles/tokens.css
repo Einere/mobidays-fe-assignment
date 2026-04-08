@@ -144,7 +144,9 @@
 	--interactive-secondary-fg: var(--color-slate-800);
 	--interactive-ghost-bg-hover: var(--color-slate-50);
 	--interactive-selected-bg: var(--color-navy-50);
+	--interactive-selected-bg-hover: var(--color-navy-100);
 	--interactive-selected-fg: var(--color-navy-800);
+	--interactive-selected-border-hover: var(--color-navy-400);
 	--interactive-focus-ring: rgb(49 95 218 / 0.28);
 	--interactive-disabled-opacity: 0.45;
 

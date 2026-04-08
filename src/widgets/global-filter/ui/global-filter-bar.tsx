@@ -75,16 +75,11 @@ export function GlobalFilterBar() {
 	}
 
 	return (
-		<section className="rounded-[var(--panel-radius)] border border-[var(--panel-border)] bg-[var(--panel-bg)] p-[var(--layout-panel-padding)] shadow-[var(--panel-shadow)]">
+		<section className="rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel">
 			<div className="flex flex-col gap-5">
 				<div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
 					<div>
-						<h2 className="text-[length:var(--type-title-size)] leading-[var(--type-title-line-height)] font-[var(--type-title-weight)]">
-							글로벌 필터
-						</h2>
-						<p className="mt-1 text-[length:var(--type-body-sm-size)] text-[var(--text-secondary)]">
-							기간, 상태, 매체 조건을 하나의 기준 상태로 관리합니다.
-						</p>
+						<h2 className="text-title">글로벌 필터</h2>
 					</div>
 					<Button
 						type="button"

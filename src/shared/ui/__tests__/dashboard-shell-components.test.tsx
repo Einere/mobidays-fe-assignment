@@ -1,20 +1,38 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { Button } from "@/shared/ui/button";
 import { TextInput } from "@/shared/ui/input";
 import { SidebarNav } from "@/shared/ui/sidebar";
 import { DataTable } from "@/shared/ui/table";
 
 describe("dashboard shell components", () => {
+	it("renders interactive controls with pointer and text cursors", () => {
+		render(
+			<>
+				<Button>보고서 내보내기</Button>
+				<TextInput aria-label="캠페인 검색" placeholder="캠페인 검색" />
+			</>,
+		);
+
+		expect(
+			screen.getByRole("button", { name: "보고서 내보내기" }).className,
+		).toContain("cursor-pointer");
+		expect(
+			screen.getByRole("textbox", { name: "캠페인 검색" }).className,
+		).toContain("cursor-text");
+	});
+
 	it("renders an input with semantic token classes", () => {
 		render(<TextInput aria-label="캠페인 검색" placeholder="캠페인 검색" />);
 
 		const input = screen.getByRole("textbox", { name: "캠페인 검색" });
 
 		expect(input).toBeInTheDocument();
-		expect(input.className).toContain("bg-[var(--surface-panel)]");
-		expect(input.className).toContain("border-[var(--border-default)]");
+		expect(input.className).toContain("bg-panel");
+		expect(input.className).toContain("border-outline");
+		expect(input.className).toContain("focus-visible:ring-focus");
 		expect(input.className).toContain(
-			"focus-visible:ring-[var(--interactive-focus-ring)]",
+			"aria-invalid:border-status-danger-border",
 		);
 	});
 
@@ -32,12 +50,8 @@ describe("dashboard shell components", () => {
 		expect(screen.getByText("Mobidays Dashboard")).toBeInTheDocument();
 		const activeItem = screen.getByRole("link", { name: "개요" });
 
-		expect(activeItem.className).toContain(
-			"bg-[var(--interactive-selected-bg)]",
-		);
-		expect(activeItem.className).toContain(
-			"text-[var(--interactive-selected-fg)]",
-		);
+		expect(activeItem.className).toContain("bg-selected");
+		expect(activeItem.className).toContain("text-selected-fg");
 	});
 
 	it("renders a data table using density and status tokens", () => {
@@ -66,8 +80,8 @@ describe("dashboard shell components", () => {
 		expect(screen.getByText("브랜드 검색")).toBeInTheDocument();
 		expect(screen.getByText("운영 중")).toBeInTheDocument();
 		expect(screen.getByText("₩18,240").className).toContain("text-right");
-		expect(
-			screen.getByRole("table", { name: "캠페인 상태 표" }).className,
-		).toContain("text-[length:var(--type-table-sm-size)]");
+		expect(screen.getByRole("table", { name: "캠페인 상태 표" }).className).toContain(
+			"text-table-sm",
+		);
 	});
 });
