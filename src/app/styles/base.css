@@ -1,0 +1,82 @@
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+	--font-sans: var(--font-family-sans);
+	--font-mono: var(--font-family-mono);
+}
+
+@layer base {
+	* {
+		box-sizing: border-box;
+		border-color: var(--border-default);
+	}
+
+	html {
+		font-family: var(--font-family-sans);
+	}
+
+	body {
+		margin: 0;
+		background: var(--surface-canvas);
+		color: var(--text-primary);
+		font-family: var(--font-family-sans);
+		font-size: var(--type-body-md-size);
+		line-height: var(--type-body-md-line-height);
+		letter-spacing: -0.01em;
+		font-synthesis: none;
+		text-rendering: optimizeLegibility;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+
+	button,
+	input,
+	select,
+	textarea {
+		font: inherit;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	p {
+		margin: 0;
+	}
+
+	h1 {
+		font-size: var(--type-display-lg-size);
+		line-height: var(--type-display-lg-line-height);
+		font-weight: var(--type-display-lg-weight);
+		letter-spacing: -0.04em;
+	}
+
+	h2 {
+		font-size: var(--type-heading-lg-size);
+		line-height: var(--type-heading-lg-line-height);
+		font-weight: var(--type-heading-lg-weight);
+		letter-spacing: -0.03em;
+	}
+
+	h3 {
+		font-size: var(--type-heading-md-size);
+		line-height: var(--type-heading-md-line-height);
+		font-weight: var(--type-heading-md-weight);
+		letter-spacing: -0.02em;
+	}
+
+	code {
+		display: inline-flex;
+		padding: 0.125rem 0.375rem;
+		border: 1px solid var(--border-subtle);
+		border-radius: var(--radius-sm);
+		background: var(--surface-panel-muted);
+		color: var(--text-primary);
+		font-family: var(--font-family-mono);
+		font-size: var(--type-code-size);
+		line-height: var(--type-code-line-height);
+		font-weight: var(--type-code-weight);
+	}
+}
