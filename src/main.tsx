@@ -1,5 +1,9 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import {
+	shouldStartMockApi,
+	startMockApi,
+} from "@/app/bootstrap/start-mock-api";
 import { AppProviders } from "@/app/providers/app-providers";
 import { worker } from "@/shared/api/mock/browser";
 import "./index.css";
@@ -19,12 +23,8 @@ function mountApp() {
 }
 
 async function bootstrap() {
-	if (import.meta.env.DEV) {
-		try {
-			await worker.start({ onUnhandledRequest: "error" });
-		} catch (error) {
-			console.error("Failed to start MSW worker", error);
-		}
+	if (shouldStartMockApi(import.meta.env.MODE, import.meta.env.VITE_USE_MSW)) {
+		await startMockApi(worker);
 	}
 
 	mountApp();
