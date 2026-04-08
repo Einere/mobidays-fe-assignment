@@ -1,9 +1,25 @@
 import { Button } from "@/shared/ui/button.tsx";
 import { TextInput } from "@/shared/ui/input.tsx";
 import { SidebarNav } from "@/shared/ui/sidebar.tsx";
-import { DataTable } from "@/shared/ui/table.tsx";
+import { useCampaignTableControls } from "@/widgets/campaign-table/model/use-campaign-table-controls";
+import { CampaignTablePlaceholder } from "@/widgets/campaign-table/ui/campaign-table-placeholder";
+import { GlobalFilterBar } from "@/widgets/global-filter/ui/global-filter-bar";
+import { GlobalFilterSummary } from "@/widgets/global-filter/ui/global-filter-summary";
+
+const campaignTableSortLabels = {
+	period: "집행기간",
+	cost: "총 집행금액",
+	ctr: "CTR",
+	cpc: "CPC",
+	roas: "ROAS",
+} as const;
 
 function App() {
+	const campaignTableControls = useCampaignTableControls();
+	const activeSortLabel = campaignTableControls.sort
+		? `${campaignTableSortLabels[campaignTableControls.sort.key]} ${campaignTableControls.sort.direction === "asc" ? "오름차순" : "내림차순"}`
+		: "없음";
+
 	return (
 		<main className="min-h-screen bg-[var(--surface-canvas)] text-[var(--text-primary)]">
 			<section className="mx-auto grid min-h-screen max-w-[var(--layout-page-max)] gap-[var(--layout-panel-gap)] px-[var(--layout-page-gutter)] py-8 lg:grid-cols-[260px_minmax(0,1fr)]">
@@ -30,6 +46,11 @@ function App() {
 							</p>
 						</div>
 					</header>
+
+					<section className="grid gap-[var(--layout-panel-gap)] xl:grid-cols-[minmax(0,1.3fr)_minmax(320px,0.9fr)]">
+						<GlobalFilterBar />
+						<GlobalFilterSummary />
+					</section>
 
 					<section className="grid gap-[var(--layout-panel-gap)] lg:grid-cols-[1.4fr_1fr]">
 						<div className="rounded-[var(--panel-radius)] border border-[var(--panel-border)] bg-[var(--panel-bg)] p-[var(--layout-panel-padding)] shadow-[var(--panel-shadow)]">
@@ -137,56 +158,100 @@ function App() {
 									aria-label="캠페인 검색"
 									className="min-w-[240px]"
 									placeholder="캠페인 검색"
+									value={campaignTableControls.searchTerm}
+									onChange={(event) =>
+										campaignTableControls.setSearchTerm(event.target.value)
+									}
 								/>
 								<Button variant="secondary">필터 열기</Button>
 							</div>
 						</div>
 
+						<div className="mt-4 flex flex-col gap-3 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--surface-panel-muted)] p-4">
+							<div className="flex flex-wrap gap-2">
+								<Button
+									type="button"
+									size="sm"
+									variant={
+										campaignTableControls.sort?.key === "period"
+											? "secondary"
+											: "outline"
+									}
+									onClick={() => campaignTableControls.toggleSort("period")}
+								>
+									집행기간
+								</Button>
+								<Button
+									type="button"
+									size="sm"
+									variant={
+										campaignTableControls.sort?.key === "ctr"
+											? "secondary"
+											: "outline"
+									}
+									onClick={() => campaignTableControls.toggleSort("ctr")}
+								>
+									CTR
+								</Button>
+								<Button
+									type="button"
+									size="sm"
+									variant={
+										campaignTableControls.sort?.key === "roas"
+											? "secondary"
+											: "outline"
+									}
+									onClick={() => campaignTableControls.toggleSort("roas")}
+								>
+									ROAS
+								</Button>
+							</div>
+							<p className="text-[length:var(--type-body-sm-size)] text-[var(--text-secondary)]">
+								테이블 로컬 상태: 검색어{" "}
+								{campaignTableControls.searchTerm
+									? `"${campaignTableControls.searchTerm}"`
+									: "없음"}
+								, 정렬 {activeSortLabel}, 페이지 {campaignTableControls.page},
+								선택 행 {campaignTableControls.selectedRowIds.length}건
+							</p>
+						</div>
+
 						<div className="mt-6">
-							<DataTable
-								caption="캠페인 상태 표"
-								columns={[
-									{ key: "name", header: "캠페인" },
-									{ key: "status", header: "상태" },
-									{ key: "budget", header: "예산 소진율", align: "right" },
-									{ key: "cpa", header: "CPA", align: "right" },
-								]}
-								rows={[
-									{
-										id: "campaign-1",
-										name: "브랜드 검색",
-										status: (
-											<span className="rounded-[var(--radius-full)] border border-[var(--status-success-border)] bg-[var(--status-success-bg)] px-2.5 py-1 text-[var(--status-success-fg)]">
-												운영 중
-											</span>
-										),
-										budget: "68%",
-										cpa: "₩18,240",
-									},
-									{
-										id: "campaign-2",
-										name: "리타겟팅 세트",
-										status: (
-											<span className="rounded-[var(--radius-full)] border border-[var(--status-warning-border)] bg-[var(--status-warning-bg)] px-2.5 py-1 text-[var(--status-warning-fg)]">
-												검토 필요
-											</span>
-										),
-										budget: "83%",
-										cpa: "₩24,900",
-									},
-									{
-										id: "campaign-3",
-										name: "앱 설치 프로모션",
-										status: (
-											<span className="rounded-[var(--radius-full)] border border-[var(--status-danger-border)] bg-[var(--status-danger-bg)] px-2.5 py-1 text-[var(--status-danger-fg)]">
-												예산 초과
-											</span>
-										),
-										budget: "112%",
-										cpa: "₩31,400",
-									},
-								]}
-							/>
+							<CampaignTablePlaceholder controls={campaignTableControls} />
+						</div>
+
+						<div className="mt-4 flex items-center justify-between text-[length:var(--type-body-sm-size)] text-[var(--text-secondary)]">
+							<p>
+								페이지네이션과 체크박스 선택은 글로벌 필터와 분리된 로컬
+								placeholder 상태입니다.
+							</p>
+							<div className="flex gap-2">
+								<Button
+									type="button"
+									size="sm"
+									variant="outline"
+									disabled={campaignTableControls.page === 1}
+									onClick={() =>
+										campaignTableControls.setPage(
+											campaignTableControls.page - 1,
+										)
+									}
+								>
+									이전
+								</Button>
+								<Button
+									type="button"
+									size="sm"
+									variant="outline"
+									onClick={() =>
+										campaignTableControls.setPage(
+											campaignTableControls.page + 1,
+										)
+									}
+								>
+									다음
+								</Button>
+							</div>
 						</div>
 					</section>
 				</div>
