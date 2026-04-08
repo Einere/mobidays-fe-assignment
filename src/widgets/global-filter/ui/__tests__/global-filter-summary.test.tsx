@@ -51,9 +51,13 @@ describe("GlobalFilterSummary", () => {
 		renderGlobalFilterSummary();
 
 		const stateBadge = await screen.findByText("준비됨");
+		const requestStateLabel = screen.getByText("조회 상태");
+		const dateRangeLabel = screen.getByText("기간");
 
 		expect(stateBadge.className).toContain("bg-[var(--status-success-bg)]");
 		expect(stateBadge.className).toContain("text-[var(--status-success-fg)]");
+		expect(requestStateLabel.className).toContain("mb-2");
+		expect(dateRangeLabel.className).toContain("mb-2");
 		expect(screen.getByText("Google, Meta, Naver")).toBeInTheDocument();
 	});
 

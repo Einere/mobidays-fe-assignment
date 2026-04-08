@@ -75,12 +75,12 @@ export function GlobalFilterSummary() {
 
 				<div className="grid gap-4 md:grid-cols-3">
 					<div className="rounded-[var(--radius-lg)] bg-[var(--surface-panel-muted)] p-4">
-						<p className="text-[length:var(--type-caption-size)] text-[var(--text-tertiary)]">
+						<p className="mb-2 text-[length:var(--type-caption-size)] text-[var(--text-tertiary)]">
 							조회 상태
 						</p>
 						<p
 							className={cn(
-								"mt-2 inline-flex rounded-[var(--radius-full)] border px-3 py-1 text-[length:var(--type-label-md-size)] font-[var(--type-label-md-weight)]",
+								"inline-flex rounded-[var(--radius-full)] border px-3 py-1 text-[length:var(--type-label-md-size)] font-[var(--type-label-md-weight)]",
 								getRequestStateClassName(requestState),
 							)}
 						>
@@ -94,19 +94,19 @@ export function GlobalFilterSummary() {
 					</div>
 
 					<div className="rounded-[var(--radius-lg)] bg-[var(--surface-panel-muted)] p-4">
-						<p className="text-[length:var(--type-caption-size)] text-[var(--text-tertiary)]">
+						<p className="mb-2 text-[length:var(--type-caption-size)] text-[var(--text-tertiary)]">
 							캠페인 결과
 						</p>
-						<p className="mt-2 text-[length:var(--type-metric-lg-size)] leading-[var(--type-metric-lg-line-height)] font-[var(--type-metric-lg-weight)]">
+						<p className="text-[length:var(--type-metric-lg-size)] leading-[var(--type-metric-lg-line-height)] font-[var(--type-metric-lg-weight)]">
 							{campaignsCount}건
 						</p>
 					</div>
 
 					<div className="rounded-[var(--radius-lg)] bg-[var(--surface-panel-muted)] p-4">
-						<p className="text-[length:var(--type-caption-size)] text-[var(--text-tertiary)]">
+						<p className="mb-2 text-[length:var(--type-caption-size)] text-[var(--text-tertiary)]">
 							일별 데이터 결과
 						</p>
-						<p className="mt-2 text-[length:var(--type-metric-lg-size)] leading-[var(--type-metric-lg-line-height)] font-[var(--type-metric-lg-weight)]">
+						<p className="text-[length:var(--type-metric-lg-size)] leading-[var(--type-metric-lg-line-height)] font-[var(--type-metric-lg-weight)]">
 							{dailyStatsCount}건
 						</p>
 					</div>
@@ -114,18 +114,15 @@ export function GlobalFilterSummary() {
 
 				<div className="grid gap-3 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--surface-panel)] p-4 text-[length:var(--type-body-sm-size)] text-[var(--text-secondary)] md:grid-cols-3">
 					<p>
-						<span className="text-[var(--text-tertiary)]">기간</span>
-						<br />
+						<span className="mb-2 block text-[var(--text-tertiary)]">기간</span>
 						{filter.dateRange.startDate} - {filter.dateRange.endDate}
 					</p>
 					<p>
-						<span className="text-[var(--text-tertiary)]">상태</span>
-						<br />
+						<span className="mb-2 block text-[var(--text-tertiary)]">상태</span>
 						{formatSelectionSummary(filter.statuses)}
 					</p>
 					<p>
-						<span className="text-[var(--text-tertiary)]">매체</span>
-						<br />
+						<span className="mb-2 block text-[var(--text-tertiary)]">매체</span>
 						{formatSelectionSummary(filter.platforms)}
 					</p>
 				</div>

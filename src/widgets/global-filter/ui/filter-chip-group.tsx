@@ -26,8 +26,8 @@ export function FilterChipGroup<T extends string>({
 		options.every((option) => selectedValues.includes(option.value));
 
 	return (
-		<fieldset aria-label={`${groupLabel} 필터`} className="flex flex-col gap-2">
-			<legend className="text-[length:var(--type-form-label-size)] font-[var(--type-form-label-weight)] text-[var(--text-primary)]">
+		<fieldset aria-label={`${groupLabel} 필터`} className="flex flex-col">
+			<legend className="mb-2 text-[length:var(--type-form-label-size)] font-[var(--type-form-label-weight)] text-[var(--text-primary)]">
 				{groupLabel}
 			</legend>
 			<div className="flex flex-wrap gap-2">

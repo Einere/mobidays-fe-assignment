@@ -66,8 +66,10 @@ describe("GlobalFilterBar", () => {
 		const activeChip = within(statusGroup).getByRole("button", {
 			name: "운영 중",
 		});
+		const statusLegend = within(statusGroup).getByText("상태");
 
 		expect(activeChip).toHaveAttribute("aria-pressed", "true");
+		expect(statusLegend.className).toContain("mb-2");
 		expect(activeChip.className).toContain(
 			"hover:border-[var(--interactive-selected-border-hover)]",
 		);
