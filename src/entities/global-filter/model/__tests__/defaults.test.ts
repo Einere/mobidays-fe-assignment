@@ -3,7 +3,9 @@ import { createInitialGlobalFilterState } from "@/entities/global-filter/model/d
 
 describe("createInitialGlobalFilterState", () => {
 	it("creates current month range with all statuses and platforms", () => {
-		const result = createInitialGlobalFilterState(new Date("2026-04-08T00:00:00Z"));
+		const result = createInitialGlobalFilterState(
+			new Date("2026-04-08T00:00:00Z"),
+		);
 
 		expect(result).toEqual({
 			dateRange: {
