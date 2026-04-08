@@ -68,6 +68,12 @@ describe("GlobalFilterBar", () => {
 		});
 
 		expect(activeChip).toHaveAttribute("aria-pressed", "true");
+		expect(activeChip.className).toContain(
+			"hover:border-[var(--interactive-selected-border-hover)]",
+		);
+		expect(activeChip.className).toContain(
+			"hover:bg-[var(--interactive-selected-bg-hover)]",
+		);
 
 		await user.click(activeChip);
 
@@ -95,7 +101,7 @@ describe("GlobalFilterBar", () => {
 			name: "매체 필터 열기",
 		});
 
-		expect(mobileTrigger).toHaveTextContent("3/3");
+		expect(mobileTrigger).toHaveTextContent("전체 3");
 
 		await user.click(mobileTrigger);
 
@@ -109,7 +115,7 @@ describe("GlobalFilterBar", () => {
 		await user.click(googleOption);
 
 		await waitFor(() => {
-			expect(mobileTrigger).toHaveTextContent("2/3");
+			expect(mobileTrigger).toHaveTextContent("Meta, Naver");
 			expect(screen.getByTestId("global-filter-state")).toHaveTextContent(
 				'"platforms":["Meta","Naver"]',
 			);
@@ -176,6 +182,9 @@ describe("GlobalFilterBar", () => {
 		expect(
 			screen.getByText("시작일은 종료일보다 늦을 수 없습니다."),
 		).toBeInTheDocument();
+		expect(startDateInput.className).toContain(
+			"aria-invalid:border-[var(--status-danger-border)]",
+		);
 		expect(startDateInput).toHaveValue("2026-04-10");
 		expect(endDateInput).toHaveValue("2026-04-01");
 		expect(screen.getByTestId("global-filter-state")).toHaveTextContent(

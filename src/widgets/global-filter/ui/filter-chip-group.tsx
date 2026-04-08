@@ -39,7 +39,7 @@ export function FilterChipGroup<T extends string>({
 					className={cn(
 						"border-[var(--border-default)]",
 						isAllSelected &&
-							"border-[var(--border-brand)] bg-[var(--interactive-selected-bg)] text-[var(--interactive-selected-fg)] hover:bg-[var(--interactive-selected-bg)]",
+							"border-[var(--border-brand)] bg-[var(--interactive-selected-bg)] text-[var(--interactive-selected-fg)] hover:border-[var(--interactive-selected-border-hover)] hover:bg-[var(--interactive-selected-bg-hover)]",
 					)}
 					onClick={onSelectAll}
 				>
@@ -58,7 +58,7 @@ export function FilterChipGroup<T extends string>({
 							className={cn(
 								"border-[var(--border-default)]",
 								isSelected &&
-									"border-[var(--border-brand)] bg-[var(--interactive-selected-bg)] text-[var(--interactive-selected-fg)] hover:bg-[var(--interactive-selected-bg)]",
+									"border-[var(--border-brand)] bg-[var(--interactive-selected-bg)] text-[var(--interactive-selected-fg)] hover:border-[var(--interactive-selected-border-hover)] hover:bg-[var(--interactive-selected-bg-hover)]",
 							)}
 							onClick={() => onToggleValue(option.value)}
 						>

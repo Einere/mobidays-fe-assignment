@@ -1,6 +1,7 @@
 import { useAtomValue } from "jotai";
 import { useDashboardData } from "@/entities/dashboard/api/use-dashboard-data";
 import { globalFilterAtom } from "@/entities/global-filter/model/store";
+import { cn } from "@/shared/lib/utils";
 
 function formatSelectionSummary(values: string[]) {
 	return values.length > 0 ? values.join(", ") : "선택 없음";
@@ -24,6 +25,18 @@ function formatRequestState(options: {
 	}
 
 	return "준비됨";
+}
+
+function getRequestStateClassName(requestState: string) {
+	switch (requestState) {
+		case "오류":
+			return "border-[var(--status-danger-border)] bg-[var(--status-danger-bg)] text-[var(--status-danger-fg)]";
+		case "불러오는 중":
+		case "동기화 중":
+			return "border-[var(--status-info-border)] bg-[var(--status-info-bg)] text-[var(--status-info-fg)]";
+		default:
+			return "border-[var(--status-success-border)] bg-[var(--status-success-bg)] text-[var(--status-success-fg)]";
+	}
 }
 
 export function GlobalFilterSummary() {
@@ -65,7 +78,12 @@ export function GlobalFilterSummary() {
 						<p className="text-[length:var(--type-caption-size)] text-[var(--text-tertiary)]">
 							조회 상태
 						</p>
-						<p className="mt-2 text-[length:var(--type-heading-lg-size)] leading-[var(--type-heading-lg-line-height)] font-[var(--type-heading-lg-weight)] text-[var(--text-primary)]">
+						<p
+							className={cn(
+								"mt-2 inline-flex rounded-[var(--radius-full)] border px-3 py-1 text-[length:var(--type-label-md-size)] font-[var(--type-label-md-weight)]",
+								getRequestStateClassName(requestState),
+							)}
+						>
 							{requestState}
 						</p>
 						{query.isError ? (

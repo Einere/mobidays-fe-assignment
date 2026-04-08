@@ -1,10 +1,27 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { Button } from "@/shared/ui/button";
 import { TextInput } from "@/shared/ui/input";
 import { SidebarNav } from "@/shared/ui/sidebar";
 import { DataTable } from "@/shared/ui/table";
 
 describe("dashboard shell components", () => {
+	it("renders interactive controls with pointer and text cursors", () => {
+		render(
+			<>
+				<Button>보고서 내보내기</Button>
+				<TextInput aria-label="캠페인 검색" placeholder="캠페인 검색" />
+			</>,
+		);
+
+		expect(
+			screen.getByRole("button", { name: "보고서 내보내기" }).className,
+		).toContain("cursor-pointer");
+		expect(
+			screen.getByRole("textbox", { name: "캠페인 검색" }).className,
+		).toContain("cursor-text");
+	});
+
 	it("renders an input with semantic token classes", () => {
 		render(<TextInput aria-label="캠페인 검색" placeholder="캠페인 검색" />);
 
@@ -15,6 +32,9 @@ describe("dashboard shell components", () => {
 		expect(input.className).toContain("border-[var(--border-default)]");
 		expect(input.className).toContain(
 			"focus-visible:ring-[var(--interactive-focus-ring)]",
+		);
+		expect(input.className).toContain(
+			"aria-invalid:border-[var(--status-danger-border)]",
 		);
 	});
 

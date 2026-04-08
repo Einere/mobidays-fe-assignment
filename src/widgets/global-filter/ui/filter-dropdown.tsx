@@ -12,6 +12,29 @@ interface FilterDropdownProps<T extends string> {
 	selectedValues: T[];
 }
 
+function formatSelectedSummary<T extends string>(
+	options: FilterOption<T>[],
+	selectedValues: T[],
+) {
+	if (selectedValues.length === options.length) {
+		return `전체 ${options.length}`;
+	}
+
+	if (selectedValues.length === 0) {
+		return "선택 없음";
+	}
+
+	const selectedLabels = options
+		.filter((option) => selectedValues.includes(option.value))
+		.map((option) => option.label);
+
+	if (selectedLabels.length <= 2) {
+		return selectedLabels.join(", ");
+	}
+
+	return `${selectedLabels[0]} 외 ${selectedLabels.length - 1}`;
+}
+
 export function FilterDropdown<T extends string>({
 	groupLabel,
 	onSelectAll,
@@ -23,6 +46,7 @@ export function FilterDropdown<T extends string>({
 	const isAllSelected =
 		selectedCount === options.length &&
 		options.every((option) => selectedValues.includes(option.value));
+	const selectedSummary = formatSelectedSummary(options, selectedValues);
 
 	return (
 		<Popover.Root>
@@ -35,8 +59,8 @@ export function FilterDropdown<T extends string>({
 				>
 					<span>{groupLabel}</span>
 					<span className="flex items-center gap-2 text-[var(--text-secondary)]">
-						<span className="text-[length:var(--type-caption-size)] font-[var(--type-caption-weight)]">
-							{selectedCount}/{options.length}
+						<span className="max-w-[10rem] truncate text-[length:var(--type-caption-size)] font-[var(--type-caption-weight)]">
+							{selectedSummary}
 						</span>
 						<ChevronDown className="size-4" />
 					</span>
