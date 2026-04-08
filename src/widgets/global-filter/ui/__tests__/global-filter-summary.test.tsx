@@ -54,8 +54,8 @@ describe("GlobalFilterSummary", () => {
 		const requestStateLabel = screen.getByText("조회 상태");
 		const dateRangeLabel = screen.getByText("기간");
 
-		expect(stateBadge.className).toContain("bg-[var(--status-success-bg)]");
-		expect(stateBadge.className).toContain("text-[var(--status-success-fg)]");
+		expect(stateBadge.className).toContain("bg-status-success");
+		expect(stateBadge.className).toContain("text-status-success-fg");
 		expect(requestStateLabel.className).toContain("mb-2");
 		expect(dateRangeLabel.className).toContain("mb-2");
 		expect(screen.getByText("Google, Meta, Naver")).toBeInTheDocument();
@@ -76,7 +76,7 @@ describe("GlobalFilterSummary", () => {
 
 		const stateBadge = screen.getByText("오류");
 
-		expect(stateBadge.className).toContain("bg-[var(--status-danger-bg)]");
-		expect(stateBadge.className).toContain("text-[var(--status-danger-fg)]");
+		expect(stateBadge.className).toContain("bg-status-danger");
+		expect(stateBadge.className).toContain("text-status-danger-fg");
 	});
 });

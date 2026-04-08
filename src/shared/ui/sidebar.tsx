@@ -20,17 +20,15 @@ function SidebarNav({ title, items, className }: SidebarNavProps) {
 	return (
 		<aside
 			className={cn(
-				"rounded-[var(--panel-radius)] border border-[var(--sidebar-border)] bg-[var(--sidebar-bg)] p-[var(--layout-panel-padding)] shadow-[var(--panel-shadow)]",
+				"rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel",
 				className,
 			)}
 		>
 			<div className="mb-5">
-				<p className="text-[length:var(--type-caption-size)] font-[var(--type-caption-weight)] tracking-[0.08em] text-[var(--text-tertiary)] uppercase">
+				<p className="text-caption tracking-[0.08em] text-fg-subtle uppercase">
 					Workspace
 				</p>
-				<h2 className="mt-2 text-[length:var(--type-title-size)] leading-[var(--type-title-line-height)] font-[var(--type-title-weight)]">
-					{title}
-				</h2>
+				<h2 className="mt-2 text-title">{title}</h2>
 			</div>
 			<nav aria-label={title}>
 				<ul className="flex list-none flex-col gap-1 p-0">
@@ -39,16 +37,16 @@ function SidebarNav({ title, items, className }: SidebarNavProps) {
 							<a
 								href={item.href ?? "#"}
 								className={cn(
-									"flex min-h-[var(--control-height-md)] items-center justify-between rounded-[var(--radius-md)] px-3 text-[length:var(--type-label-md-size)] font-[var(--type-label-md-weight)] transition-colors duration-[var(--duration-fast)] ease-[var(--easing-standard)]",
+									"flex min-h-control-md items-center justify-between rounded-md px-3 text-label-md transition-colors duration-[var(--duration-fast)] ease-standard",
 									item.active
-										? "bg-[var(--interactive-selected-bg)] text-[var(--interactive-selected-fg)]"
-										: "text-[var(--text-secondary)] hover:bg-[var(--interactive-ghost-bg-hover)] hover:text-[var(--text-primary)]",
+										? "bg-selected text-selected-fg"
+										: "text-fg-muted hover:bg-ghost-hover hover:text-fg",
 								)}
 								aria-current={item.active ? "page" : undefined}
 							>
 								<span>{item.label}</span>
 								{item.meta ? (
-									<span className="text-[length:var(--type-caption-size)] text-[var(--text-tertiary)]">
+									<span className="text-caption text-fg-subtle">
 										{item.meta}
 									</span>
 								) : null}

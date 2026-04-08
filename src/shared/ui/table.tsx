@@ -28,22 +28,22 @@ function DataTable<T extends DataTableRow>({
 	return (
 		<div
 			className={cn(
-				"overflow-hidden rounded-[var(--panel-radius)] border border-[var(--table-border)] bg-[var(--table-bg)] shadow-[var(--panel-shadow)]",
+				"overflow-hidden rounded-panel border border-outline-subtle bg-panel shadow-panel",
 				className,
 			)}
 		>
 			<table
 				aria-label={caption}
-				className="w-full border-collapse text-[length:var(--type-table-sm-size)] font-[var(--type-table-sm-weight)] text-[var(--table-text)]"
+				className="w-full border-collapse text-table-sm text-fg"
 			>
 				<caption className="sr-only">{caption}</caption>
-				<thead className="bg-[var(--table-header-bg)] text-[var(--table-muted-text)]">
+				<thead className="bg-panel-muted text-fg-muted">
 					<tr>
 						{columns.map((column) => (
 							<th
 								key={String(column.key)}
 								className={cn(
-									"h-[var(--layout-table-row-height)] px-4 text-left font-[var(--type-label-md-weight)]",
+									"h-table-row px-4 text-left text-label-md",
 									column.align === "right" && "text-right",
 								)}
 								scope="col"
@@ -58,15 +58,15 @@ function DataTable<T extends DataTableRow>({
 						<tr
 							key={row.id}
 							className={cn(
-								"border-t border-[var(--table-border)]",
-								rowIndex > 0 && "hover:bg-[var(--table-row-hover-bg)]",
+								"border-t border-outline-subtle",
+								rowIndex > 0 && "hover:bg-hover-surface",
 							)}
 						>
 							{columns.map((column) => (
 								<td
 									key={String(column.key)}
 									className={cn(
-										"h-[var(--layout-table-row-height)] px-4 align-middle text-[var(--table-text)]",
+										"h-table-row px-4 align-middle text-fg",
 										column.align === "right" && "text-right",
 									)}
 								>

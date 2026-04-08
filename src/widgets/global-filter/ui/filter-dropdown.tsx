@@ -58,8 +58,8 @@ export function FilterDropdown<T extends string>({
 					aria-label={`${groupLabel} 필터 열기`}
 				>
 					<span>{groupLabel}</span>
-					<span className="flex items-center gap-2 text-[var(--text-secondary)]">
-						<span className="max-w-[10rem] truncate text-[length:var(--type-caption-size)] font-[var(--type-caption-weight)]">
+					<span className="flex items-center gap-2 text-fg-muted">
+						<span className="max-w-[10rem] truncate text-caption">
 							{selectedSummary}
 						</span>
 						<ChevronDown className="size-4" />
@@ -71,23 +71,22 @@ export function FilterDropdown<T extends string>({
 					align="start"
 					sideOffset={8}
 					aria-label={`${groupLabel} 필터`}
-					className="z-[var(--z-dropdown)] w-[min(18rem,calc(100vw-2rem))] rounded-[var(--panel-radius)] border border-[var(--panel-border)] bg-[var(--panel-bg)] p-3 shadow-[var(--shadow-md)]"
+					className="z-(--z-dropdown) w-[min(18rem,calc(100vw-2rem))] rounded-panel border border-outline-subtle bg-panel p-3 shadow-popover"
 				>
 					<div className="flex flex-col gap-2">
 						<button
 							type="button"
 							aria-pressed={isAllSelected}
 							className={cn(
-								"flex items-center justify-between rounded-[var(--radius-md)] px-3 py-2 text-left text-[length:var(--type-body-sm-size)] text-[var(--text-primary)] outline-none transition-colors hover:bg-[var(--surface-hover)] focus-visible:ring-2 focus-visible:ring-[var(--interactive-focus-ring)]",
-								isAllSelected &&
-									"bg-[var(--interactive-selected-bg)] text-[var(--interactive-selected-fg)]",
+								"flex items-center justify-between rounded-md px-3 py-2 text-left text-body-sm text-fg outline-none transition-colors hover:bg-hover-surface focus-visible:ring-2 focus-visible:ring-focus",
+								isAllSelected && "bg-selected text-selected-fg",
 							)}
 							onClick={onSelectAll}
 						>
-							<span className="font-[var(--type-label-md-weight)]">전체</span>
+							<span className="text-label-md">전체</span>
 							{isAllSelected ? <Check className="size-4" /> : null}
 						</button>
-						<div className="h-px bg-[var(--border-subtle)]" />
+						<div className="h-px bg-outline-subtle" />
 						{options.map((option) => {
 							const isSelected = selectedValues.includes(option.value);
 
@@ -97,9 +96,8 @@ export function FilterDropdown<T extends string>({
 									type="button"
 									aria-pressed={isSelected}
 									className={cn(
-										"flex items-center justify-between rounded-[var(--radius-md)] px-3 py-2 text-[length:var(--type-body-sm-size)] text-[var(--text-primary)] outline-none transition-colors hover:bg-[var(--surface-hover)] focus-visible:ring-2 focus-visible:ring-[var(--interactive-focus-ring)]",
-										isSelected &&
-											"bg-[var(--interactive-selected-bg)] text-[var(--interactive-selected-fg)]",
+										"flex items-center justify-between rounded-md px-3 py-2 text-body-sm text-fg outline-none transition-colors hover:bg-hover-surface focus-visible:ring-2 focus-visible:ring-focus",
+										isSelected && "bg-selected text-selected-fg",
 									)}
 									onClick={() => onToggleValue(option.value)}
 								>
@@ -107,13 +105,12 @@ export function FilterDropdown<T extends string>({
 									<span
 										aria-hidden="true"
 										className={cn(
-											"flex size-4 items-center justify-center rounded-[4px] border border-[var(--border-default)] bg-[var(--surface-panel)]",
-											isSelected &&
-												"border-[var(--border-brand)] bg-[var(--interactive-selected-bg)]",
+											"flex size-4 items-center justify-center rounded-[4px] border border-outline bg-panel",
+											isSelected && "border-brand bg-selected",
 										)}
 									>
 										{isSelected ? (
-											<Check className="size-3 text-[var(--interactive-selected-fg)]" />
+											<Check className="size-3 text-selected-fg" />
 										) : null}
 									</span>
 								</button>

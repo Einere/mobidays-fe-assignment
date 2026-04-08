@@ -28,13 +28,11 @@ describe("dashboard shell components", () => {
 		const input = screen.getByRole("textbox", { name: "캠페인 검색" });
 
 		expect(input).toBeInTheDocument();
-		expect(input.className).toContain("bg-[var(--surface-panel)]");
-		expect(input.className).toContain("border-[var(--border-default)]");
+		expect(input.className).toContain("bg-panel");
+		expect(input.className).toContain("border-outline");
+		expect(input.className).toContain("focus-visible:ring-focus");
 		expect(input.className).toContain(
-			"focus-visible:ring-[var(--interactive-focus-ring)]",
-		);
-		expect(input.className).toContain(
-			"aria-invalid:border-[var(--status-danger-border)]",
+			"aria-invalid:border-status-danger-border",
 		);
 	});
 
@@ -52,12 +50,8 @@ describe("dashboard shell components", () => {
 		expect(screen.getByText("Mobidays Dashboard")).toBeInTheDocument();
 		const activeItem = screen.getByRole("link", { name: "개요" });
 
-		expect(activeItem.className).toContain(
-			"bg-[var(--interactive-selected-bg)]",
-		);
-		expect(activeItem.className).toContain(
-			"text-[var(--interactive-selected-fg)]",
-		);
+		expect(activeItem.className).toContain("bg-selected");
+		expect(activeItem.className).toContain("text-selected-fg");
 	});
 
 	it("renders a data table using density and status tokens", () => {
@@ -86,8 +80,8 @@ describe("dashboard shell components", () => {
 		expect(screen.getByText("브랜드 검색")).toBeInTheDocument();
 		expect(screen.getByText("운영 중")).toBeInTheDocument();
 		expect(screen.getByText("₩18,240").className).toContain("text-right");
-		expect(
-			screen.getByRole("table", { name: "캠페인 상태 표" }).className,
-		).toContain("text-[length:var(--type-table-sm-size)]");
+		expect(screen.getByRole("table", { name: "캠페인 상태 표" }).className).toContain(
+			"text-table-sm",
+		);
 	});
 });

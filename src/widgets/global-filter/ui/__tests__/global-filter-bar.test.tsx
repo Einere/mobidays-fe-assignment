@@ -70,12 +70,8 @@ describe("GlobalFilterBar", () => {
 
 		expect(activeChip).toHaveAttribute("aria-pressed", "true");
 		expect(statusLegend.className).toContain("mb-2");
-		expect(activeChip.className).toContain(
-			"hover:border-[var(--interactive-selected-border-hover)]",
-		);
-		expect(activeChip.className).toContain(
-			"hover:bg-[var(--interactive-selected-bg-hover)]",
-		);
+		expect(activeChip.className).toContain("hover:border-brand-strong");
+		expect(activeChip.className).toContain("hover:bg-selected-hover");
 
 		await user.click(activeChip);
 
@@ -143,9 +139,7 @@ describe("GlobalFilterBar", () => {
 		await user.tab();
 
 		expect(googleOption).toHaveFocus();
-		expect(googleOption.className).toContain(
-			"focus-visible:ring-[var(--interactive-focus-ring)]",
-		);
+		expect(googleOption.className).toContain("focus-visible:ring-focus");
 		expect(googleOption).toHaveAttribute("aria-pressed", "true");
 
 		await user.keyboard("[Space]");
@@ -185,7 +179,7 @@ describe("GlobalFilterBar", () => {
 			screen.getByText("시작일은 종료일보다 늦을 수 없습니다."),
 		).toBeInTheDocument();
 		expect(startDateInput.className).toContain(
-			"aria-invalid:border-[var(--status-danger-border)]",
+			"aria-invalid:border-status-danger-border",
 		);
 		expect(startDateInput).toHaveValue("2026-04-10");
 		expect(endDateInput).toHaveValue("2026-04-01");

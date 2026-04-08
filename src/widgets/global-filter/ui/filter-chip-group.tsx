@@ -27,9 +27,7 @@ export function FilterChipGroup<T extends string>({
 
 	return (
 		<fieldset aria-label={`${groupLabel} 필터`} className="flex flex-col">
-			<legend className="mb-2 text-[length:var(--type-form-label-size)] font-[var(--type-form-label-weight)] text-[var(--text-primary)]">
-				{groupLabel}
-			</legend>
+			<legend className="mb-2 text-form-label text-fg">{groupLabel}</legend>
 			<div className="flex flex-wrap gap-2">
 				<Button
 					type="button"
@@ -37,9 +35,9 @@ export function FilterChipGroup<T extends string>({
 					size="sm"
 					aria-pressed={isAllSelected}
 					className={cn(
-						"border-[var(--border-default)]",
+						"border-outline",
 						isAllSelected &&
-							"border-[var(--border-brand)] bg-[var(--interactive-selected-bg)] text-[var(--interactive-selected-fg)] hover:border-[var(--interactive-selected-border-hover)] hover:bg-[var(--interactive-selected-bg-hover)]",
+							"border-brand bg-selected text-selected-fg hover:border-brand-strong hover:bg-selected-hover",
 					)}
 					onClick={onSelectAll}
 				>
@@ -56,9 +54,9 @@ export function FilterChipGroup<T extends string>({
 							size="sm"
 							aria-pressed={isSelected}
 							className={cn(
-								"border-[var(--border-default)]",
+								"border-outline",
 								isSelected &&
-									"border-[var(--border-brand)] bg-[var(--interactive-selected-bg)] text-[var(--interactive-selected-fg)] hover:border-[var(--interactive-selected-border-hover)] hover:bg-[var(--interactive-selected-bg-hover)]",
+									"border-brand bg-selected text-selected-fg hover:border-brand-strong hover:bg-selected-hover",
 							)}
 							onClick={() => onToggleValue(option.value)}
 						>

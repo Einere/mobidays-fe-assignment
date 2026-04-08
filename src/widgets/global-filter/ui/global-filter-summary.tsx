@@ -30,12 +30,12 @@ function formatRequestState(options: {
 function getRequestStateClassName(requestState: string) {
 	switch (requestState) {
 		case "오류":
-			return "border-[var(--status-danger-border)] bg-[var(--status-danger-bg)] text-[var(--status-danger-fg)]";
+			return "border-status-danger-border bg-status-danger text-status-danger-fg";
 		case "불러오는 중":
 		case "동기화 중":
-			return "border-[var(--status-info-border)] bg-[var(--status-info-bg)] text-[var(--status-info-fg)]";
+			return "border-status-info-border bg-status-info text-status-info-fg";
 		default:
-			return "border-[var(--status-success-border)] bg-[var(--status-success-bg)] text-[var(--status-success-fg)]";
+			return "border-status-success-border bg-status-success text-status-success-fg";
 	}
 }
 
@@ -52,7 +52,7 @@ export function GlobalFilterSummary() {
 	});
 
 	return (
-		<section className="rounded-[var(--panel-radius)] border border-[var(--panel-border)] bg-[var(--panel-bg)] p-[var(--layout-panel-padding)] shadow-[var(--panel-shadow)]">
+		<section className="rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel">
 			<div className="flex flex-col gap-5">
 				<p
 					className="sr-only"
@@ -65,64 +65,52 @@ export function GlobalFilterSummary() {
 				</p>
 
 				<div className="flex flex-col gap-2">
-					<h2 className="text-[length:var(--type-title-size)] leading-[var(--type-title-line-height)] font-[var(--type-title-weight)]">
-						필터 결과 요약
-					</h2>
-					<p className="text-[length:var(--type-body-sm-size)] text-[var(--text-secondary)]">
+					<h2 className="text-title">필터 결과 요약</h2>
+					<p className="text-body-sm text-fg-muted">
 						전역 필터 기준으로 조회 상태와 결과 집합 크기를 확인합니다.
 					</p>
 				</div>
 
 				<div className="grid gap-4 md:grid-cols-3">
-					<div className="rounded-[var(--radius-lg)] bg-[var(--surface-panel-muted)] p-4">
-						<p className="mb-2 text-[length:var(--type-caption-size)] text-[var(--text-tertiary)]">
-							조회 상태
-						</p>
+					<div className="rounded-card bg-panel-muted p-4">
+						<p className="mb-2 text-caption text-fg-subtle">조회 상태</p>
 						<p
 							className={cn(
-								"inline-flex rounded-[var(--radius-full)] border px-3 py-1 text-[length:var(--type-label-md-size)] font-[var(--type-label-md-weight)]",
+								"inline-flex rounded-pill border px-3 py-1 text-label-md",
 								getRequestStateClassName(requestState),
 							)}
 						>
 							{requestState}
 						</p>
 						{query.isError ? (
-							<p className="mt-2 text-[length:var(--type-body-sm-size)] text-[var(--status-danger-fg)]">
+							<p className="mt-2 text-body-sm text-status-danger-fg">
 								{query.error.message}
 							</p>
 						) : null}
 					</div>
 
-					<div className="rounded-[var(--radius-lg)] bg-[var(--surface-panel-muted)] p-4">
-						<p className="mb-2 text-[length:var(--type-caption-size)] text-[var(--text-tertiary)]">
-							캠페인 결과
-						</p>
-						<p className="text-[length:var(--type-metric-lg-size)] leading-[var(--type-metric-lg-line-height)] font-[var(--type-metric-lg-weight)]">
-							{campaignsCount}건
-						</p>
+					<div className="rounded-card bg-panel-muted p-4">
+						<p className="mb-2 text-caption text-fg-subtle">캠페인 결과</p>
+						<p className="text-metric-lg">{campaignsCount}건</p>
 					</div>
 
-					<div className="rounded-[var(--radius-lg)] bg-[var(--surface-panel-muted)] p-4">
-						<p className="mb-2 text-[length:var(--type-caption-size)] text-[var(--text-tertiary)]">
-							일별 데이터 결과
-						</p>
-						<p className="text-[length:var(--type-metric-lg-size)] leading-[var(--type-metric-lg-line-height)] font-[var(--type-metric-lg-weight)]">
-							{dailyStatsCount}건
-						</p>
+					<div className="rounded-card bg-panel-muted p-4">
+						<p className="mb-2 text-caption text-fg-subtle">일별 데이터 결과</p>
+						<p className="text-metric-lg">{dailyStatsCount}건</p>
 					</div>
 				</div>
 
-				<div className="grid gap-3 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--surface-panel)] p-4 text-[length:var(--type-body-sm-size)] text-[var(--text-secondary)] md:grid-cols-3">
+				<div className="grid gap-3 rounded-card border border-outline-subtle bg-panel p-4 text-body-sm text-fg-muted md:grid-cols-3">
 					<p>
-						<span className="mb-2 block text-[var(--text-tertiary)]">기간</span>
+						<span className="mb-2 block text-fg-subtle">기간</span>
 						{filter.dateRange.startDate} - {filter.dateRange.endDate}
 					</p>
 					<p>
-						<span className="mb-2 block text-[var(--text-tertiary)]">상태</span>
+						<span className="mb-2 block text-fg-subtle">상태</span>
 						{formatSelectionSummary(filter.statuses)}
 					</p>
 					<p>
-						<span className="mb-2 block text-[var(--text-tertiary)]">매체</span>
+						<span className="mb-2 block text-fg-subtle">매체</span>
 						{formatSelectionSummary(filter.platforms)}
 					</p>
 				</div>

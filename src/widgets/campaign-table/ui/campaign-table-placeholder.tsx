@@ -8,7 +8,7 @@ const placeholderCampaignRows = [
 		name: "브랜드 검색",
 		statusLabel: "운영 중",
 		statusClassName:
-			"border-[var(--status-success-border)] bg-[var(--status-success-bg)] text-[var(--status-success-fg)]",
+			"border-status-success-border bg-status-success text-status-success-fg",
 		budget: "68%",
 		cpa: "₩18,240",
 	},
@@ -17,7 +17,7 @@ const placeholderCampaignRows = [
 		name: "리타겟팅 세트",
 		statusLabel: "검토 필요",
 		statusClassName:
-			"border-[var(--status-warning-border)] bg-[var(--status-warning-bg)] text-[var(--status-warning-fg)]",
+			"border-status-warning-border bg-status-warning text-status-warning-fg",
 		budget: "83%",
 		cpa: "₩24,900",
 	},
@@ -26,7 +26,7 @@ const placeholderCampaignRows = [
 		name: "앱 설치 프로모션",
 		statusLabel: "예산 초과",
 		statusClassName:
-			"border-[var(--status-danger-border)] bg-[var(--status-danger-bg)] text-[var(--status-danger-fg)]",
+			"border-status-danger-border bg-status-danger text-status-danger-fg",
 		budget: "112%",
 		cpa: "₩31,400",
 	},
@@ -69,7 +69,7 @@ export function CampaignTablePlaceholder({
 			<input
 				aria-label={`${row.name} 선택`}
 				checked={controls.selectedRowIds.includes(row.id)}
-				className="size-4 rounded border border-[var(--border-default)] accent-[var(--interactive-primary-bg)]"
+				className="size-4 rounded border border-outline accent-primary"
 				type="checkbox"
 				onChange={() => controls.toggleRowSelection(row.id)}
 			/>
@@ -77,7 +77,7 @@ export function CampaignTablePlaceholder({
 		name: row.name,
 		status: (
 			<span
-				className={`rounded-[var(--radius-full)] border px-2.5 py-1 ${row.statusClassName}`}
+				className={`rounded-pill border px-2.5 py-1 ${row.statusClassName}`}
 			>
 				{row.statusLabel}
 			</span>
@@ -98,7 +98,7 @@ export function CampaignTablePlaceholder({
 							aria-checked={isPartiallySelected ? "mixed" : areAllRowsSelected}
 							aria-label="모든 캠페인 선택"
 							checked={areAllRowsSelected}
-							className="size-4 rounded border border-[var(--border-default)] accent-[var(--interactive-primary-bg)]"
+							className="size-4 rounded border border-outline accent-primary"
 							type="checkbox"
 							onChange={() =>
 								controls.setSelectedRowIds(
