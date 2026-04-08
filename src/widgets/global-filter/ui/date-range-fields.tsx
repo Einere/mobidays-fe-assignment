@@ -1,0 +1,73 @@
+import { TextInput } from "@/shared/ui/input";
+
+interface DateRangeFieldsProps {
+	endDate: string;
+	onEndDateChange: (value: string) => void;
+	onStartDateChange: (value: string) => void;
+	startDate: string;
+	validationMessage?: string | null;
+}
+
+export function DateRangeFields({
+	endDate,
+	onEndDateChange,
+	onStartDateChange,
+	startDate,
+	validationMessage,
+}: DateRangeFieldsProps) {
+	const describedBy = validationMessage
+		? "global-filter-date-error"
+		: undefined;
+
+	return (
+		<div className="flex min-w-0 flex-1 flex-col gap-2">
+			<p className="text-[length:var(--type-form-label-size)] font-[var(--type-form-label-weight)] text-[var(--text-primary)]">
+				집행 기간
+			</p>
+			<div className="grid gap-3 sm:grid-cols-2">
+				<div className="flex flex-col gap-1.5">
+					<label
+						htmlFor="global-filter-start-date"
+						className="text-[length:var(--type-caption-size)] font-[var(--type-caption-weight)] text-[var(--text-secondary)]"
+					>
+						시작일
+					</label>
+					<TextInput
+						id="global-filter-start-date"
+						aria-describedby={describedBy}
+						aria-invalid={validationMessage ? "true" : "false"}
+						type="date"
+						value={startDate}
+						onChange={(event) => onStartDateChange(event.target.value)}
+					/>
+				</div>
+				<div className="flex flex-col gap-1.5">
+					<label
+						htmlFor="global-filter-end-date"
+						className="text-[length:var(--type-caption-size)] font-[var(--type-caption-weight)] text-[var(--text-secondary)]"
+					>
+						종료일
+					</label>
+					<TextInput
+						id="global-filter-end-date"
+						aria-describedby={describedBy}
+						aria-invalid={validationMessage ? "true" : "false"}
+						type="date"
+						value={endDate}
+						onChange={(event) => onEndDateChange(event.target.value)}
+					/>
+				</div>
+			</div>
+			<div className="min-h-5">
+				{validationMessage ? (
+					<p
+						id="global-filter-date-error"
+						className="text-[length:var(--type-caption-size)] font-[var(--type-caption-weight)] text-[var(--status-danger-fg)]"
+					>
+						{validationMessage}
+					</p>
+				) : null}
+			</div>
+		</div>
+	);
+}
