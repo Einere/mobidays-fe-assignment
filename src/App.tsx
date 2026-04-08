@@ -39,11 +39,7 @@ function App() {
 							Mobidays Dashboard
 						</p>
 						<div className="flex flex-col gap-2">
-							<h1>Campaign Operations</h1>
-							<p className="max-w-3xl text-[length:var(--type-body-lg-size)] leading-[var(--type-body-lg-line-height)] text-[var(--text-secondary)]">
-								새 디자인 토큰 시스템으로 운영 대시보드의 판독성, 상태 위계,
-								조작 밀도를 검증하는 셸입니다.
-							</p>
+							<h1>캠페인 운영 현황</h1>
 						</div>
 					</header>
 
@@ -59,9 +55,6 @@ function App() {
 									<h2 className="text-[length:var(--type-heading-lg-size)] leading-[var(--type-heading-lg-line-height)] font-[var(--type-heading-lg-weight)]">
 										성과 개요
 									</h2>
-									<p className="text-[length:var(--type-body-md-size)] text-[var(--text-secondary)]">
-										의미 기반 차트 색상과 패널 위계를 검증합니다.
-									</p>
 								</div>
 								<div className="flex gap-2">
 									<Button size="sm" variant="outline">
@@ -101,7 +94,7 @@ function App() {
 
 						<div className="rounded-[var(--panel-radius)] border border-[var(--panel-border)] bg-[var(--panel-bg)] p-[var(--layout-panel-padding)] shadow-[var(--panel-shadow)]">
 							<h2 className="text-[length:var(--type-title-size)] leading-[var(--type-title-line-height)] font-[var(--type-title-weight)]">
-								상태 규칙
+								운영 상태
 							</h2>
 							<div className="mt-5 flex flex-wrap gap-2">
 								<span className="rounded-[var(--radius-full)] border border-[var(--status-success-border)] bg-[var(--status-success-bg)] px-3 py-1 text-[length:var(--type-caption-size)] font-[var(--type-caption-weight)] text-[var(--status-success-fg)]">
@@ -120,21 +113,21 @@ function App() {
 
 							<div className="mt-8 flex flex-col gap-3">
 								<div className="flex items-center justify-between text-[length:var(--type-table-sm-size)] font-[var(--type-table-sm-weight)] text-[var(--text-secondary)]">
-									<span>Positive</span>
+									<span>안정 운영</span>
 									<span>+18.4%</span>
 								</div>
 								<div className="h-2 rounded-full bg-[var(--surface-panel-muted)]">
 									<div className="h-full w-[72%] rounded-full bg-[var(--chart-positive)]" />
 								</div>
 								<div className="flex items-center justify-between text-[length:var(--type-table-sm-size)] font-[var(--type-table-sm-weight)] text-[var(--text-secondary)]">
-									<span>Warning</span>
+									<span>주의 필요</span>
 									<span>7 캠페인</span>
 								</div>
 								<div className="h-2 rounded-full bg-[var(--surface-panel-muted)]">
 									<div className="h-full w-[48%] rounded-full bg-[var(--chart-warning)]" />
 								</div>
 								<div className="flex items-center justify-between text-[length:var(--type-table-sm-size)] font-[var(--type-table-sm-weight)] text-[var(--text-secondary)]">
-									<span>Danger</span>
+									<span>긴급 대응</span>
 									<span>2 캠페인</span>
 								</div>
 								<div className="h-2 rounded-full bg-[var(--surface-panel-muted)]">
@@ -148,10 +141,6 @@ function App() {
 						<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 							<div>
 								<h2>캠페인 현황</h2>
-								<p className="mt-1 text-[length:var(--type-body-md-size)] text-[var(--text-secondary)]">
-									입력, 표, 상태 토큰이 실제 운영툴 밀도에서 잘 동작하는지
-									확인합니다.
-								</p>
 							</div>
 							<div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
 								<TextInput
@@ -206,14 +195,19 @@ function App() {
 									ROAS
 								</Button>
 							</div>
-							<p className="text-[length:var(--type-body-sm-size)] text-[var(--text-secondary)]">
-								테이블 로컬 상태: 검색어{" "}
-								{campaignTableControls.searchTerm
-									? `"${campaignTableControls.searchTerm}"`
-									: "없음"}
-								, 정렬 {activeSortLabel}, 페이지 {campaignTableControls.page},
-								선택 행 {campaignTableControls.selectedRowIds.length}건
-							</p>
+							<div className="flex flex-wrap gap-x-4 gap-y-1 text-[length:var(--type-body-sm-size)] text-[var(--text-secondary)]">
+								<span>
+									검색어{" "}
+									{campaignTableControls.searchTerm
+										? `"${campaignTableControls.searchTerm}"`
+										: "없음"}
+								</span>
+								<span>정렬 {activeSortLabel}</span>
+								<span>페이지 {campaignTableControls.page}</span>
+								<span>
+									선택 {campaignTableControls.selectedRowIds.length}건
+								</span>
+							</div>
 						</div>
 
 						<div className="mt-6">
@@ -221,10 +215,7 @@ function App() {
 						</div>
 
 						<div className="mt-4 flex items-center justify-between text-[length:var(--type-body-sm-size)] text-[var(--text-secondary)]">
-							<p>
-								페이지네이션과 체크박스 선택은 글로벌 필터와 분리된 로컬
-								placeholder 상태입니다.
-							</p>
+							<p>선택 {campaignTableControls.selectedRowIds.length}건</p>
 							<div className="flex gap-2">
 								<Button
 									type="button"
