@@ -8,6 +8,10 @@ const tokensCss = fs.readFileSync(
 	path.resolve(process.cwd(), "src/app/styles/tokens.css"),
 	"utf8",
 );
+const baseCss = fs.readFileSync(
+	path.resolve(process.cwd(), "src/app/styles/base.css"),
+	"utf8",
+);
 
 describe("design tokens", () => {
 	it("defines core semantic tokens", () => {
@@ -37,5 +41,32 @@ describe("design tokens", () => {
 		expect(tokensCss).toContain("--chart-warning:");
 		expect(tokensCss).toContain("--chart-danger:");
 		expect(tokensCss).toContain("--chart-baseline:");
+	});
+
+	it("maps semantic tokens to tailwind theme aliases", () => {
+		expect(baseCss).toContain("--color-panel: var(--surface-panel);");
+		expect(baseCss).toContain("--color-fg: var(--text-primary);");
+		expect(baseCss).toContain("--color-fg-muted: var(--text-secondary);");
+		expect(baseCss).toContain("--color-brand: var(--border-brand);");
+		expect(baseCss).toContain(
+			"--color-status-danger: var(--status-danger-bg);",
+		);
+		expect(baseCss).toContain("--color-focus: var(--interactive-focus-ring);");
+	});
+
+	it("maps typography and sizing tokens to tailwind theme aliases", () => {
+		expect(baseCss).toContain("--text-title: var(--type-title-size);");
+		expect(baseCss).toContain("--text-caption: var(--type-caption-size);");
+		expect(baseCss).toContain("--text-table-sm: var(--type-table-sm-size);");
+		expect(baseCss).toContain("--text-metric-lg: var(--type-metric-lg-size);");
+		expect(baseCss).toContain(
+			"--spacing-control-md: var(--control-height-md);",
+		);
+		expect(baseCss).toContain(
+			"--spacing-table-row: var(--layout-table-row-height);",
+		);
+		expect(baseCss).toContain("--spacing-page-max: var(--layout-page-max);");
+		expect(baseCss).toContain("--ease-standard: var(--easing-standard);");
+		expect(baseCss).toContain("--radius-card: var(--radius-lg);");
 	});
 });
