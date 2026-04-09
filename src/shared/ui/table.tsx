@@ -1,6 +1,7 @@
 import type * as React from "react";
 
 import { cn } from "@/shared/lib/utils";
+import { DataDenseScrollArea } from "@/shared/ui/data-dense-scroll-area";
 
 type DataTableColumn<T extends Record<string, React.ReactNode>> = {
 	key: keyof T;
@@ -16,6 +17,8 @@ type DataTableProps<T extends DataTableRow> = {
 	caption: string;
 	columns: DataTableColumn<T>[];
 	rows: T[];
+	density?: "default" | "compact";
+	mobileScrollHint?: string;
 	className?: string;
 	tableClassName?: string;
 };
@@ -24,13 +27,25 @@ function DataTable<T extends DataTableRow>({
 	caption,
 	columns,
 	rows,
+	density = "default",
+	mobileScrollHint,
 	className,
 	tableClassName,
 }: DataTableProps<T>) {
+	const headerCellClassName =
+		density === "compact"
+			? "h-table-row-compact px-3 sm:h-table-row sm:px-4 text-left typo-caption sm:typo-label-md"
+			: "h-table-row px-4 text-left typo-label-md";
+	const bodyCellClassName =
+		density === "compact"
+			? "h-table-row-compact px-3 sm:h-table-row sm:px-4 align-middle text-fg"
+			: "h-table-row px-4 align-middle text-fg";
+
 	return (
-		<div
+		<DataDenseScrollArea
+			hint={mobileScrollHint ?? "좌우로 스크롤해 더 많은 데이터를 확인하세요."}
 			className={cn(
-				"overflow-x-auto overflow-y-hidden rounded-panel border border-outline-subtle bg-panel shadow-panel",
+				"rounded-panel border border-outline-subtle bg-panel shadow-panel",
 				className,
 			)}
 		>
@@ -48,7 +63,7 @@ function DataTable<T extends DataTableRow>({
 							<th
 								key={String(column.key)}
 								className={cn(
-									"h-table-row px-4 text-left typo-label-md",
+									headerCellClassName,
 									column.align === "right" && "text-right",
 								)}
 								scope="col"
@@ -71,7 +86,7 @@ function DataTable<T extends DataTableRow>({
 								<td
 									key={String(column.key)}
 									className={cn(
-										"h-table-row px-4 align-middle text-fg",
+										bodyCellClassName,
 										column.align === "right" && "text-right",
 									)}
 								>
@@ -82,7 +97,7 @@ function DataTable<T extends DataTableRow>({
 					))}
 				</tbody>
 			</table>
-		</div>
+		</DataDenseScrollArea>
 	);
 }
 
