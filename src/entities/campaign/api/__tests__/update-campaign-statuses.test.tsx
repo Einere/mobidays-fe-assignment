@@ -4,7 +4,6 @@ import { HttpResponse, http } from "msw";
 import { describe, expect, it, vi } from "vitest";
 import { updateCampaignStatuses } from "@/entities/campaign/api/update-campaign-statuses";
 import { useUpdateCampaignStatuses } from "@/entities/campaign/api/use-update-campaign-statuses";
-import { createDashboardDataQueryKey } from "@/entities/dashboard/api/use-dashboard-data";
 import type { GlobalFilterState } from "@/entities/global-filter/model/types";
 import { mockDb, seedMockDb } from "@/shared/api/mock/db";
 import {
@@ -108,7 +107,7 @@ describe("campaign status updates", () => {
 		).rejects.toThrow("Request failed: 500");
 	});
 
-	it("invalidates the matching dashboard query key after a successful mutation", async () => {
+	it("invalidates all dashboard data queries after a successful mutation", async () => {
 		seedMockDb({
 			campaigns: [
 				{
@@ -130,7 +129,7 @@ describe("campaign status updates", () => {
 			<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 		);
 
-		const { result } = renderHook(() => useUpdateCampaignStatuses(filter), {
+		const { result } = renderHook(() => useUpdateCampaignStatuses(), {
 			wrapper,
 		});
 
@@ -142,7 +141,7 @@ describe("campaign status updates", () => {
 		});
 
 		expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-			queryKey: createDashboardDataQueryKey(filter),
+			queryKey: ["dashboard-data"],
 		});
 	});
 });
