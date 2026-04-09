@@ -282,6 +282,9 @@ describe("CampaignTableCard", () => {
 			expect(table).toBeVisible();
 			expect(table).toHaveClass("min-w-[940px]");
 			expect(
+				screen.getByText("좌우로 스크롤해 표 전체를 확인하세요."),
+			).toBeInTheDocument();
+			expect(
 				screen.getByRole("button", { name: "총 집행금액 정렬" }),
 			).toBeVisible();
 			expect(
@@ -406,7 +409,9 @@ describe("CampaignTableCard", () => {
 		expect(
 			await within(dialog).findByText("상태 변경에 실패했습니다."),
 		).toBeVisible();
-		expect(within(dialog).getByText("Request failed: 500")).toBeVisible();
+		expect(
+			within(dialog).queryByText("Request failed: 500"),
+		).not.toBeInTheDocument();
 		expect(screen.getByText("선택 1건")).toBeInTheDocument();
 		await user.click(within(dialog).getByRole("button", { name: "취소" }));
 		expect(
@@ -805,7 +810,7 @@ describe("CampaignTableCard", () => {
 		expect(
 			await screen.findByText("캠페인 데이터를 불러오지 못했습니다."),
 		).toBeVisible();
-		expect(screen.getByText("Request failed: 500")).toBeVisible();
+		expect(screen.queryByText("Request failed: 500")).not.toBeInTheDocument();
 		expect(
 			screen.queryByRole("searchbox", { name: "캠페인 검색" }),
 		).not.toBeInTheDocument();
@@ -834,7 +839,7 @@ describe("CampaignTableCard", () => {
 				"최신 캠페인 데이터를 불러오지 못해 마지막 성공 결과를 표시 중입니다.",
 			),
 		).toBeVisible();
-		expect(screen.getByText("Request failed: 500")).toBeVisible();
+		expect(screen.queryByText("Request failed: 500")).not.toBeInTheDocument();
 		expect(screen.getByText("브랜드 검색")).toBeVisible();
 	});
 });

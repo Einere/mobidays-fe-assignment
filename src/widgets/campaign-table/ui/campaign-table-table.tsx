@@ -146,6 +146,8 @@ export function CampaignTableTable({
 			<DataTable
 				caption="캠페인 현황 표"
 				className="-mx-2 sm:mx-0"
+				density="compact"
+				mobileScrollHint="좌우로 스크롤해 표 전체를 확인하세요."
 				tableClassName="min-w-[940px] lg:min-w-0"
 				columns={[
 					{

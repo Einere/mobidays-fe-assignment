@@ -83,6 +83,10 @@ export function useCampaignStatusBulkAction({
 			setIsDialogOpen(true);
 		},
 		setDialogOpen(open: boolean) {
+			if (mutation.isPending && !open) {
+				return;
+			}
+
 			setIsDialogOpen(open);
 
 			if (!open) {

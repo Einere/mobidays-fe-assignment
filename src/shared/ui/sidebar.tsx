@@ -38,7 +38,7 @@ function SidebarNavList({
 							<a
 								href={item.href ?? "#"}
 								className={cn(
-									"flex min-h-control-md items-center justify-between rounded-md px-3 typo-label-md transition-colors duration-[var(--duration-fast)] ease-standard",
+									"flex min-h-control-touch sm:min-h-control-md items-center justify-between rounded-md px-3 typo-label-md transition-colors duration-[var(--duration-fast)] ease-standard",
 									item.active
 										? "bg-selected text-selected-fg"
 										: "text-fg-muted hover:bg-ghost-hover hover:text-fg",
@@ -88,8 +88,15 @@ function MobileSidebarNav({ title, items, className }: SidebarNavProps) {
 				</Button>
 			</Dialog.Trigger>
 			<Dialog.Portal>
-				<Dialog.Overlay className="fixed inset-0 z-40 bg-black/35 backdrop-blur-[1px]" />
-				<Dialog.Content className="fixed inset-y-0 left-0 z-50 w-[min(88vw,22rem)] border-r border-outline-subtle bg-panel p-panel shadow-panel focus:outline-none">
+				<Dialog.Overlay
+					data-slot="mobile-sidebar-overlay"
+					className="fixed inset-0 z-40 bg-overlay-scrim backdrop-blur-[1px]"
+				/>
+				<Dialog.Content
+					data-slot="mobile-sidebar-content"
+					aria-describedby={undefined}
+					className="fixed inset-y-0 left-0 z-50 w-[min(88vw,22rem)] border-r border-outline-subtle bg-panel p-panel shadow-panel focus:outline-none"
+				>
 					<Dialog.Title className="sr-only">{title} 메뉴</Dialog.Title>
 					<SidebarNavList title={title} items={items} />
 				</Dialog.Content>

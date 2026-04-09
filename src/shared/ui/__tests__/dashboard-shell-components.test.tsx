@@ -19,8 +19,14 @@ describe("dashboard shell components", () => {
 			screen.getByRole("button", { name: "보고서 내보내기" }).className,
 		).toContain("cursor-pointer");
 		expect(
+			screen.getByRole("button", { name: "보고서 내보내기" }).className,
+		).toContain("min-h-control-touch");
+		expect(
 			screen.getByRole("textbox", { name: "캠페인 검색" }).className,
 		).toContain("cursor-text");
+		expect(
+			screen.getByRole("textbox", { name: "캠페인 검색" }).className,
+		).toContain("min-h-control-touch");
 	});
 
 	it("renders an input with semantic token classes", () => {
@@ -53,6 +59,7 @@ describe("dashboard shell components", () => {
 
 		expect(activeItem.className).toContain("bg-selected");
 		expect(activeItem.className).toContain("text-selected-fg");
+		expect(activeItem.className).toContain("min-h-control-touch");
 	});
 
 	it("opens a mobile navigation dialog from the hamburger trigger", async () => {
@@ -71,6 +78,10 @@ describe("dashboard shell components", () => {
 		await user.click(screen.getByRole("button", { name: "메뉴 열기" }));
 
 		expect(screen.getByRole("dialog")).toBeInTheDocument();
+		expect(
+			document.querySelector('[data-slot="mobile-sidebar-overlay"]')
+				?.className ?? "",
+		).toContain("bg-overlay-scrim");
 		expect(screen.getByRole("link", { name: "개요" })).toBeInTheDocument();
 		expect(screen.getByRole("link", { name: "캠페인" })).toBeInTheDocument();
 	});
