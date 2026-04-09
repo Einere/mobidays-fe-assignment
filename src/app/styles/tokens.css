@@ -108,9 +108,11 @@
 	--layout-panel-padding: 20px;
 	--layout-toolbar-gap: 12px;
 	--layout-table-row-height: 44px;
+	--layout-table-row-height-compact: 40px;
 	--control-height-sm: 32px;
 	--control-height-md: 40px;
 	--control-height-lg: 48px;
+	--control-height-touch: 44px;
 
 	/* Semantic text */
 	--text-primary: var(--color-slate-900);
@@ -149,6 +151,7 @@
 	--interactive-selected-border-hover: var(--color-navy-400);
 	--interactive-focus-ring: rgb(49 95 218 / 0.28);
 	--interactive-disabled-opacity: 0.45;
+	--overlay-scrim: rgb(11 18 32 / 0.38);
 
 	/* Semantic status */
 	--status-success-bg: #ecfdf3;
@@ -291,6 +294,7 @@
 	--interactive-selected-fg: #dbe7ff;
 	--interactive-focus-ring: rgb(191 210 255 / 0.32);
 	--interactive-disabled-opacity: 0.38;
+	--overlay-scrim: rgb(8 17 31 / 0.68);
 
 	--status-success-bg: rgb(20 184 166 / 0.12);
 	--status-success-fg: #7ce9d9;

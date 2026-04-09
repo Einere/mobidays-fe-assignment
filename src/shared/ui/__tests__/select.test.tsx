@@ -24,6 +24,8 @@ describe("SelectTrigger", () => {
 		const trigger = screen.getByRole("combobox", { name: "상태 선택" });
 
 		expect(trigger.className).toContain("disabled:cursor-not-allowed");
+		expect(trigger.className).toContain("min-h-control-touch");
+		expect(trigger.className).toContain("sm:h-control-md");
 		expect(trigger.className).not.toContain("disabled:pointer-events-none");
 	});
 });

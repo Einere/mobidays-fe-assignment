@@ -30,6 +30,7 @@
 	--color-secondary-fg: var(--interactive-secondary-fg);
 	--color-ghost-hover: var(--interactive-ghost-bg-hover);
 	--color-focus: var(--interactive-focus-ring);
+	--color-overlay-scrim: var(--overlay-scrim);
 	--color-status-success: var(--status-success-bg);
 	--color-status-success-fg: var(--status-success-fg);
 	--color-status-success-border: var(--status-success-border);
@@ -58,7 +59,9 @@
 	--spacing-control-sm: var(--control-height-sm);
 	--spacing-control-md: var(--control-height-md);
 	--spacing-control-lg: var(--control-height-lg);
+	--spacing-control-touch: var(--control-height-touch);
 	--spacing-table-row: var(--layout-table-row-height);
+	--spacing-table-row-compact: var(--layout-table-row-height-compact);
 	--ease-standard: var(--easing-standard);
 }
 
@@ -120,6 +123,10 @@
 	font-size: var(--type-table-sm-size);
 	line-height: var(--type-table-sm-line-height);
 	font-weight: var(--type-table-sm-weight);
+}
+
+@utility h-table-row-compact {
+	height: var(--layout-table-row-height-compact);
 }
 
 @utility typo-metric-lg {

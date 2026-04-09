@@ -14,6 +14,8 @@ const buttonVariants = cva(
 				outline: "border-outline bg-panel text-fg hover:bg-hover-surface",
 				secondary:
 					"border-transparent bg-secondary text-secondary-fg hover:bg-secondary-hover",
+				warning:
+					"border-status-warning-border bg-status-warning text-status-warning-fg hover:bg-[color-mix(in_srgb,var(--status-warning-bg)_72%,var(--status-warning-border))]",
 				ghost:
 					"border-transparent bg-transparent text-fg-muted hover:bg-ghost-hover hover:text-fg",
 				destructive:
@@ -22,14 +24,15 @@ const buttonVariants = cva(
 			},
 			size: {
 				default:
-					"h-control-md gap-1.5 rounded-control px-3 typo-label-md has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5",
-				xs: "h-7 gap-1 rounded-sm px-2 typo-caption has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
-				sm: "h-control-sm gap-1 rounded-control px-2.5 typo-label-md has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3.5",
-				lg: "h-control-lg gap-1.5 rounded-card px-4 typo-label-lg has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
-				icon: "size-control-md rounded-control",
-				"icon-xs": "size-7 rounded-sm [&_svg:not([class*='size-'])]:size-3",
-				"icon-sm": "size-control-sm rounded-control",
-				"icon-lg": "size-control-lg rounded-card",
+					"min-h-control-touch sm:h-control-md gap-1.5 rounded-control px-3 typo-label-md has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5",
+				xs: "min-h-control-touch sm:h-7 gap-1 rounded-sm px-2 typo-caption has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
+				sm: "min-h-control-touch sm:h-control-sm gap-1 rounded-control px-2.5 typo-label-md has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3.5",
+				lg: "min-h-control-touch sm:h-control-lg gap-1.5 rounded-card px-4 typo-label-lg has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
+				icon: "size-control-touch sm:size-control-md rounded-control",
+				"icon-xs":
+					"size-control-touch sm:size-7 rounded-sm [&_svg:not([class*='size-'])]:size-3",
+				"icon-sm": "size-control-touch sm:size-control-sm rounded-control",
+				"icon-lg": "size-control-touch sm:size-control-lg rounded-card",
 			},
 		},
 		defaultVariants: {

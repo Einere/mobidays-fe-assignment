@@ -19,6 +19,8 @@ describe("design tokens", () => {
 		expect(tokensCss).toContain("--surface-panel:");
 		expect(tokensCss).toContain("--border-default:");
 		expect(tokensCss).toContain("--control-height-md:");
+		expect(tokensCss).toContain("--control-height-touch:");
+		expect(tokensCss).toContain("--layout-table-row-height-compact:");
 	});
 
 	it("defines interactive state tokens for controls", () => {
@@ -27,6 +29,7 @@ describe("design tokens", () => {
 		expect(tokensCss).toContain("--interactive-secondary-bg:");
 		expect(tokensCss).toContain("--interactive-focus-ring:");
 		expect(tokensCss).toContain("--interactive-disabled-opacity:");
+		expect(tokensCss).toContain("--overlay-scrim:");
 	});
 
 	it("defines typography tokens for data-dense interfaces", () => {
@@ -55,6 +58,7 @@ describe("design tokens", () => {
 			"--color-status-danger: var(--status-danger-bg);",
 		);
 		expect(baseCss).toContain("--color-focus: var(--interactive-focus-ring);");
+		expect(baseCss).toContain("--color-overlay-scrim: var(--overlay-scrim);");
 	});
 
 	it("defines typo utility classes from typography tokens", () => {
@@ -70,7 +74,13 @@ describe("design tokens", () => {
 			"--spacing-control-md: var(--control-height-md);",
 		);
 		expect(baseCss).toContain(
+			"--spacing-control-touch: var(--control-height-touch);",
+		);
+		expect(baseCss).toContain(
 			"--spacing-table-row: var(--layout-table-row-height);",
+		);
+		expect(baseCss).toContain(
+			"--spacing-table-row-compact: var(--layout-table-row-height-compact);",
 		);
 		expect(baseCss).toContain("--spacing-page-max: var(--layout-page-max);");
 		expect(baseCss).toContain("--ease-standard: var(--easing-standard);");
