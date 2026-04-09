@@ -1,7 +1,11 @@
 import { Search } from "lucide-react";
+import { useEffect, useState } from "react";
 import type { CampaignStatus } from "@/entities/global-filter/model/types";
+import { useDebouncedValue } from "@/shared/hooks/use-debounced-value";
 import { Button } from "@/shared/ui/button";
 import { TextInput } from "@/shared/ui/input";
+
+const SEARCH_DEBOUNCE_DELAY = 300;
 
 interface CampaignTableToolbarProps {
 	searchTerm: string;
@@ -28,6 +32,24 @@ export function CampaignTableToolbar({
 	onPendingStatusChange,
 	onOpenStatusDialog,
 }: CampaignTableToolbarProps) {
+	const [draftSearchTerm, setDraftSearchTerm] = useState(searchTerm);
+	const debouncedSearchTerm = useDebouncedValue(
+		draftSearchTerm,
+		SEARCH_DEBOUNCE_DELAY,
+	);
+
+	useEffect(() => {
+		setDraftSearchTerm(searchTerm);
+	}, [searchTerm]);
+
+	useEffect(() => {
+		if (debouncedSearchTerm === searchTerm) {
+			return;
+		}
+
+		onSearchTermChange(debouncedSearchTerm);
+	}, [debouncedSearchTerm, onSearchTermChange, searchTerm]);
+
 	return (
 		<div className="flex flex-col gap-4 border-b border-outline-subtle pb-4">
 			<div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
@@ -50,8 +72,8 @@ export function CampaignTableToolbar({
 							disabled={disabled}
 							placeholder="캠페인명 검색"
 							type="search"
-							value={searchTerm}
-							onChange={(event) => onSearchTermChange(event.target.value)}
+							value={draftSearchTerm}
+							onChange={(event) => setDraftSearchTerm(event.target.value)}
 						/>
 					</div>
 					<label className="flex min-w-[140px] flex-col gap-1 text-body-sm text-fg-muted">
