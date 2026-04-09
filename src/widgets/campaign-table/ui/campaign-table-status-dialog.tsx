@@ -28,23 +28,23 @@ export function CampaignTableStatusDialog({
 				<Dialog.Overlay className="fixed inset-0 z-40 bg-black/45 backdrop-blur-[2px]" />
 				<Dialog.Content className="-translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2 z-50 flex w-[min(92vw,480px)] flex-col gap-5 rounded-panel border border-outline bg-panel p-panel shadow-panel focus:outline-none">
 					<div className="flex flex-col gap-2">
-						<Dialog.Title className="text-heading-md text-fg">
+						<Dialog.Title className="typo-heading-md text-fg">
 							캠페인 상태 변경
 						</Dialog.Title>
-						<Dialog.Description className="text-body-sm text-fg-muted">
+						<Dialog.Description className="typo-body-sm text-fg-muted">
 							선택한 캠페인 {selectedCount}건의 상태를 {statusLabel}로
 							변경합니다.
 						</Dialog.Description>
 					</div>
 
-					<div className="rounded-card border border-outline-subtle bg-panel-muted px-4 py-3 text-body-sm text-fg-muted">
+					<div className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-3 typo-body-sm text-status-danger-fg">
 						변경을 적용하면 선택한 캠페인 전체에 같은 상태가 반영됩니다.
 					</div>
 
 					{errorMessage ? (
-						<div className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-3 text-body-sm text-status-danger-fg">
+						<div className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-3 typo-body-sm text-status-danger-fg">
 							<p>상태 변경에 실패했습니다.</p>
-							<p className="mt-1 text-caption">{errorMessage}</p>
+							<p className="mt-1 typo-caption">{errorMessage}</p>
 						</div>
 					) : null}
 
@@ -56,6 +56,7 @@ export function CampaignTableStatusDialog({
 						</Dialog.Close>
 						<Button
 							type="button"
+							variant="destructive"
 							disabled={isSubmitting || !canConfirm}
 							onClick={onConfirm}
 						>

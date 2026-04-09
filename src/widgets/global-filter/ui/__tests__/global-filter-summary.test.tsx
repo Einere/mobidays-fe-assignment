@@ -84,13 +84,15 @@ describe("GlobalFilterSummary", () => {
 
 		await screen.findAllByText("1건");
 
-		const dateRangeLabel = screen.getByText("기간");
-
 		expect(screen.queryByText("조회 상태")).not.toBeInTheDocument();
 		expect(screen.getByText("캠페인 결과")).toBeInTheDocument();
 		expect(screen.getByText("일별 데이터 결과")).toBeInTheDocument();
-		expect(dateRangeLabel.className).toContain("mb-2");
-		expect(screen.getByText("Google, Meta, Naver")).toBeInTheDocument();
+		expect(getCampaignResultCard()?.parentElement?.className).toContain(
+			"grid-cols-2",
+		);
+		expect(screen.queryByText("기간")).not.toBeInTheDocument();
+		expect(screen.queryByText("상태")).not.toBeInTheDocument();
+		expect(screen.queryByText("매체")).not.toBeInTheDocument();
 	});
 
 	it("keeps the previous result visible while a filter update is in flight", async () => {
@@ -197,10 +199,6 @@ describe("GlobalFilterSummary", () => {
 		await screen.findAllByText("2건");
 
 		await user.click(screen.getByRole("button", { name: "메타만 보기" }));
-
-		await waitFor(() => {
-			expect(screen.getByText("Meta")).toBeInTheDocument();
-		});
 
 		expect(screen.queryByText("조회 상태")).not.toBeInTheDocument();
 		expect(

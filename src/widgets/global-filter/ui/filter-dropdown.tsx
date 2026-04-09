@@ -59,7 +59,7 @@ export function FilterDropdown<T extends string>({
 				>
 					<span>{groupLabel}</span>
 					<span className="flex items-center gap-2 text-fg-muted">
-						<span className="max-w-[10rem] truncate text-caption">
+						<span className="max-w-[10rem] truncate typo-caption">
 							{selectedSummary}
 						</span>
 						<ChevronDown className="size-4" />
@@ -78,12 +78,12 @@ export function FilterDropdown<T extends string>({
 							type="button"
 							aria-pressed={isAllSelected}
 							className={cn(
-								"flex items-center justify-between rounded-md px-3 py-2 text-left text-body-sm text-fg outline-none transition-colors hover:bg-hover-surface focus-visible:ring-2 focus-visible:ring-focus",
+								"flex items-center justify-between rounded-md px-3 py-2 text-left typo-body-sm text-fg outline-none transition-colors hover:bg-hover-surface focus-visible:ring-2 focus-visible:ring-focus",
 								isAllSelected && "bg-selected text-selected-fg",
 							)}
 							onClick={onSelectAll}
 						>
-							<span className="text-label-md">전체</span>
+							<span className="typo-label-md">전체</span>
 							{isAllSelected ? <Check className="size-4" /> : null}
 						</button>
 						<div className="h-px bg-outline-subtle" />
@@ -96,7 +96,7 @@ export function FilterDropdown<T extends string>({
 									type="button"
 									aria-pressed={isSelected}
 									className={cn(
-										"flex items-center justify-between rounded-md px-3 py-2 text-body-sm text-fg outline-none transition-colors hover:bg-hover-surface focus-visible:ring-2 focus-visible:ring-focus",
+										"flex items-center justify-between rounded-md px-3 py-2 typo-body-sm text-fg outline-none transition-colors hover:bg-hover-surface focus-visible:ring-2 focus-visible:ring-focus",
 										isSelected && "bg-selected text-selected-fg",
 									)}
 									onClick={() => onToggleValue(option.value)}

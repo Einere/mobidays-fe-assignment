@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { buildCampaignTableRows } from "@/entities/campaign/lib/build-campaign-table-rows";
 import { getDashboardDataQueryOptions } from "@/entities/dashboard/api/use-dashboard-data";
 import type { GlobalFilterState } from "@/entities/global-filter/model/types";
@@ -112,37 +112,9 @@ export function useCampaignTableData(
 		[controls.page, controls.searchTerm, controls.sort, tableRows],
 	);
 
-	const selectableRowIds = tableView?.rows.map((row) => row.id) ?? [];
-	const selectedVisibleRowIds = selectableRowIds.filter((rowId) =>
-		controls.selectedRowIds.includes(rowId),
-	);
-	const areAllVisibleRowsSelected =
-		selectableRowIds.length > 0 &&
-		selectedVisibleRowIds.length === selectableRowIds.length;
-	const isPartiallySelected =
-		selectedVisibleRowIds.length > 0 && !areAllVisibleRowsSelected;
-
-	useEffect(() => {
-		if (tableRows === null) {
-			return;
-		}
-
-		const availableRowIds = new Set(tableRows.map((row) => row.id));
-		const nextSelectedRowIds = controls.selectedRowIds.filter((rowId) =>
-			availableRowIds.has(rowId),
-		);
-
-		if (nextSelectedRowIds.length !== controls.selectedRowIds.length) {
-			controls.setSelectedRowIds(nextSelectedRowIds);
-		}
-	}, [controls.selectedRowIds, controls.setSelectedRowIds, tableRows]);
-
 	return {
 		viewState,
 		tableView,
-		selectableRowIds,
-		areAllVisibleRowsSelected,
-		isPartiallySelected,
 		isShowingPlaceholderData: query.isPlaceholderData,
 	};
 }

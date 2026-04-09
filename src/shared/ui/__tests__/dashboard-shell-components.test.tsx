@@ -1,8 +1,9 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { Button } from "@/shared/ui/button";
 import { TextInput } from "@/shared/ui/input";
-import { SidebarNav } from "@/shared/ui/sidebar";
+import { MobileSidebarNav, SidebarNav } from "@/shared/ui/sidebar";
 import { DataTable } from "@/shared/ui/table";
 
 describe("dashboard shell components", () => {
@@ -54,6 +55,26 @@ describe("dashboard shell components", () => {
 		expect(activeItem.className).toContain("text-selected-fg");
 	});
 
+	it("opens a mobile navigation dialog from the hamburger trigger", async () => {
+		const user = userEvent.setup();
+
+		render(
+			<MobileSidebarNav
+				title="Mobidays Dashboard"
+				items={[
+					{ id: "overview", label: "개요", active: true },
+					{ id: "campaigns", label: "캠페인" },
+				]}
+			/>,
+		);
+
+		await user.click(screen.getByRole("button", { name: "메뉴 열기" }));
+
+		expect(screen.getByRole("dialog")).toBeInTheDocument();
+		expect(screen.getByRole("link", { name: "개요" })).toBeInTheDocument();
+		expect(screen.getByRole("link", { name: "캠페인" })).toBeInTheDocument();
+	});
+
 	it("renders a data table using density and status tokens", () => {
 		render(
 			<DataTable
@@ -82,6 +103,6 @@ describe("dashboard shell components", () => {
 		expect(screen.getByText("₩18,240").className).toContain("text-right");
 		expect(
 			screen.getByRole("table", { name: "캠페인 상태 표" }).className,
-		).toContain("text-table-sm");
+		).toContain("typo-table-sm");
 	});
 });

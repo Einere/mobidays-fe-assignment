@@ -100,12 +100,12 @@ function ChartTooltipContent({
 	return (
 		<div
 			className={cn(
-				"rounded-card border border-outline-subtle bg-panel px-3 py-2 text-body-sm shadow-panel",
+				"rounded-card border border-outline-subtle bg-panel px-3 py-2 typo-body-sm shadow-panel",
 				className,
 			)}
 		>
 			{label ? (
-				<div className="mb-2 text-caption text-fg-muted">{label}</div>
+				<div className="mb-2 typo-caption text-fg-muted">{label}</div>
 			) : null}
 			<div className="grid gap-2">
 				{payload.map((item) => {
@@ -170,7 +170,7 @@ function ChartLegendContent({ payload, className }: ChartLegendContentProps) {
 	return (
 		<div
 			className={cn(
-				"flex flex-wrap items-center gap-3 text-body-sm",
+				"flex flex-wrap items-center gap-3 typo-body-sm",
 				className,
 			)}
 		>

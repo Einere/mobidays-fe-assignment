@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 전역 필터 결과를 기반으로 캠페인 테이블 뷰모델, 검색/정렬/페이지네이션, 선택 기반 일괄 상태 변경, 모바일 확장 UI를 갖춘 3.3 캠페인 관리 테이블을 구현한다.
+**Goal:** 전역 필터 결과를 기반으로 캠페인 테이블 뷰모델, 검색/정렬/페이지네이션, 선택 기반 일괄 상태 변경, 모바일 압축 테이블 UI를 갖춘 3.3 캠페인 관리 테이블을 구현한다.
 
 **Architecture:** 기존 `useDashboardData(filter)` 조회 흐름을 유지하고, `campaigns`와 `dailyStats`를 입력으로 받는 순수 뷰모델 생성기에서 테이블 row를 계산한다. 검색/정렬/페이지네이션/선택은 위젯 로컬 상태로 관리하고, 일괄 상태 변경은 MSW 메모리 스토어를 갱신하는 mutation과 React Query invalidate로 반영한다.
 
@@ -32,14 +32,14 @@
   - 검색 입력, 결과 건수, 상태 변경 드롭다운, 적용 버튼
 - Create: `src/widgets/campaign-table/ui/campaign-table-status-dialog.tsx`
   - 확인 다이얼로그
-- Create: `src/widgets/campaign-table/ui/campaign-table-mobile-row.tsx`
-  - 모바일 확장 row 표시
 - Create: `src/widgets/campaign-table/ui/__tests__/campaign-table-card.test.tsx`
   - 위젯 상호작용 테스트
 - Modify: `src/widgets/campaign-table/model/use-campaign-table-controls.ts`
-  - 일괄 상태 변경 대상 상태, 현재 페이지 row 선택 helpers 추가
+  - debounce 포함 검색/정렬/페이지 로컬 상태 관리
+- Create: `src/widgets/campaign-table/model/use-campaign-table-selection.ts`
+  - 선택 상태와 view 변화 시 초기화 정책 관리
 - Modify: `src/shared/ui/table.tsx`
-  - 정렬 가능한 헤더/모바일 대응이 필요하면 최소 범위 확장
+  - 가로 스크롤 가능한 압축 테이블 대응
 - Modify: `src/App.tsx`
   - placeholder 제거 후 실제 카드 연결
 

@@ -95,9 +95,19 @@ describe("GlobalFilterBar", () => {
 
 		renderGlobalFilterBar();
 
+		expect(
+			screen.getByText("글로벌 필터").closest("div")?.parentElement?.className,
+		).toContain("justify-between");
+		expect(
+			screen.getByLabelText("시작일").closest("div")?.parentElement?.className,
+		).toContain("grid-cols-2");
+
 		const mobileTrigger = screen.getByRole("button", {
 			name: "매체 필터 열기",
 		});
+		expect(screen.getByTestId("mobile-filter-grid").className).toContain(
+			"grid-cols-2",
+		);
 
 		expect(mobileTrigger).toHaveTextContent("전체 3");
 

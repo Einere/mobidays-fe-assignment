@@ -17,6 +17,7 @@ type DataTableProps<T extends DataTableRow> = {
 	columns: DataTableColumn<T>[];
 	rows: T[];
 	className?: string;
+	tableClassName?: string;
 };
 
 function DataTable<T extends DataTableRow>({
@@ -24,17 +25,21 @@ function DataTable<T extends DataTableRow>({
 	columns,
 	rows,
 	className,
+	tableClassName,
 }: DataTableProps<T>) {
 	return (
 		<div
 			className={cn(
-				"overflow-hidden rounded-panel border border-outline-subtle bg-panel shadow-panel",
+				"overflow-x-auto overflow-y-hidden rounded-panel border border-outline-subtle bg-panel shadow-panel",
 				className,
 			)}
 		>
 			<table
 				aria-label={caption}
-				className="w-full border-collapse text-table-sm text-fg"
+				className={cn(
+					"w-full border-collapse typo-table-sm text-fg",
+					tableClassName,
+				)}
 			>
 				<caption className="sr-only">{caption}</caption>
 				<thead className="bg-panel-muted text-fg-muted">
@@ -43,7 +48,7 @@ function DataTable<T extends DataTableRow>({
 							<th
 								key={String(column.key)}
 								className={cn(
-									"h-table-row px-4 text-left text-label-md",
+									"h-table-row px-4 text-left typo-label-md",
 									column.align === "right" && "text-right",
 								)}
 								scope="col"

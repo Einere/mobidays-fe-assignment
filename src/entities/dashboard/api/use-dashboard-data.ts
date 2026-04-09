@@ -6,6 +6,7 @@ function sortValues(values: string[]) {
 	return [...values].sort((a, b) => a.localeCompare(b));
 }
 
+/*TODO: 추후 쿼리키 빌더 패턴 도입 */
 export function createDashboardDataQueryKey(filter: GlobalFilterState) {
 	return [
 		"dashboard-data",
