@@ -3,12 +3,15 @@
 @theme inline {
 	--font-sans: var(--font-family-sans);
 	--font-mono: var(--font-family-mono);
-	--text-title: var(--type-title-size);
-	--text-title--line-height: var(--type-title-line-height);
-	--text-title--font-weight: var(--type-title-weight);
+	--text-heading-xl: var(--type-heading-xl-size);
+	--text-heading-xl--line-height: var(--type-heading-xl-line-height);
+	--text-heading-xl--font-weight: var(--type-heading-xl-weight);
 	--text-heading-lg: var(--type-heading-lg-size);
 	--text-heading-lg--line-height: var(--type-heading-lg-line-height);
 	--text-heading-lg--font-weight: var(--type-heading-lg-weight);
+	--text-heading-md: var(--type-heading-md-size);
+	--text-heading-md--line-height: var(--type-heading-md-line-height);
+	--text-heading-md--font-weight: var(--type-heading-md-weight);
 	--text-body-lg: var(--type-body-lg-size);
 	--text-body-lg--line-height: var(--type-body-lg-line-height);
 	--text-body-lg--font-weight: var(--type-body-lg-weight);
@@ -115,6 +118,7 @@
 		font-family: var(--font-family-sans);
 		font-size: var(--type-body-md-size);
 		line-height: var(--type-body-md-line-height);
+		font-width: var(--type-body-md-weight);
 		letter-spacing: -0.01em;
 		font-synthesis: none;
 		text-rendering: optimizeLegibility;
@@ -140,9 +144,9 @@
 	}
 
 	h1 {
-		font-size: var(--type-display-lg-size);
-		line-height: var(--type-display-lg-line-height);
-		font-weight: var(--type-display-lg-weight);
+		font-size: var(--type-heading-xl-size);
+		line-height: var(--type-heading-xl-line-height);
+		font-weight: var(--type-heading-xl-weight);
 		letter-spacing: -0.04em;
 	}
 
@@ -158,6 +162,13 @@
 		line-height: var(--type-heading-md-line-height);
 		font-weight: var(--type-heading-md-weight);
 		letter-spacing: -0.02em;
+	}
+
+	h4 {
+		font-size: var(--type-heading-sm-size);
+		line-height: var(--type-heading-sm-line-height);
+		font-weight: var(--type-heading-sm-weight);
+		letter-spacing: -0.01em;
 	}
 
 	code {

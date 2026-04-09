@@ -52,7 +52,7 @@ function App() {
 					<DailyTrendChartCard />
 
 					<section className="rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel">
-						<h2 className="text-title">운영 상태</h2>
+						<h2 className="text-heading-md">운영 상태</h2>
 						<div className="mt-5 flex flex-wrap gap-2">
 							<span className="rounded-pill border border-status-success-border bg-status-success px-3 py-1 text-caption text-status-success-fg">
 								운영 중

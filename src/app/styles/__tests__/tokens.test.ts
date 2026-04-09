@@ -30,7 +30,10 @@ describe("design tokens", () => {
 	});
 
 	it("defines typography tokens for data-dense interfaces", () => {
+		expect(tokensCss).toContain("--type-heading-xl-size:");
+		expect(tokensCss).not.toContain("--type-display-lg-size:");
 		expect(tokensCss).toContain("--type-body-md-size:");
+		expect(tokensCss).not.toContain("--type-title-size:");
 		expect(tokensCss).toContain("--type-table-sm-size:");
 		expect(tokensCss).toContain("--type-metric-lg-size:");
 		expect(tokensCss).toContain("--type-form-label-size:");
@@ -55,7 +58,13 @@ describe("design tokens", () => {
 	});
 
 	it("maps typography and sizing tokens to tailwind theme aliases", () => {
-		expect(baseCss).toContain("--text-title: var(--type-title-size);");
+		expect(baseCss).not.toContain("--text-title:");
+		expect(baseCss).toContain(
+			"--text-heading-xl: var(--type-heading-xl-size);",
+		);
+		expect(baseCss).toContain(
+			"--text-heading-md: var(--type-heading-md-size);",
+		);
 		expect(baseCss).toContain("--text-caption: var(--type-caption-size);");
 		expect(baseCss).toContain("--text-table-sm: var(--type-table-sm-size);");
 		expect(baseCss).toContain("--text-metric-lg: var(--type-metric-lg-size);");
