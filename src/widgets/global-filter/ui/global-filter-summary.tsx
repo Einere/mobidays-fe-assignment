@@ -3,10 +3,6 @@ import { useAtomValue } from "jotai";
 import { getDashboardDataQueryOptions } from "@/entities/dashboard/api/use-dashboard-data";
 import { globalFilterAtom } from "@/entities/global-filter/model/store";
 
-function formatSelectionSummary(values: string[]) {
-	return values.length > 0 ? values.join(", ") : "선택 없음";
-}
-
 export function GlobalFilterSummary() {
 	const filter = useAtomValue(globalFilterAtom);
 	const query = useQuery({
@@ -52,21 +48,6 @@ export function GlobalFilterSummary() {
 						<p className="mb-2 typo-caption text-fg-subtle">일별 데이터 결과</p>
 						<p className="typo-metric-lg">{dailyStatsCount}건</p>
 					</div>
-				</div>
-
-				<div className="grid gap-3 rounded-card border border-outline-subtle bg-panel p-4 typo-body-sm text-fg-muted md:grid-cols-3">
-					<p>
-						<span className="mb-2 block text-fg-subtle">기간</span>
-						{filter.dateRange.startDate} - {filter.dateRange.endDate}
-					</p>
-					<p>
-						<span className="mb-2 block text-fg-subtle">상태</span>
-						{formatSelectionSummary(filter.statuses)}
-					</p>
-					<p>
-						<span className="mb-2 block text-fg-subtle">매체</span>
-						{formatSelectionSummary(filter.platforms)}
-					</p>
 				</div>
 			</div>
 		</section>
