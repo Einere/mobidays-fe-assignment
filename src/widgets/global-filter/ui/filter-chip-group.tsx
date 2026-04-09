@@ -26,7 +26,7 @@ export function FilterChipGroup<T extends string>({
 
 	return (
 		<fieldset aria-label={`${groupLabel} 필터`} className="flex flex-col">
-			<legend className="mb-2 text-form-label text-fg">{groupLabel}</legend>
+			<legend className="mb-2 typo-form-label text-fg">{groupLabel}</legend>
 			<div className="flex flex-wrap gap-2">
 				<ToggleButton
 					type="button"

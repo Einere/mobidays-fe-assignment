@@ -63,7 +63,7 @@ export function CampaignTableToolbar({
 			<div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
 				<div className="flex flex-col gap-1">
 					<h2>캠페인 현황</h2>
-					<p className="text-body-sm text-fg-muted">
+					<p className="typo-body-sm text-fg-muted">
 						전역 필터 기준으로 집계한 캠페인별 운영 성과입니다.
 					</p>
 				</div>
@@ -115,7 +115,7 @@ export function CampaignTableToolbar({
 				</div>
 			</div>
 
-			<div className="flex flex-col gap-2 text-body-sm text-fg-muted sm:flex-row sm:items-center sm:justify-between">
+			<div className="flex flex-col gap-2 typo-body-sm text-fg-muted sm:flex-row sm:items-center sm:justify-between">
 				<p>
 					총 {totalCount}건 중 {filteredCount}건 표시
 				</p>

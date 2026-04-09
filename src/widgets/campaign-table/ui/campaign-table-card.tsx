@@ -106,13 +106,13 @@ function SortableColumnHeader({
 			variant="ghost"
 			size="sm"
 			aria-label={`${label} 정렬`}
-			className="-mx-2 h-auto px-2 py-1 text-label-md text-fg-muted hover:text-fg data-[active=true]:text-fg"
+			className="-mx-2 h-auto px-2 py-1 typo-label-md text-fg-muted hover:text-fg data-[active=true]:text-fg"
 			data-active={active}
 			disabled={disabled}
 			onClick={onClick}
 		>
 			{label}
-			<span aria-hidden="true" className="text-caption text-fg-subtle">
+			<span aria-hidden="true" className="typo-caption text-fg-subtle">
 				{active ? (direction === "asc" ? "↑" : "↓") : "↕"}
 			</span>
 		</Button>
@@ -125,7 +125,7 @@ function CampaignTableLoadingState() {
 			<div className="flex flex-col gap-4" data-testid="campaign-table-loading">
 				<div className="flex flex-col gap-1">
 					<h2>캠페인 현황</h2>
-					<p className="text-body-sm text-fg-muted">
+					<p className="typo-body-sm text-fg-muted">
 						전역 필터 기준으로 집계한 캠페인별 운영 성과입니다.
 					</p>
 				</div>
@@ -142,12 +142,12 @@ function CampaignTableErrorState({ errorMessage }: { errorMessage: string }) {
 		<section className="rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel">
 			<div className="flex flex-col gap-3">
 				<h2>캠페인 현황</h2>
-				<p className="text-body-sm text-fg-muted">
+				<p className="typo-body-sm text-fg-muted">
 					전역 필터 기준으로 집계한 캠페인별 운영 성과입니다.
 				</p>
-				<div className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-5 text-body-sm text-status-danger-fg">
+				<div className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-5 typo-body-sm text-status-danger-fg">
 					<p>캠페인 데이터를 불러오지 못했습니다.</p>
-					<p className="mt-1 text-caption">{errorMessage}</p>
+					<p className="mt-1 typo-caption">{errorMessage}</p>
 				</div>
 			</div>
 		</section>
@@ -208,7 +208,7 @@ export function CampaignTableCard() {
 		status: (
 			<span
 				className={cn(
-					"inline-flex rounded-pill border px-2.5 py-1 text-caption",
+					"inline-flex rounded-pill border px-2.5 py-1 typo-caption",
 					getStatusToneClassName(row.status),
 				)}
 			>
@@ -244,12 +244,12 @@ export function CampaignTableCard() {
 				/>
 
 				{tableData.viewState.staleErrorMessage ? (
-					<div className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-3 text-body-sm text-status-danger-fg">
+					<div className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-3 typo-body-sm text-status-danger-fg">
 						<p>
 							최신 캠페인 데이터를 불러오지 못해 마지막 성공 결과를 표시
 							중입니다.
 						</p>
-						<p className="mt-1 text-caption">
+						<p className="mt-1 typo-caption">
 							{tableData.viewState.staleErrorMessage}
 						</p>
 					</div>
@@ -257,7 +257,7 @@ export function CampaignTableCard() {
 
 				{tableData.viewState.isSyncing ? (
 					<p
-						className="text-body-sm text-fg-muted"
+						className="typo-body-sm text-fg-muted"
 						role="status"
 						aria-live="polite"
 					>
@@ -396,12 +396,12 @@ export function CampaignTableCard() {
 						/>
 					)
 				) : (
-					<div className="flex h-48 items-center justify-center rounded-card border border-outline-subtle bg-panel-muted px-4 text-body-sm text-fg-muted">
+					<div className="flex h-48 items-center justify-center rounded-card border border-outline-subtle bg-panel-muted px-4 typo-body-sm text-fg-muted">
 						{emptyStateMessage}
 					</div>
 				)}
 
-				<div className="flex flex-col gap-3 text-body-sm text-fg-muted sm:flex-row sm:items-center sm:justify-between">
+				<div className="flex flex-col gap-3 typo-body-sm text-fg-muted sm:flex-row sm:items-center sm:justify-between">
 					<p>
 						페이지 {tableView.page} / {tableView.totalPages}
 					</p>

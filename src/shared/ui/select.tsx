@@ -19,7 +19,7 @@ function SelectTrigger({
 		<SelectPrimitive.Trigger
 			data-slot="select-trigger"
 			className={cn(
-				"flex h-control-md w-full items-center justify-between gap-2 rounded-md border border-outline bg-panel px-3 text-body-md text-fg outline-none transition-colors duration-[var(--duration-fast)] ease-standard data-[placeholder]:text-fg-subtle hover:border-outline-strong focus-visible:ring-2 focus-visible:ring-focus disabled:cursor-not-allowed disabled:opacity-(--interactive-disabled-opacity) [&_svg]:shrink-0",
+				"flex h-control-md w-full items-center justify-between gap-2 rounded-md border border-outline bg-panel px-3 typo-body-md text-fg outline-none transition-colors duration-[var(--duration-fast)] ease-standard data-[placeholder]:text-fg-subtle hover:border-outline-strong focus-visible:ring-2 focus-visible:ring-focus disabled:cursor-not-allowed disabled:opacity-(--interactive-disabled-opacity) [&_svg]:shrink-0",
 				className,
 			)}
 			{...props}
@@ -80,7 +80,7 @@ function SelectItem({
 		<SelectPrimitive.Item
 			data-slot="select-item"
 			className={cn(
-				"relative flex w-full cursor-default items-center gap-2 rounded-control py-2 pr-8 pl-2 text-body-md outline-none select-none data-[disabled]:pointer-events-none data-[highlighted]:bg-hover-surface data-[highlighted]:text-fg data-[disabled]:opacity-50",
+				"relative flex w-full cursor-default items-center gap-2 rounded-control py-2 pr-8 pl-2 typo-body-md outline-none select-none data-[disabled]:pointer-events-none data-[highlighted]:bg-hover-surface data-[highlighted]:text-fg data-[disabled]:opacity-50",
 				className,
 			)}
 			{...props}

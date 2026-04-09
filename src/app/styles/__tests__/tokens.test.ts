@@ -57,17 +57,15 @@ describe("design tokens", () => {
 		expect(baseCss).toContain("--color-focus: var(--interactive-focus-ring);");
 	});
 
-	it("maps typography and sizing tokens to tailwind theme aliases", () => {
+	it("defines typo utility classes from typography tokens", () => {
 		expect(baseCss).not.toContain("--text-title:");
-		expect(baseCss).toContain(
-			"--text-heading-xl: var(--type-heading-xl-size);",
-		);
-		expect(baseCss).toContain(
-			"--text-heading-md: var(--type-heading-md-size);",
-		);
-		expect(baseCss).toContain("--text-caption: var(--type-caption-size);");
-		expect(baseCss).toContain("--text-table-sm: var(--type-table-sm-size);");
-		expect(baseCss).toContain("--text-metric-lg: var(--type-metric-lg-size);");
+		expect(baseCss).not.toContain("--type-heading-xl:");
+		expect(baseCss).toContain("@utility typo-heading-xl");
+		expect(baseCss).toContain("font-size: var(--type-heading-xl-size);");
+		expect(baseCss).toContain("@utility typo-heading-md");
+		expect(baseCss).toContain("@utility typo-caption");
+		expect(baseCss).toContain("@utility typo-table-sm");
+		expect(baseCss).toContain("@utility typo-metric-lg");
 		expect(baseCss).toContain(
 			"--spacing-control-md: var(--control-height-md);",
 		);
