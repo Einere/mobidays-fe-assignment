@@ -1,15 +1,16 @@
 import { act, renderHook } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { useCampaignTableControls } from "@/widgets/campaign-table/model/use-campaign-table-controls";
 
 describe("useCampaignTableControls", () => {
 	it("keeps table-only search, page, and sort state isolated", () => {
+		vi.useFakeTimers();
 		const { result } = renderHook(() => useCampaignTableControls());
 
+		expect(result.current.searchInput).toBe("");
 		expect(result.current.searchTerm).toBe("");
 		expect(result.current.page).toBe(1);
 		expect(result.current.sort).toBeNull();
-		expect(result.current.selectedRowIds).toEqual([]);
 
 		act(() => {
 			result.current.setPage(3);
@@ -42,9 +43,14 @@ describe("useCampaignTableControls", () => {
 		expect(result.current.page).toBe(1);
 
 		act(() => {
-			result.current.setSearchTerm("브랜드");
+			result.current.setSearchInput("브랜드");
 		});
 
+		expect(result.current.searchInput).toBe("브랜드");
+		expect(result.current.searchTerm).toBe("");
+		act(() => {
+			vi.advanceTimersByTime(300);
+		});
 		expect(result.current.searchTerm).toBe("브랜드");
 		expect(result.current.page).toBe(1);
 
@@ -75,18 +81,6 @@ describe("useCampaignTableControls", () => {
 			key: "roas",
 			direction: "asc",
 		});
-
-		act(() => {
-			result.current.toggleRowSelection("campaign-1");
-		});
-
-		expect(result.current.selectedRowIds).toEqual(["campaign-1"]);
-		expect(result.current.page).toBe(1);
-
-		act(() => {
-			result.current.toggleRowSelection("campaign-1");
-		});
-
-		expect(result.current.selectedRowIds).toEqual([]);
+		vi.useRealTimers();
 	});
 });

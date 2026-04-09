@@ -1,7 +1,5 @@
 import { Search } from "lucide-react";
-import { useEffect, useState } from "react";
 import type { CampaignStatus } from "@/entities/global-filter/model/types";
-import { useDebouncedValue } from "@/shared/hooks/use-debounced-value";
 import { Button } from "@/shared/ui/button";
 import { TextInput } from "@/shared/ui/input";
 import {
@@ -12,51 +10,32 @@ import {
 	SelectValue,
 } from "@/shared/ui/select";
 
-const SEARCH_DEBOUNCE_DELAY = 300;
-
 interface CampaignTableToolbarProps {
-	searchTerm: string;
+	searchInput: string;
 	filteredCount: number;
 	totalCount: number;
 	selectedCount: number;
 	pendingStatus: CampaignStatus | null;
 	disabled: boolean;
 	canApplyStatusChange: boolean;
-	onSearchTermChange: (nextSearchTerm: string) => void;
+	onSearchInputChange: (nextSearchInput: string) => void;
 	onPendingStatusChange: (nextPendingStatus: CampaignStatus | null) => void;
 	onOpenStatusDialog: () => void;
 }
 
 export function CampaignTableToolbar({
-	searchTerm,
+	searchInput,
 	filteredCount,
 	totalCount,
 	selectedCount,
 	pendingStatus,
 	disabled,
 	canApplyStatusChange,
-	onSearchTermChange,
+	onSearchInputChange,
 	onPendingStatusChange,
 	onOpenStatusDialog,
 }: CampaignTableToolbarProps) {
-	const [draftSearchTerm, setDraftSearchTerm] = useState(searchTerm);
-	const debouncedSearchTerm = useDebouncedValue(
-		draftSearchTerm,
-		SEARCH_DEBOUNCE_DELAY,
-	);
 	const isStatusControlDisabled = disabled || selectedCount === 0;
-
-	useEffect(() => {
-		setDraftSearchTerm(searchTerm);
-	}, [searchTerm]);
-
-	useEffect(() => {
-		if (debouncedSearchTerm === searchTerm) {
-			return;
-		}
-
-		onSearchTermChange(debouncedSearchTerm);
-	}, [debouncedSearchTerm, onSearchTermChange, searchTerm]);
 
 	return (
 		<div className="flex flex-col gap-4 border-b border-outline-subtle pb-4">
@@ -80,8 +59,8 @@ export function CampaignTableToolbar({
 							disabled={disabled}
 							placeholder="캠페인명 검색"
 							type="search"
-							value={draftSearchTerm}
-							onChange={(event) => setDraftSearchTerm(event.target.value)}
+							value={searchInput}
+							onChange={(event) => onSearchInputChange(event.target.value)}
 						/>
 					</div>
 					<div className="min-w-[140px]">
