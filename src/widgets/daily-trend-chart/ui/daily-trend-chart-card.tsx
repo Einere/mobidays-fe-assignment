@@ -1,13 +1,21 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import type { ReactNode } from "react";
+import { type ReactNode, useCallback, useState } from "react";
 import {
 	buildDailyTrendSeries,
 	type DailyTrendPoint,
 } from "@/entities/daily-stat/lib/build-daily-trend-series";
 import { getDashboardDataQueryOptions } from "@/entities/dashboard/api/use-dashboard-data";
 import { globalFilterAtom } from "@/entities/global-filter/model/store";
-import { DailyTrendLineChart } from "@/widgets/daily-trend-chart/ui/daily-trend-line-chart";
+import {
+	type DailyTrendMetricKey,
+	defaultDailyTrendMetricKeys,
+} from "@/widgets/daily-trend-chart/model/metrics";
+import {
+	DailyTrendLineChart,
+	DailyTrendMetricToggleGroup,
+	toggleDailyTrendMetricSelection,
+} from "@/widgets/daily-trend-chart/ui/daily-trend-line-chart";
 
 type ResolvedChartSnapshot = {
 	campaignsCount: number;
@@ -45,17 +53,24 @@ function createResolvedChartSnapshot(
 	};
 }
 
-function DailyTrendChartCardFrame({ children }: { children: ReactNode }) {
+function DailyTrendChartCardFrame({
+	children,
+	actions,
+}: {
+	children: ReactNode;
+	actions?: ReactNode;
+}) {
 	return (
 		<section className="rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel">
 			<div className="flex flex-col gap-5">
 				<div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
 					<div className="flex flex-col gap-2">
-						<h2 className="text-heading-lg">성과 개요</h2>
+						<h2>성과 개요</h2>
 						<p className="text-body-sm text-fg-muted">
 							전역 필터 기준으로 집계한 일별 추이 꺾은선 그래프입니다.
 						</p>
 					</div>
+					{actions ? <div className="lg:self-start">{actions}</div> : null}
 				</div>
 				{children}
 			</div>
@@ -139,8 +154,6 @@ function renderDailyTrendChartBody(viewState: DailyTrendChartViewState) {
 					선택한 캠페인에 표시할 일별 데이터가 없습니다.
 				</div>
 			);
-		case "chart":
-			return <DailyTrendLineChart data={viewState.chartData} />;
 	}
 }
 
@@ -179,10 +192,18 @@ function DailyTrendChartCardMeta({
 
 export function DailyTrendChartCard() {
 	const filter = useAtomValue(globalFilterAtom);
+	const [activeMetrics, setActiveMetrics] = useState<DailyTrendMetricKey[]>([
+		...defaultDailyTrendMetricKeys,
+	]);
 	const query = useQuery({
 		...getDashboardDataQueryOptions(filter),
 		placeholderData: keepPreviousData,
 	});
+	const toggleMetric = useCallback((metricKey: DailyTrendMetricKey) => {
+		setActiveMetrics((currentMetrics) =>
+			toggleDailyTrendMetricSelection(currentMetrics, metricKey),
+		);
+	}, []);
 	const currentDataSnapshot =
 		query.data === undefined
 			? null
@@ -201,8 +222,25 @@ export function DailyTrendChartCard() {
 	});
 
 	return (
-		<DailyTrendChartCardFrame>
-			{renderDailyTrendChartBody(viewState)}
+		<DailyTrendChartCardFrame
+			actions={
+				viewState.kind === "chart" ? (
+					<DailyTrendMetricToggleGroup
+						activeMetrics={activeMetrics}
+						metricGroupLabel="일별 추이 메트릭"
+						onToggleMetric={toggleMetric}
+					/>
+				) : null
+			}
+		>
+			{viewState.kind === "chart" ? (
+				<DailyTrendLineChart
+					activeMetrics={activeMetrics}
+					data={viewState.chartData}
+				/>
+			) : (
+				renderDailyTrendChartBody(viewState)
+			)}
 			<DailyTrendChartCardMeta viewState={viewState} />
 		</DailyTrendChartCardFrame>
 	);

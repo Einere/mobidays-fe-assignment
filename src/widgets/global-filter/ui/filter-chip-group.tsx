@@ -1,5 +1,4 @@
-import { cn } from "@/shared/lib/utils";
-import { Button } from "@/shared/ui/button";
+import { ToggleButton } from "@/shared/ui/toggle-button";
 
 export interface FilterOption<T extends string> {
 	label: string;
@@ -29,39 +28,25 @@ export function FilterChipGroup<T extends string>({
 		<fieldset aria-label={`${groupLabel} 필터`} className="flex flex-col">
 			<legend className="mb-2 text-form-label text-fg">{groupLabel}</legend>
 			<div className="flex flex-wrap gap-2">
-				<Button
+				<ToggleButton
 					type="button"
-					variant="outline"
-					size="sm"
-					aria-pressed={isAllSelected}
-					className={cn(
-						"border-outline",
-						isAllSelected &&
-							"border-brand bg-selected text-selected-fg hover:border-brand-strong hover:bg-selected-hover",
-					)}
+					pressed={isAllSelected}
 					onClick={onSelectAll}
 				>
 					전체
-				</Button>
+				</ToggleButton>
 				{options.map((option) => {
 					const isSelected = selectedValues.includes(option.value);
 
 					return (
-						<Button
+						<ToggleButton
 							key={option.value}
 							type="button"
-							variant="outline"
-							size="sm"
-							aria-pressed={isSelected}
-							className={cn(
-								"border-outline",
-								isSelected &&
-									"border-brand bg-selected text-selected-fg hover:border-brand-strong hover:bg-selected-hover",
-							)}
+							pressed={isSelected}
 							onClick={() => onToggleValue(option.value)}
 						>
 							{option.label}
-						</Button>
+						</ToggleButton>
 					);
 				})}
 			</div>

@@ -216,6 +216,13 @@ describe("DailyTrendChartCard", () => {
 		expect(
 			screen.queryByRole("button", { name: "보고서 내보내기" }),
 		).not.toBeInTheDocument();
+		expect(
+			within(chartSection)
+				.getByRole("group", { name: "일별 추이 메트릭" })
+				.compareDocumentPosition(
+					within(chartSection).getByTestId("daily-trend-line-chart"),
+				) & Node.DOCUMENT_POSITION_FOLLOWING,
+		).toBeTruthy();
 
 		expectSectionToPrecede(filterSection, chartSection);
 		expectSectionToPrecede(summarySection, chartSection);

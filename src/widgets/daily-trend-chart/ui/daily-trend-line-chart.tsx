@@ -1,16 +1,14 @@
-import { useCallback, useState } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import type { DailyTrendPoint } from "@/entities/daily-stat/lib/build-daily-trend-series";
-import { Button } from "@/shared/ui/button";
 import {
 	ChartContainer,
 	ChartLegend,
 	ChartTooltip,
 	ChartTooltipContent,
 } from "@/shared/ui/chart";
+import { ToggleButton } from "@/shared/ui/toggle-button";
 import {
 	type DailyTrendMetricKey,
-	defaultDailyTrendMetricKeys,
 	formatDailyTrendMetricValue,
 	getDailyTrendMetric,
 	visibleDailyTrendMetricKeys,
@@ -74,82 +72,80 @@ export function toggleDailyTrendMetricSelection(
 		);
 }
 
+export function DailyTrendMetricToggleGroup({
+	activeMetrics,
+	metricGroupLabel = "일별 추이 메트릭",
+	onToggleMetric,
+}: {
+	activeMetrics: DailyTrendMetricKey[];
+	metricGroupLabel?: string;
+	onToggleMetric: (metricKey: DailyTrendMetricKey) => void;
+}) {
+	return (
+		<fieldset
+			className="flex flex-wrap justify-end gap-2"
+			aria-label={metricGroupLabel}
+		>
+			<legend className="sr-only">{metricGroupLabel}</legend>
+			{toggleMetricDefinitions.map((metric) => {
+				const isActive = activeMetrics.includes(metric.key);
+
+				return (
+					<ToggleButton
+						key={metric.key}
+						type="button"
+						pressed={isActive}
+						onClick={() => onToggleMetric(metric.key)}
+					>
+						{metric.label}
+					</ToggleButton>
+				);
+			})}
+		</fieldset>
+	);
+}
+
 export function DailyTrendLineChart({
 	data,
-	metricGroupLabel = "일별 추이 메트릭",
+	activeMetrics,
 }: {
 	data: DailyTrendPoint[];
-	metricGroupLabel?: string;
+	activeMetrics: DailyTrendMetricKey[];
 }) {
-	const [activeMetrics, setActiveMetrics] = useState<DailyTrendMetricKey[]>([
-		...defaultDailyTrendMetricKeys,
-	]);
-
-	const toggleMetric = useCallback((metricKey: DailyTrendMetricKey) => {
-		setActiveMetrics((currentMetrics) =>
-			toggleDailyTrendMetricSelection(currentMetrics, metricKey),
-		);
-	}, []);
-
 	return (
-		<>
-			<fieldset className="flex flex-wrap gap-2" aria-label={metricGroupLabel}>
-				<legend className="sr-only">{metricGroupLabel}</legend>
-				{toggleMetricDefinitions.map((metric) => {
-					const isActive = activeMetrics.includes(metric.key);
-
-					return (
-						<Button
+		<ChartContainer className="h-80" config={chartConfig}>
+			<LineChart data={data}>
+				<CartesianGrid vertical={false} stroke="var(--color-outline-subtle)" />
+				<XAxis
+					axisLine={false}
+					dataKey="date"
+					minTickGap={24}
+					tickFormatter={formatDateLabel}
+					tickLine={false}
+				/>
+				<YAxis
+					axisLine={false}
+					tickFormatter={formatYAxisTick}
+					tickLine={false}
+					width={56}
+				/>
+				<ChartTooltip content={tooltipContent} />
+				<ChartLegend />
+				{toggleMetricDefinitions
+					.filter((metric) => activeMetrics.includes(metric.key))
+					.map((metric) => (
+						<Line
 							key={metric.key}
-							type="button"
-							size="sm"
-							variant={isActive ? "secondary" : "outline"}
-							aria-pressed={isActive}
-							onClick={() => toggleMetric(metric.key)}
-						>
-							{metric.label}
-						</Button>
-					);
-				})}
-			</fieldset>
-
-			<ChartContainer className="h-80" config={chartConfig}>
-				<LineChart data={data}>
-					<CartesianGrid
-						vertical={false}
-						stroke="var(--color-outline-subtle)"
-					/>
-					<XAxis
-						axisLine={false}
-						dataKey="date"
-						minTickGap={24}
-						tickFormatter={formatDateLabel}
-						tickLine={false}
-					/>
-					<YAxis
-						axisLine={false}
-						tickFormatter={formatYAxisTick}
-						tickLine={false}
-						width={56}
-					/>
-					<ChartTooltip content={tooltipContent} />
-					<ChartLegend />
-					{toggleMetricDefinitions
-						.filter((metric) => activeMetrics.includes(metric.key))
-						.map((metric) => (
-							<Line
-								key={metric.key}
-								type="monotone"
-								dataKey={metric.key}
-								name={metric.key}
-								stroke={`var(--color-${metric.key})`}
-								strokeWidth={2}
-								dot={true}
-								connectNulls={false}
-							/>
-						))}
-				</LineChart>
-			</ChartContainer>
-		</>
+							type="monotone"
+							dataKey={metric.key}
+							name={metric.key}
+							stroke={`var(--color-${metric.key})`}
+							strokeWidth={2}
+							dot={true}
+							connectNulls={false}
+						/>
+					))}
+			</LineChart>
+		</ChartContainer>
 	);
 }
