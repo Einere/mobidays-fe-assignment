@@ -64,3 +64,14 @@ AI 도구에게 의견을 뭃어보니, 명확하지 않은 데이터는 "원본
 - 범례는 확장성을 고려하되, "노출수"와 "클릭수"만 노출.
 - shadcn chart 래퍼를 `shared/ui`에 도입, 차트 데이터 집계는 `entities/` 에 순수 함수로 분리, UI는 `widgets/`에서 담당.
 - 혼동을 방지하기 위해 `null` 과 `0`을 구분 => `null` 인 경우에는 선이 끊어지도록 설계함.
+
+## 04.09
+
+"일별 추이 차트" 기능 구현 후, 실제 렌더링 테스트, 클린코드 리뷰 진행
+- [Frontend Fundamentals](https://frontend-fundamentals.com/code-quality/) 를 스킬화하여 개인적으로 사용함.
+- 구현된 `DailyTrendChartCard`는 전역 상태를 직접 받아와 해석 후 렌더링까지 담당함.
+  - "상태 패칭 및 해석" 책임은 부모로 위임, `DailyTrendChartCard`는 데이터를 렌더링하는 책임만 갖도록 리팩토링함.
+- 끊어진 시계열 데이터도 명확히 인지할 수 있게 `dot={false}` 옵션을 제거
+- 과도한 불리언 변수들을 이용한 렌더링 제어
+  - Tagged Union(`DailyTrendChartViewState`)을 이용해 의도치않은 상태로의 전이를 방지
+- cross-key 패치 실패 시, 최근 성공 UI 보존을 위한 로직을 명확히 함.

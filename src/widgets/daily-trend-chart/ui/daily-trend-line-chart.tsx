@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import type { DailyTrendPoint } from "@/entities/daily-stat/lib/build-daily-trend-series";
 import { Button } from "@/shared/ui/button";
@@ -40,6 +40,15 @@ function formatYAxisTick(value: number) {
 	return numberFormatter.format(value);
 }
 
+function tooltipFormatter(value: unknown, metricKey: string) {
+	return formatDailyTrendMetricValue(
+		metricKey as DailyTrendMetricKey,
+		typeof value === "number" ? value : null,
+	);
+}
+
+const tooltipContent = <ChartTooltipContent formatter={tooltipFormatter} />;
+
 export function toggleDailyTrendMetricSelection(
 	currentMetrics: DailyTrendMetricKey[],
 	metricKey: DailyTrendMetricKey,
@@ -76,11 +85,11 @@ export function DailyTrendLineChart({
 		...defaultDailyTrendMetricKeys,
 	]);
 
-	function toggleMetric(metricKey: DailyTrendMetricKey) {
+	const toggleMetric = useCallback((metricKey: DailyTrendMetricKey) => {
 		setActiveMetrics((currentMetrics) =>
 			toggleDailyTrendMetricSelection(currentMetrics, metricKey),
 		);
-	}
+	}, []);
 
 	return (
 		<>
@@ -123,18 +132,7 @@ export function DailyTrendLineChart({
 						tickLine={false}
 						width={56}
 					/>
-					<ChartTooltip
-						content={
-							<ChartTooltipContent
-								formatter={(value, metricKey) => {
-									return formatDailyTrendMetricValue(
-										metricKey,
-										typeof value === "number" ? value : null,
-									);
-								}}
-							/>
-						}
-					/>
+					<ChartTooltip content={tooltipContent} />
 					<ChartLegend />
 					{toggleMetricDefinitions
 						.filter((metric) => activeMetrics.includes(metric.key))
