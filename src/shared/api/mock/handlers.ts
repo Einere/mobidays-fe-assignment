@@ -4,7 +4,10 @@ import type {
 	CampaignStatus,
 	GlobalFilterState,
 } from "@/entities/global-filter/model/types";
-import { mockDb } from "@/shared/api/mock/db";
+import {
+	getMemoryDb,
+	updateCampaignStatusesByIds,
+} from "@/shared/api/mock/memory-db";
 import type { RawCampaign, RawDailyStat } from "@/shared/api/mock/types";
 
 function parseListParam<Value extends string>(value: string | null): Value[] {
@@ -28,6 +31,29 @@ function parseDateValue(value: unknown): number | null {
 	return typeof value === "string" && Number.isFinite(Date.parse(value))
 		? Date.parse(value)
 		: null;
+}
+
+function isCampaignStatus(value: unknown): value is CampaignStatus {
+	return value === "active" || value === "paused" || value === "ended";
+}
+
+function isUpdateCampaignStatusesBody(
+	value: unknown,
+): value is { ids: string[]; status: CampaignStatus } {
+	if (typeof value !== "object" || value === null) {
+		return false;
+	}
+
+	const { ids, status } = value as {
+		ids?: unknown;
+		status?: unknown;
+	};
+
+	return (
+		Array.isArray(ids) &&
+		ids.every((id) => typeof id === "string") &&
+		isCampaignStatus(status)
+	);
 }
 
 function matchesCampaignDateRange(
@@ -87,21 +113,38 @@ function matchesDailyStatFilters(
 
 export const handlers = [
 	http.get("/campaigns", ({ request }) => {
+		const memoryDb = getMemoryDb();
+
 		return HttpResponse.json(
-			mockDb.campaigns.filter((campaign) =>
+			memoryDb.campaigns.filter((campaign) =>
 				matchesCampaignFilters(campaign, createFilterState(request)),
 			),
 		);
 	}),
 	http.get("/daily_stats", ({ request }) => {
+		const memoryDb = getMemoryDb();
 		const { searchParams } = new URL(request.url);
 		const campaignIds = parseListParam(searchParams.get("campaignIds"));
 		const filter = createFilterState(request);
 
 		return HttpResponse.json(
-			mockDb.daily_stats.filter((dailyStat) =>
+			memoryDb.daily_stats.filter((dailyStat) =>
 				matchesDailyStatFilters(dailyStat, campaignIds, filter.dateRange),
 			),
 		);
+	}),
+	http.patch("/campaigns/status", async ({ request }) => {
+		const body = await request.json();
+
+		if (!isUpdateCampaignStatusesBody(body)) {
+			return HttpResponse.json(
+				{ message: "Invalid request body" },
+				{ status: 400 },
+			);
+		}
+
+		updateCampaignStatusesByIds(body.ids, body.status);
+
+		return new HttpResponse(null, { status: 204 });
 	}),
 ];

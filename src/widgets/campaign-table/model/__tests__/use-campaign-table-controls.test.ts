@@ -18,6 +18,30 @@ describe("useCampaignTableControls", () => {
 		expect(result.current.page).toBe(3);
 
 		act(() => {
+			result.current.setPage(3.8);
+		});
+
+		expect(result.current.page).toBe(3);
+
+		act(() => {
+			result.current.setPage(0);
+		});
+
+		expect(result.current.page).toBe(1);
+
+		act(() => {
+			result.current.setPage(Number.NaN);
+		});
+
+		expect(result.current.page).toBe(1);
+
+		act(() => {
+			result.current.setPage(Number.POSITIVE_INFINITY);
+		});
+
+		expect(result.current.page).toBe(1);
+
+		act(() => {
 			result.current.setSearchTerm("브랜드");
 		});
 
@@ -41,6 +65,15 @@ describe("useCampaignTableControls", () => {
 		expect(result.current.sort).toEqual({
 			key: "ctr",
 			direction: "desc",
+		});
+
+		act(() => {
+			result.current.toggleSort("roas");
+		});
+
+		expect(result.current.sort).toEqual({
+			key: "roas",
+			direction: "asc",
 		});
 
 		act(() => {

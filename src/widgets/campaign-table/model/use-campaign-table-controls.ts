@@ -1,12 +1,8 @@
 import { useState } from "react";
-
-export type CampaignTableSortKey = "period" | "cost" | "ctr" | "cpc" | "roas";
-export type CampaignTableSortDirection = "asc" | "desc";
-
-export interface CampaignTableSortState {
-	key: CampaignTableSortKey;
-	direction: CampaignTableSortDirection;
-}
+import type {
+	CampaignTableSortKey,
+	CampaignTableSortState,
+} from "@/widgets/campaign-table/model/campaign-table-sort";
 
 export interface CampaignTableControls {
 	searchTerm: string;
@@ -17,6 +13,7 @@ export interface CampaignTableControls {
 	setPage: (nextPage: number) => void;
 	toggleSort: (nextSortKey: CampaignTableSortKey) => void;
 	toggleRowSelection: (rowId: string) => void;
+	togglePageSelection: (pageRowIds: string[]) => void;
 	setSelectedRowIds: (nextSelectedRowIds: string[]) => void;
 }
 
@@ -32,7 +29,9 @@ export function useCampaignTableControls() {
 	}
 
 	function setPage(nextPage: number) {
-		setPageState(Math.max(1, nextPage));
+		const normalizedPage = Number.isFinite(nextPage) ? Math.floor(nextPage) : 1;
+
+		setPageState(Math.max(1, normalizedPage));
 	}
 
 	function toggleSort(nextSortKey: CampaignTableSortKey) {
@@ -64,6 +63,22 @@ export function useCampaignTableControls() {
 		});
 	}
 
+	function togglePageSelection(pageRowIds: string[]) {
+		setSelectedRowIds((currentSelectedRowIds) => {
+			const areAllPageRowsSelected =
+				pageRowIds.length > 0 &&
+				pageRowIds.every((rowId) => currentSelectedRowIds.includes(rowId));
+
+			if (areAllPageRowsSelected) {
+				return currentSelectedRowIds.filter(
+					(selectedRowId) => !pageRowIds.includes(selectedRowId),
+				);
+			}
+
+			return Array.from(new Set([...currentSelectedRowIds, ...pageRowIds]));
+		});
+	}
+
 	return {
 		searchTerm,
 		page,
@@ -73,6 +88,7 @@ export function useCampaignTableControls() {
 		setPage,
 		toggleSort,
 		toggleRowSelection,
+		togglePageSelection,
 		setSelectedRowIds,
 	} satisfies CampaignTableControls;
 }
