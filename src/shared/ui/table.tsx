@@ -34,7 +34,7 @@ function DataTable<T extends DataTableRow>({
 		>
 			<table
 				aria-label={caption}
-				className="w-full border-collapse text-table-sm text-fg"
+				className="w-full border-collapse typo-table-sm text-fg"
 			>
 				<caption className="sr-only">{caption}</caption>
 				<thead className="bg-panel-muted text-fg-muted">
@@ -43,7 +43,7 @@ function DataTable<T extends DataTableRow>({
 							<th
 								key={String(column.key)}
 								className={cn(
-									"h-table-row px-4 text-left text-label-md",
+									"h-table-row px-4 text-left typo-label-md",
 									column.align === "right" && "text-right",
 								)}
 								scope="col"

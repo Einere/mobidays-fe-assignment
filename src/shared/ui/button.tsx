@@ -22,10 +22,10 @@ const buttonVariants = cva(
 			},
 			size: {
 				default:
-					"h-control-md gap-1.5 rounded-control px-3 text-label-md has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5",
-				xs: "h-7 gap-1 rounded-sm px-2 text-caption has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
-				sm: "h-control-sm gap-1 rounded-control px-2.5 text-label-md has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3.5",
-				lg: "h-control-lg gap-1.5 rounded-card px-4 text-label-lg has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
+					"h-control-md gap-1.5 rounded-control px-3 typo-label-md has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5",
+				xs: "h-7 gap-1 rounded-sm px-2 typo-caption has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
+				sm: "h-control-sm gap-1 rounded-control px-2.5 typo-label-md has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3.5",
+				lg: "h-control-lg gap-1.5 rounded-card px-4 typo-label-lg has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
 				icon: "size-control-md rounded-control",
 				"icon-xs": "size-7 rounded-sm [&_svg:not([class*='size-'])]:size-3",
 				"icon-sm": "size-control-sm rounded-control",

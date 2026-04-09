@@ -25,10 +25,10 @@ function SidebarNav({ title, items, className }: SidebarNavProps) {
 			)}
 		>
 			<div className="mb-5">
-				<p className="text-caption tracking-[0.08em] text-fg-subtle uppercase">
+				<p className="typo-caption tracking-[0.08em] text-fg-subtle uppercase">
 					Workspace
 				</p>
-				<h2 className="mt-2 text-heading-md">{title}</h2>
+				<h2 className="mt-2 typo-heading-md">{title}</h2>
 			</div>
 			<nav aria-label={title}>
 				<ul className="flex list-none flex-col gap-1 p-0">
@@ -37,7 +37,7 @@ function SidebarNav({ title, items, className }: SidebarNavProps) {
 							<a
 								href={item.href ?? "#"}
 								className={cn(
-									"flex min-h-control-md items-center justify-between rounded-md px-3 text-label-md transition-colors duration-[var(--duration-fast)] ease-standard",
+									"flex min-h-control-md items-center justify-between rounded-md px-3 typo-label-md transition-colors duration-[var(--duration-fast)] ease-standard",
 									item.active
 										? "bg-selected text-selected-fg"
 										: "text-fg-muted hover:bg-ghost-hover hover:text-fg",
@@ -46,7 +46,7 @@ function SidebarNav({ title, items, className }: SidebarNavProps) {
 							>
 								<span>{item.label}</span>
 								{item.meta ? (
-									<span className="text-caption text-fg-subtle">
+									<span className="typo-caption text-fg-subtle">
 										{item.meta}
 									</span>
 								) : null}

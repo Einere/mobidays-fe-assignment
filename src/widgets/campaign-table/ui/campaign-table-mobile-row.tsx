@@ -40,21 +40,21 @@ export function CampaignTableMobileRow({
 						<p className="font-medium text-fg">{row.name}</p>
 						<span
 							className={cn(
-								"inline-flex rounded-pill border px-2.5 py-1 text-caption",
+								"inline-flex rounded-pill border px-2.5 py-1 typo-caption",
 								statusToneClassName,
 							)}
 						>
 							{formatCampaignStatusLabel(row.status)}
 						</span>
 					</div>
-					<p className="mt-1 text-body-sm text-fg-muted">
+					<p className="mt-1 typo-body-sm text-fg-muted">
 						{row.platform ?? "-"} ·{" "}
 						{formatCampaignPeriod(row.startDate, row.endDate)}
 					</p>
 				</div>
 			</div>
 
-			<div className="mt-4 grid grid-cols-2 gap-3 rounded-card bg-panel-muted p-3 text-body-sm">
+			<div className="mt-4 grid grid-cols-2 gap-3 rounded-card bg-panel-muted p-3 typo-body-sm">
 				<div>
 					<p className="text-fg-muted">총 집행금액</p>
 					<p className="mt-1 font-medium text-fg">
