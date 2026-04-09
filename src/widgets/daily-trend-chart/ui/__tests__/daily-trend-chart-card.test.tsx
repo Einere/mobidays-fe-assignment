@@ -689,7 +689,7 @@ describe("DailyTrendChartCard", () => {
 		});
 	});
 
-	it("keeps the last successful chart visible when a refetch fails", async () => {
+	it("renders a full error state when the next query key fails", async () => {
 		const user = userEvent.setup();
 		let campaignsRequestCount = 0;
 
@@ -827,25 +827,13 @@ describe("DailyTrendChartCard", () => {
 
 		await waitFor(() => {
 			expect(
-				screen.getByText(
-					"최신 성과 데이터를 불러오지 못해 마지막 성공 결과를 표시 중입니다.",
-				),
+				screen.getByText("성과 데이터를 불러오지 못했습니다."),
 			).toBeInTheDocument();
 		});
 
-		expect(screen.getByTestId("daily-trend-line-chart")).toBeInTheDocument();
 		expect(screen.getByText("Request failed: 500")).toBeInTheDocument();
-		expect(rechartsState.lineChartData).toEqual([
-			{
-				date: "2026-04-01",
-				impressions: 300,
-				clicks: 30,
-				conversions: 3,
-				cost: 3500,
-			},
-		]);
 		expect(
-			screen.queryByText("성과 데이터를 불러오지 못했습니다."),
+			screen.queryByTestId("daily-trend-line-chart"),
 		).not.toBeInTheDocument();
 	});
 
@@ -853,7 +841,6 @@ describe("DailyTrendChartCard", () => {
 		expect(
 			resolveDailyTrendChartViewState({
 				currentDataSnapshot: null,
-				fallbackSnapshot: null,
 				errorMessage: null,
 				isLoadingError: false,
 				isPending: false,
@@ -880,7 +867,6 @@ describe("DailyTrendChartCard", () => {
 						},
 					],
 				},
-				fallbackSnapshot: null,
 				errorMessage: "Request failed: 500",
 				isLoadingError: false,
 				isPending: false,
@@ -903,22 +889,10 @@ describe("DailyTrendChartCard", () => {
 		});
 	});
 
-	it("resolves the stale chart state from a fallback snapshot when the next query key fails", () => {
+	it("resolves a full error when the next query key fails without current data", () => {
 		expect(
 			resolveDailyTrendChartViewState({
 				currentDataSnapshot: null,
-				fallbackSnapshot: {
-					campaignsCount: 2,
-					chartData: [
-						{
-							date: "2026-04-01",
-							impressions: 300,
-							clicks: 30,
-							conversions: 3,
-							cost: 3500,
-						},
-					],
-				},
 				errorMessage: "Request failed: 500",
 				isLoadingError: true,
 				isPending: false,
@@ -926,18 +900,8 @@ describe("DailyTrendChartCard", () => {
 				isRefetching: false,
 			}),
 		).toEqual({
-			chartData: [
-				{
-					date: "2026-04-01",
-					impressions: 300,
-					clicks: 30,
-					conversions: 3,
-					cost: 3500,
-				},
-			],
-			kind: "chart",
-			staleErrorMessage: "Request failed: 500",
-			isSyncing: false,
+			kind: "full-error",
+			errorMessage: "Request failed: 500",
 		});
 	});
 });

@@ -1,15 +1,10 @@
-import {
-	keepPreviousData,
-	useQuery,
-	useQueryClient,
-} from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import type { ReactNode } from "react";
 import {
 	buildDailyTrendSeries,
 	type DailyTrendPoint,
 } from "@/entities/daily-stat/lib/build-daily-trend-series";
-import type { DashboardData } from "@/entities/dashboard/api/fetch-dashboard-data";
 import { getDashboardDataQueryOptions } from "@/entities/dashboard/api/use-dashboard-data";
 import { globalFilterAtom } from "@/entities/global-filter/model/store";
 import { DailyTrendLineChart } from "@/widgets/daily-trend-chart/ui/daily-trend-line-chart";
@@ -50,35 +45,6 @@ function createResolvedChartSnapshot(
 	};
 }
 
-function findLastSuccessfulChartSnapshot(
-	dashboardQueryEntries: Array<
-		readonly [readonly unknown[], DashboardData | undefined, number]
-	>,
-) {
-	let lastSuccessfulSnapshot: ResolvedChartSnapshot | null = null;
-	let latestDataUpdatedAt = -1;
-
-	for (const [, dashboardData, dataUpdatedAt] of dashboardQueryEntries) {
-		if (dashboardData === undefined || dataUpdatedAt <= latestDataUpdatedAt) {
-			continue;
-		}
-
-		const snapshot = createResolvedChartSnapshot(
-			dashboardData.dailyStats,
-			dashboardData.campaigns.length,
-		);
-
-		if (snapshot.campaignsCount === 0 || snapshot.chartData.length === 0) {
-			continue;
-		}
-
-		lastSuccessfulSnapshot = snapshot;
-		latestDataUpdatedAt = dataUpdatedAt;
-	}
-
-	return lastSuccessfulSnapshot;
-}
-
 function DailyTrendChartCardFrame({ children }: { children: ReactNode }) {
 	return (
 		<section className="rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel">
@@ -99,7 +65,6 @@ function DailyTrendChartCardFrame({ children }: { children: ReactNode }) {
 
 export function resolveDailyTrendChartViewState({
 	currentDataSnapshot,
-	fallbackSnapshot,
 	errorMessage,
 	isLoadingError,
 	isPending,
@@ -107,7 +72,6 @@ export function resolveDailyTrendChartViewState({
 	isRefetching,
 }: {
 	currentDataSnapshot: ResolvedChartSnapshot | null;
-	fallbackSnapshot: ResolvedChartSnapshot | null;
 	errorMessage: string | null;
 	isLoadingError: boolean;
 	isPending: boolean;
@@ -115,15 +79,6 @@ export function resolveDailyTrendChartViewState({
 	isRefetching: boolean;
 }): DailyTrendChartViewState {
 	if (currentDataSnapshot === null) {
-		if (fallbackSnapshot !== null && isLoadingError) {
-			return {
-				kind: "chart",
-				chartData: fallbackSnapshot.chartData,
-				isSyncing: false,
-				staleErrorMessage: errorMessage ?? "알 수 없는 오류가 발생했습니다.",
-			};
-		}
-
 		if (isPending) {
 			return { kind: "loading" };
 		}
@@ -224,7 +179,6 @@ function DailyTrendChartCardMeta({
 
 export function DailyTrendChartCard() {
 	const filter = useAtomValue(globalFilterAtom);
-	const queryClient = useQueryClient();
 	const query = useQuery({
 		...getDashboardDataQueryOptions(filter),
 		placeholderData: keepPreviousData,
@@ -236,25 +190,9 @@ export function DailyTrendChartCard() {
 					query.data.dailyStats,
 					query.data.campaigns.length,
 				);
-	const fallbackSnapshot = findLastSuccessfulChartSnapshot(
-		queryClient
-			.getQueriesData<DashboardData>({
-				queryKey: ["dashboard-data"],
-			})
-			.map(
-				([queryKey, dashboardData]) =>
-					[
-						queryKey,
-						dashboardData,
-						queryClient.getQueryState<DashboardData>(queryKey)?.dataUpdatedAt ??
-							-1,
-					] as const,
-			),
-	);
 
 	const viewState = resolveDailyTrendChartViewState({
 		currentDataSnapshot,
-		fallbackSnapshot: query.isLoadingError ? fallbackSnapshot : null,
 		errorMessage: query.error?.message ?? null,
 		isLoadingError: query.isLoadingError,
 		isPending: query.isPending,
