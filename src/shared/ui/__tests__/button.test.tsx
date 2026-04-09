@@ -15,4 +15,15 @@ describe("Button", () => {
 		expect(button.className).toContain("disabled:cursor-not-allowed");
 		expect(button.className).not.toContain("disabled:pointer-events-none");
 	});
+
+	it("uses explicit theme tokens for the default variant contrast", () => {
+		render(<Button type="button">기본 버튼</Button>);
+
+		const button = screen.getByRole("button", { name: "기본 버튼" });
+
+		expect(button.className).toContain("bg-primary");
+		expect(button.className).toContain("text-primary-fg");
+		expect(button.className).toContain("hover:bg-primary-hover");
+		expect(button.className).toContain("typo-label-md");
+	});
 });
