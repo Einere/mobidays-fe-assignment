@@ -64,4 +64,32 @@ describe("parseDailyStatResponse", () => {
 		expect(result).toHaveLength(1);
 		expect(result[0]?.id).toBe("STAT-1");
 	});
+
+	it("drops records when required metric fields are not finite numbers or null", () => {
+		const result = parseDailyStatResponse([
+			{
+				id: "STAT-1",
+				campaignId: "CMP-1",
+				date: "2026-04-08",
+				impressions: 10,
+				clicks: 1,
+				conversions: 0,
+				cost: 1000,
+				conversionsValue: 3000,
+			},
+			{
+				id: "STAT-2",
+				campaignId: "CMP-2",
+				date: "2026-04-08",
+				impressions: Number.NaN,
+				clicks: 2,
+				conversions: 1,
+				cost: 2000,
+				conversionsValue: 4000,
+			},
+		]);
+
+		expect(result).toHaveLength(1);
+		expect(result[0]?.id).toBe("STAT-1");
+	});
 });

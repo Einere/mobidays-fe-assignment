@@ -1,3 +1,4 @@
+import { z } from "zod";
 import type {
 	CampaignPlatform,
 	CampaignStatus,
@@ -13,10 +14,6 @@ function isNonEmptyString(value: unknown): value is string {
 
 function isFiniteNumber(value: unknown): value is number {
 	return typeof value === "number" && Number.isFinite(value);
-}
-
-function isNullableFiniteNumber(value: unknown): value is number | null {
-	return value === null || isFiniteNumber(value);
 }
 
 function isDateLikeString(value: unknown): value is string {
@@ -48,6 +45,45 @@ function parseNullableNumber(value: unknown): number | null {
 	return isFiniteNumber(value) ? value : null;
 }
 
+const nonEmptyStringSchema = z
+	.string()
+	.refine((value) => value.trim().length > 0);
+
+const nullableFiniteNumberSchema = z.union([z.number().finite(), z.null()]);
+
+const campaignRowSchema = z
+	.object({
+		id: nonEmptyStringSchema,
+	})
+	.passthrough();
+
+const dailyStatRowSchema = z
+	.object({
+		id: nonEmptyStringSchema,
+		campaignId: nonEmptyStringSchema,
+		impressions: nullableFiniteNumberSchema,
+		clicks: nullableFiniteNumberSchema,
+		conversions: nullableFiniteNumberSchema,
+		cost: nullableFiniteNumberSchema,
+		conversionsValue: nullableFiniteNumberSchema,
+	})
+	.passthrough();
+
+function parseResponseRows<Row extends z.ZodTypeAny>(
+	response: unknown,
+	rowSchema: Row,
+): z.output<Row>[] {
+	if (!Array.isArray(response)) {
+		return [];
+	}
+
+	return response.flatMap((item) => {
+		const parsedItem = rowSchema.safeParse(item);
+
+		return parsedItem.success ? [parsedItem.data] : [];
+	});
+}
+
 export interface DashboardCampaign {
 	raw: RawCampaign;
 	id: string;
@@ -72,68 +108,38 @@ export interface DashboardDailyStat {
 }
 
 export function parseCampaignResponse(response: unknown): DashboardCampaign[] {
-	if (!Array.isArray(response)) {
-		return [];
-	}
+	return parseResponseRows(response, campaignRowSchema).map((item) => {
+		const rawCampaign = item as unknown as RawCampaign;
 
-	return response.flatMap((item) => {
-		if (!isNonEmptyString(item?.id)) {
-			return [];
-		}
-
-		const rawCampaign = item as RawCampaign;
-
-		return [
-			{
-				raw: rawCampaign,
-				id: rawCampaign.id,
-				name: parseOptionalString(rawCampaign.name),
-				platform: parseEnumValue(rawCampaign.platform, campaignPlatforms),
-				status: parseEnumValue(rawCampaign.status, campaignStatuses),
-				budget: parseNullableNumber(rawCampaign.budget),
-				startDate: parseNullableDateLikeString(rawCampaign.startDate),
-				endDate: parseNullableDateLikeString(rawCampaign.endDate),
-			},
-		];
+		return {
+			raw: rawCampaign,
+			id: item.id,
+			name: parseOptionalString(rawCampaign.name),
+			platform: parseEnumValue(rawCampaign.platform, campaignPlatforms),
+			status: parseEnumValue(rawCampaign.status, campaignStatuses),
+			budget: parseNullableNumber(rawCampaign.budget),
+			startDate: parseNullableDateLikeString(rawCampaign.startDate),
+			endDate: parseNullableDateLikeString(rawCampaign.endDate),
+		};
 	});
 }
 
 export function parseDailyStatResponse(
 	response: unknown,
 ): DashboardDailyStat[] {
-	if (!Array.isArray(response)) {
-		return [];
-	}
+	return parseResponseRows(response, dailyStatRowSchema).map((item) => {
+		const rawDailyStat = item as unknown as RawDailyStat;
 
-	return response.flatMap((item) => {
-		if (!isNonEmptyString(item?.id) || !isNonEmptyString(item?.campaignId)) {
-			return [];
-		}
-
-		const rawDailyStat = item as RawDailyStat;
-
-		if (
-			!isNullableFiniteNumber(rawDailyStat.conversionsValue) ||
-			!isNullableFiniteNumber(rawDailyStat.impressions) ||
-			!isNullableFiniteNumber(rawDailyStat.clicks) ||
-			!isNullableFiniteNumber(rawDailyStat.conversions) ||
-			!isNullableFiniteNumber(rawDailyStat.cost)
-		) {
-			return [];
-		}
-
-		return [
-			{
-				raw: rawDailyStat,
-				id: rawDailyStat.id,
-				campaignId: rawDailyStat.campaignId,
-				date: parseNullableDateLikeString(rawDailyStat.date),
-				impressions: rawDailyStat.impressions,
-				clicks: rawDailyStat.clicks,
-				conversions: rawDailyStat.conversions,
-				cost: rawDailyStat.cost,
-				conversionsValue: rawDailyStat.conversionsValue,
-			},
-		];
+		return {
+			raw: rawDailyStat,
+			id: item.id,
+			campaignId: item.campaignId,
+			date: parseNullableDateLikeString(rawDailyStat.date),
+			impressions: item.impressions,
+			clicks: item.clicks,
+			conversions: item.conversions,
+			cost: item.cost,
+			conversionsValue: item.conversionsValue,
+		};
 	});
 }
