@@ -849,24 +849,65 @@ describe("DailyTrendChartCard", () => {
 		).not.toBeInTheDocument();
 	});
 
-	it("resolves the initial loading state before any successful snapshot exists", () => {
+	it("resolves empty data when no snapshot or error exists", () => {
 		expect(
 			resolveDailyTrendChartViewState({
-				currentSnapshot: null,
+				currentDataSnapshot: null,
+				fallbackSnapshot: null,
 				errorMessage: null,
-				isError: false,
-				isFetching: false,
-				isPending: true,
+				isLoadingError: false,
+				isPending: false,
+				isRefetchError: false,
+				isRefetching: false,
 			}),
 		).toEqual({
-			kind: "loading",
+			kind: "empty-data",
 		});
 	});
 
-	it("resolves the stale chart state when a refetch fails after a successful snapshot", () => {
+	it("resolves the stale chart state from current query data when a background refetch fails", () => {
 		expect(
 			resolveDailyTrendChartViewState({
-				currentSnapshot: {
+				currentDataSnapshot: {
+					campaignsCount: 2,
+					chartData: [
+						{
+							date: "2026-04-01",
+							impressions: 300,
+							clicks: 30,
+							conversions: 3,
+							cost: 3500,
+						},
+					],
+				},
+				fallbackSnapshot: null,
+				errorMessage: "Request failed: 500",
+				isLoadingError: false,
+				isPending: false,
+				isRefetchError: true,
+				isRefetching: false,
+			}),
+		).toEqual({
+			chartData: [
+				{
+					date: "2026-04-01",
+					impressions: 300,
+					clicks: 30,
+					conversions: 3,
+					cost: 3500,
+				},
+			],
+			kind: "chart",
+			staleErrorMessage: "Request failed: 500",
+			isSyncing: false,
+		});
+	});
+
+	it("resolves the stale chart state from a fallback snapshot when the next query key fails", () => {
+		expect(
+			resolveDailyTrendChartViewState({
+				currentDataSnapshot: null,
+				fallbackSnapshot: {
 					campaignsCount: 2,
 					chartData: [
 						{
@@ -879,9 +920,10 @@ describe("DailyTrendChartCard", () => {
 					],
 				},
 				errorMessage: "Request failed: 500",
-				isError: true,
-				isFetching: false,
+				isLoadingError: true,
 				isPending: false,
+				isRefetchError: false,
+				isRefetching: false,
 			}),
 		).toEqual({
 			chartData: [
