@@ -1,40 +1,38 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { useDebouncedValue } from "@/shared/hooks/use-debounced-value";
 import type {
 	CampaignTableSortKey,
 	CampaignTableSortState,
 } from "@/widgets/campaign-table/model/campaign-table-sort";
 
 export interface CampaignTableControls {
+	searchInput: string;
 	searchTerm: string;
 	page: number;
 	sort: CampaignTableSortState | null;
-	selectedRowIds: string[];
-	setSearchTerm: (nextSearchTerm: string) => void;
+	setSearchInput: (nextSearchInput: string) => void;
 	setPage: (nextPage: number) => void;
 	toggleSort: (nextSortKey: CampaignTableSortKey) => void;
-	toggleRowSelection: (rowId: string) => void;
-	togglePageSelection: (pageRowIds: string[]) => void;
-	setSelectedRowIds: (nextSelectedRowIds: string[]) => void;
 }
 
 export function useCampaignTableControls() {
-	const [searchTerm, setSearchTermState] = useState("");
+	const [searchInput, setSearchInputState] = useState("");
 	const [page, setPageState] = useState(1);
 	const [sort, setSort] = useState<CampaignTableSortState | null>(null);
-	const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
+	const searchTerm = useDebouncedValue(searchInput, 300);
 
-	function setSearchTerm(nextSearchTerm: string) {
-		setSearchTermState(nextSearchTerm);
+	const setSearchInput = useCallback((nextSearchInput: string) => {
+		setSearchInputState(nextSearchInput);
 		setPageState(1);
-	}
+	}, []);
 
-	function setPage(nextPage: number) {
+	const setPage = useCallback((nextPage: number) => {
 		const normalizedPage = Number.isFinite(nextPage) ? Math.floor(nextPage) : 1;
 
 		setPageState(Math.max(1, normalizedPage));
-	}
+	}, []);
 
-	function toggleSort(nextSortKey: CampaignTableSortKey) {
+	const toggleSort = useCallback((nextSortKey: CampaignTableSortKey) => {
 		setSort((currentSort) => {
 			if (!currentSort || currentSort.key !== nextSortKey) {
 				return {
@@ -49,46 +47,15 @@ export function useCampaignTableControls() {
 			};
 		});
 		setPageState(1);
-	}
-
-	function toggleRowSelection(rowId: string) {
-		setSelectedRowIds((currentSelectedRowIds) => {
-			if (currentSelectedRowIds.includes(rowId)) {
-				return currentSelectedRowIds.filter(
-					(selectedRowId) => selectedRowId !== rowId,
-				);
-			}
-
-			return [...currentSelectedRowIds, rowId];
-		});
-	}
-
-	function togglePageSelection(pageRowIds: string[]) {
-		setSelectedRowIds((currentSelectedRowIds) => {
-			const areAllPageRowsSelected =
-				pageRowIds.length > 0 &&
-				pageRowIds.every((rowId) => currentSelectedRowIds.includes(rowId));
-
-			if (areAllPageRowsSelected) {
-				return currentSelectedRowIds.filter(
-					(selectedRowId) => !pageRowIds.includes(selectedRowId),
-				);
-			}
-
-			return Array.from(new Set([...currentSelectedRowIds, ...pageRowIds]));
-		});
-	}
+	}, []);
 
 	return {
+		searchInput,
 		searchTerm,
 		page,
 		sort,
-		selectedRowIds,
-		setSearchTerm,
+		setSearchInput,
 		setPage,
 		toggleSort,
-		toggleRowSelection,
-		togglePageSelection,
-		setSelectedRowIds,
 	} satisfies CampaignTableControls;
 }
