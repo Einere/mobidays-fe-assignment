@@ -37,7 +37,7 @@ export function CampaignTableStatusDialog({
 						</Dialog.Description>
 					</div>
 
-					<div className="rounded-card border border-outline-subtle bg-panel-muted px-4 py-3 typo-body-sm text-fg-muted">
+					<div className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-3 typo-body-sm text-status-danger-fg">
 						변경을 적용하면 선택한 캠페인 전체에 같은 상태가 반영됩니다.
 					</div>
 
@@ -56,6 +56,7 @@ export function CampaignTableStatusDialog({
 						</Dialog.Close>
 						<Button
 							type="button"
+							variant="destructive"
 							disabled={isSubmitting || !canConfirm}
 							onClick={onConfirm}
 						>
