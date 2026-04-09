@@ -70,7 +70,11 @@ function DailyTrendChartCardFrame({
 							전역 필터 기준으로 집계한 일별 추이 꺾은선 그래프입니다.
 						</p>
 					</div>
-					{actions ? <div className="lg:self-start">{actions}</div> : null}
+					{actions ? (
+						<div className="-mx-1 overflow-x-auto px-1 lg:mx-0 lg:self-start lg:px-0">
+							{actions}
+						</div>
+					) : null}
 				</div>
 				{children}
 			</div>
@@ -235,10 +239,15 @@ export function DailyTrendChartCard() {
 			}
 		>
 			{viewState.kind === "chart" ? (
-				<DailyTrendLineChart
-					activeMetrics={activeMetrics}
-					data={viewState.chartData}
-				/>
+				<div
+					className="-mx-2 overflow-x-auto px-2 sm:mx-0 sm:px-0"
+					data-testid="daily-trend-scroll-area"
+				>
+					<DailyTrendLineChart
+						activeMetrics={activeMetrics}
+						data={viewState.chartData}
+					/>
+				</div>
 			) : (
 				renderDailyTrendChartBody(viewState)
 			)}
