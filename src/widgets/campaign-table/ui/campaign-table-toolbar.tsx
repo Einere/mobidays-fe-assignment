@@ -4,6 +4,13 @@ import type { CampaignStatus } from "@/entities/global-filter/model/types";
 import { useDebouncedValue } from "@/shared/hooks/use-debounced-value";
 import { Button } from "@/shared/ui/button";
 import { TextInput } from "@/shared/ui/input";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/shared/ui/select";
 
 const SEARCH_DEBOUNCE_DELAY = 300;
 
@@ -37,6 +44,7 @@ export function CampaignTableToolbar({
 		draftSearchTerm,
 		SEARCH_DEBOUNCE_DELAY,
 	);
+	const isStatusControlDisabled = disabled || selectedCount === 0;
 
 	useEffect(() => {
 		setDraftSearchTerm(searchTerm);
@@ -76,31 +84,30 @@ export function CampaignTableToolbar({
 							onChange={(event) => setDraftSearchTerm(event.target.value)}
 						/>
 					</div>
-					<label className="flex min-w-[140px] flex-col gap-1 text-body-sm text-fg-muted">
-						<span className="sr-only">변경할 상태</span>
-						<select
-							aria-label="변경할 상태"
-							className="flex h-control-md w-full rounded-md border border-outline bg-panel px-3 text-fg outline-none transition-colors duration-[var(--duration-fast)] ease-standard hover:border-outline-strong focus-visible:ring-2 focus-visible:ring-focus"
-							disabled={disabled}
+					<div className="min-w-[140px]">
+						<Select
+							disabled={isStatusControlDisabled}
 							value={pendingStatus ?? ""}
-							onChange={(event) =>
+							onValueChange={(value) =>
 								onPendingStatusChange(
-									event.target.value === ""
-										? null
-										: (event.target.value as CampaignStatus),
+									value === "" ? null : (value as CampaignStatus),
 								)
 							}
 						>
-							<option value="">상태 선택</option>
-							<option value="active">진행 중</option>
-							<option value="paused">일시중지</option>
-							<option value="ended">종료</option>
-						</select>
-					</label>
+							<SelectTrigger aria-label="변경할 상태">
+								<SelectValue placeholder="상태 선택" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="active">진행 중</SelectItem>
+								<SelectItem value="paused">일시중지</SelectItem>
+								<SelectItem value="ended">종료</SelectItem>
+							</SelectContent>
+						</Select>
+					</div>
 					<Button
 						type="button"
 						variant="secondary"
-						disabled={disabled || !canApplyStatusChange}
+						disabled={isStatusControlDisabled || !canApplyStatusChange}
 						onClick={onOpenStatusDialog}
 					>
 						상태 적용

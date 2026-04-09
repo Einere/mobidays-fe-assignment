@@ -47,4 +47,29 @@ describe("CampaignTableToolbar", () => {
 		expect(onSearchTermChange).toHaveBeenCalledTimes(1);
 		expect(onSearchTermChange).toHaveBeenLastCalledWith("브랜드");
 	});
+
+	it("disables the status controls when no rows are selected", () => {
+		render(
+			<CampaignTableToolbar
+				searchTerm=""
+				filteredCount={2}
+				totalCount={2}
+				selectedCount={0}
+				pendingStatus={null}
+				disabled={false}
+				canApplyStatusChange={false}
+				onSearchTermChange={vi.fn()}
+				onPendingStatusChange={vi.fn()}
+				onOpenStatusDialog={vi.fn()}
+			/>,
+		);
+
+		expect(
+			screen.getByRole("combobox", { name: "변경할 상태" }),
+		).toBeDisabled();
+		expect(
+			screen.getByRole("combobox", { name: "변경할 상태" }).className,
+		).toContain("cursor-not-allowed");
+		expect(screen.getByRole("button", { name: "상태 적용" })).toBeDisabled();
+	});
 });
