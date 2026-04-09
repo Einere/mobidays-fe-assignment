@@ -268,6 +268,9 @@ describe("DailyTrendChartCard", () => {
 			"responsive-container",
 		).parentElement;
 
+		expect(
+			screen.getByText("좌우로 스크롤해 추이 전체를 비교하세요."),
+		).toBeInTheDocument();
 		expect(scrollArea.className).toContain("overflow-x-auto");
 		expect(chart?.className).toContain("min-w-[720px]");
 	});
@@ -896,7 +899,7 @@ describe("DailyTrendChartCard", () => {
 			).toBeInTheDocument();
 		});
 
-		expect(screen.getByText("Request failed: 500")).toBeInTheDocument();
+		expect(screen.queryByText("Request failed: 500")).not.toBeInTheDocument();
 		expect(
 			screen.queryByTestId("daily-trend-line-chart"),
 		).not.toBeInTheDocument();

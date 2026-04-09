@@ -1,9 +1,10 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { CampaignTableStatusDialog } from "@/widgets/campaign-table/ui/campaign-table-status-dialog";
 
 describe("CampaignTableStatusDialog", () => {
-	it("uses danger tone for the caution copy and confirm action", () => {
+	it("uses warning tone for the caution copy and confirm action", () => {
 		render(
 			<CampaignTableStatusDialog
 				open
@@ -21,16 +22,49 @@ describe("CampaignTableStatusDialog", () => {
 			screen.getByText(
 				"변경을 적용하면 선택한 캠페인 전체에 같은 상태가 반영됩니다.",
 			).className,
-		).toContain("border-status-danger-border");
+		).toContain("border-status-warning-border");
 		expect(
 			screen.getByText(
 				"변경을 적용하면 선택한 캠페인 전체에 같은 상태가 반영됩니다.",
 			).className,
-		).toContain("bg-status-danger/30");
+		).toContain("bg-status-warning/30");
+		expect(
+			document.querySelector('[data-slot="campaign-status-dialog-overlay"]')
+				?.className ?? "",
+		).toContain("bg-overlay-scrim");
 		expect(
 			screen
 				.getByRole("button", { name: "변경 적용" })
 				.getAttribute("data-variant"),
-		).toBe("destructive");
+		).toBe("warning");
+	});
+
+	it("keeps the dialog open when escape is pressed during submission", async () => {
+		const user = userEvent.setup();
+		const onOpenChange = vi.fn();
+
+		render(
+			<CampaignTableStatusDialog
+				open
+				selectedCount={2}
+				statusLabel="종료"
+				errorMessage={null}
+				isSubmitting
+				canConfirm={false}
+				onOpenChange={onOpenChange}
+				onConfirm={vi.fn()}
+			/>,
+		);
+
+		expect(
+			screen.getByRole("dialog", { name: "캠페인 상태 변경" }),
+		).toBeInTheDocument();
+
+		await user.keyboard("{Escape}");
+
+		expect(onOpenChange).not.toHaveBeenCalledWith(false);
+		expect(
+			screen.getByRole("dialog", { name: "캠페인 상태 변경" }),
+		).toBeInTheDocument();
 	});
 });

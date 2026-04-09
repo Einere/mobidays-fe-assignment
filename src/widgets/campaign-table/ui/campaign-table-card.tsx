@@ -27,7 +27,7 @@ function CampaignTableLoadingState() {
 	);
 }
 
-function CampaignTableErrorState({ errorMessage }: { errorMessage: string }) {
+function CampaignTableErrorState() {
 	return (
 		<section className="rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel">
 			<div className="flex flex-col gap-3">
@@ -37,7 +37,6 @@ function CampaignTableErrorState({ errorMessage }: { errorMessage: string }) {
 				</p>
 				<div className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-5 typo-body-sm text-status-danger-fg">
 					<p>캠페인 데이터를 불러오지 못했습니다.</p>
-					<p className="mt-1 typo-caption">{errorMessage}</p>
 				</div>
 			</div>
 		</section>
@@ -76,11 +75,7 @@ export function CampaignTableCard() {
 	}
 
 	if (tableData.viewState.kind === "full-error") {
-		return (
-			<CampaignTableErrorState
-				errorMessage={tableData.viewState.errorMessage}
-			/>
-		);
+		return <CampaignTableErrorState />;
 	}
 
 	if (tableData.tableView === null) {
@@ -114,9 +109,6 @@ export function CampaignTableCard() {
 						<p>
 							최신 캠페인 데이터를 불러오지 못해 마지막 성공 결과를 표시
 							중입니다.
-						</p>
-						<p className="mt-1 typo-caption">
-							{tableData.viewState.staleErrorMessage}
 						</p>
 					</div>
 				) : null}

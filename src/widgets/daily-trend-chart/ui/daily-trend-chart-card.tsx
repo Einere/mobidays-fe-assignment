@@ -7,6 +7,7 @@ import {
 } from "@/entities/daily-stat/lib/build-daily-trend-series";
 import { getDashboardDataQueryOptions } from "@/entities/dashboard/api/use-dashboard-data";
 import { globalFilterAtom } from "@/entities/global-filter/model/store";
+import { DataDenseScrollArea } from "@/shared/ui/data-dense-scroll-area";
 import {
 	type DailyTrendMetricKey,
 	defaultDailyTrendMetricKeys,
@@ -143,7 +144,6 @@ function renderDailyTrendChartBody(viewState: DailyTrendChartViewState) {
 			return (
 				<div className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-5 typo-body-sm text-status-danger-fg">
 					<p>성과 데이터를 불러오지 못했습니다.</p>
-					<p className="mt-1 typo-caption">{viewState.errorMessage}</p>
 				</div>
 			);
 		case "empty-campaigns":
@@ -177,7 +177,6 @@ function DailyTrendChartCardMeta({
 					<p>
 						최신 성과 데이터를 불러오지 못해 마지막 성공 결과를 표시 중입니다.
 					</p>
-					<p className="mt-1 typo-caption">{viewState.staleErrorMessage}</p>
 				</div>
 			) : null}
 
@@ -239,15 +238,16 @@ export function DailyTrendChartCard() {
 			}
 		>
 			{viewState.kind === "chart" ? (
-				<div
-					className="-mx-2 overflow-x-auto px-2 sm:mx-0 sm:px-0"
-					data-testid="daily-trend-scroll-area"
+				<DataDenseScrollArea
+					hint="좌우로 스크롤해 추이 전체를 비교하세요."
+					className="-mx-2 px-2 sm:mx-0 sm:px-0"
+					viewportTestId="daily-trend-scroll-area"
 				>
 					<DailyTrendLineChart
 						activeMetrics={activeMetrics}
 						data={viewState.chartData}
 					/>
-				</div>
+				</DataDenseScrollArea>
 			) : (
 				renderDailyTrendChartBody(viewState)
 			)}
