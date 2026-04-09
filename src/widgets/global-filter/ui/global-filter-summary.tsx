@@ -42,7 +42,7 @@ export function GlobalFilterSummary() {
 					</p>
 				) : null}
 
-				<div className="grid gap-4 md:grid-cols-2">
+				<div className="grid grid-cols-2 gap-4">
 					<div className="rounded-card bg-panel-muted p-4">
 						<p className="mb-2 typo-caption text-fg-subtle">캠페인 결과</p>
 						<p className="typo-metric-lg">{campaignsCount}건</p>
