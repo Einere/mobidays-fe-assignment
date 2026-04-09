@@ -9,6 +9,7 @@ import { cn } from "@/shared/lib/utils";
 interface CampaignTableMobileRowProps {
 	row: CampaignTableRow;
 	selected: boolean;
+	disabled: boolean;
 	statusToneClassName: string;
 	onToggleSelection: () => void;
 }
@@ -16,6 +17,7 @@ interface CampaignTableMobileRowProps {
 export function CampaignTableMobileRow({
 	row,
 	selected,
+	disabled,
 	statusToneClassName,
 	onToggleSelection,
 }: CampaignTableMobileRowProps) {
@@ -29,6 +31,7 @@ export function CampaignTableMobileRow({
 					aria-label={`${row.name} 선택`}
 					checked={selected}
 					className="mt-1 size-4 rounded border border-outline accent-primary"
+					disabled={disabled}
 					type="checkbox"
 					onChange={onToggleSelection}
 				/>

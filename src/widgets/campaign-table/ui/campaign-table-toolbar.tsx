@@ -9,6 +9,7 @@ interface CampaignTableToolbarProps {
 	totalCount: number;
 	selectedCount: number;
 	pendingStatus: CampaignStatus | null;
+	disabled: boolean;
 	canApplyStatusChange: boolean;
 	onSearchTermChange: (nextSearchTerm: string) => void;
 	onPendingStatusChange: (nextPendingStatus: CampaignStatus | null) => void;
@@ -21,6 +22,7 @@ export function CampaignTableToolbar({
 	totalCount,
 	selectedCount,
 	pendingStatus,
+	disabled,
 	canApplyStatusChange,
 	onSearchTermChange,
 	onPendingStatusChange,
@@ -45,6 +47,7 @@ export function CampaignTableToolbar({
 						<TextInput
 							aria-label="캠페인 검색"
 							className="pl-9"
+							disabled={disabled}
 							placeholder="캠페인명 검색"
 							type="search"
 							value={searchTerm}
@@ -56,6 +59,7 @@ export function CampaignTableToolbar({
 						<select
 							aria-label="변경할 상태"
 							className="flex h-control-md w-full rounded-md border border-outline bg-panel px-3 text-fg outline-none transition-colors duration-[var(--duration-fast)] ease-standard hover:border-outline-strong focus-visible:ring-2 focus-visible:ring-focus"
+							disabled={disabled}
 							value={pendingStatus ?? ""}
 							onChange={(event) =>
 								onPendingStatusChange(
@@ -74,7 +78,7 @@ export function CampaignTableToolbar({
 					<Button
 						type="button"
 						variant="secondary"
-						disabled={!canApplyStatusChange}
+						disabled={disabled || !canApplyStatusChange}
 						onClick={onOpenStatusDialog}
 					>
 						상태 적용

@@ -1,29 +1,22 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useUpdateCampaignStatuses } from "@/entities/campaign/api/use-update-campaign-statuses";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import type { CampaignTableRow } from "@/entities/campaign/lib/build-campaign-table-rows";
-import { buildCampaignTableRows } from "@/entities/campaign/lib/build-campaign-table-rows";
 import {
 	formatCampaignMetric,
 	formatCampaignPeriod,
 	formatCampaignStatusLabel,
 } from "@/entities/campaign/lib/format-campaign-table";
-import { getDashboardDataQueryOptions } from "@/entities/dashboard/api/use-dashboard-data";
 import { globalFilterAtom } from "@/entities/global-filter/model/store";
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
 import { DataTable } from "@/shared/ui/table";
-import { deriveCampaignTableView } from "@/widgets/campaign-table/model/derive-campaign-table-view";
-import {
-	type CampaignTableSortKey,
-	useCampaignTableControls,
-} from "@/widgets/campaign-table/model/use-campaign-table-controls";
+import type { CampaignTableSortKey } from "@/widgets/campaign-table/model/campaign-table-sort";
+import { useCampaignStatusBulkAction } from "@/widgets/campaign-table/model/use-campaign-status-bulk-action";
+import { useCampaignTableControls } from "@/widgets/campaign-table/model/use-campaign-table-controls";
+import { useCampaignTableData } from "@/widgets/campaign-table/model/use-campaign-table-data";
 import { CampaignTableMobileRow } from "@/widgets/campaign-table/ui/campaign-table-mobile-row";
 import { CampaignTableStatusDialog } from "@/widgets/campaign-table/ui/campaign-table-status-dialog";
 import { CampaignTableToolbar } from "@/widgets/campaign-table/ui/campaign-table-toolbar";
-
-const pageSize = 10;
 
 const sortLabels: Record<CampaignTableSortKey, string> = {
 	period: "집행기간",
@@ -42,25 +35,6 @@ const statusToneClassNames = {
 	unknown: "border-outline bg-panel-muted text-fg-muted",
 } as const;
 
-type CampaignTableSnapshot = {
-	rows: ReturnType<typeof buildCampaignTableRows>;
-};
-
-type CampaignTableViewState =
-	| {
-			kind: "loading";
-	  }
-	| {
-			kind: "full-error";
-			errorMessage: string;
-	  }
-	| {
-			kind: "table";
-			rows: CampaignTableSnapshot["rows"];
-			isSyncing: boolean;
-			staleErrorMessage: string | null;
-	  };
-
 function getStatusToneClassName(status: CampaignTableRow["status"]) {
 	switch (status) {
 		case "active":
@@ -74,51 +48,6 @@ function getStatusToneClassName(status: CampaignTableRow["status"]) {
 	}
 }
 
-function resolveCampaignTableViewState({
-	currentDataSnapshot,
-	errorMessage,
-	isLoadingError,
-	isPending,
-	isRefetchError,
-	isRefetching,
-}: {
-	currentDataSnapshot: CampaignTableSnapshot | null;
-	errorMessage: string | null;
-	isLoadingError: boolean;
-	isPending: boolean;
-	isRefetchError: boolean;
-	isRefetching: boolean;
-}): CampaignTableViewState {
-	if (currentDataSnapshot === null) {
-		if (isPending) {
-			return { kind: "loading" };
-		}
-
-		if (isLoadingError) {
-			return {
-				kind: "full-error",
-				errorMessage: errorMessage ?? "알 수 없는 오류가 발생했습니다.",
-			};
-		}
-
-		return {
-			kind: "table",
-			rows: [],
-			isSyncing: false,
-			staleErrorMessage: null,
-		};
-	}
-
-	return {
-		kind: "table",
-		rows: currentDataSnapshot.rows,
-		isSyncing: isRefetching,
-		staleErrorMessage: isRefetchError
-			? (errorMessage ?? "알 수 없는 오류가 발생했습니다.")
-			: null,
-	};
-}
-
 function useIsMobileTableView() {
 	const [isMobile, setIsMobile] = useState(() => {
 		if (
@@ -129,6 +58,9 @@ function useIsMobileTableView() {
 		}
 
 		return window.matchMedia("(max-width: 1023px)").matches;
+	});
+	const updateIsMobile = useEffectEvent((matches: boolean) => {
+		setIsMobile(matches);
 	});
 
 	useEffect(() => {
@@ -141,10 +73,10 @@ function useIsMobileTableView() {
 
 		const mediaQueryList = window.matchMedia("(max-width: 1023px)");
 		const handleChange = (event: MediaQueryListEvent) => {
-			setIsMobile(event.matches);
+			updateIsMobile(event.matches);
 		};
 
-		setIsMobile(mediaQueryList.matches);
+		updateIsMobile(mediaQueryList.matches);
 		mediaQueryList.addEventListener("change", handleChange);
 
 		return () => {
@@ -159,11 +91,13 @@ function SortableColumnHeader({
 	active,
 	direction,
 	label,
+	disabled,
 	onClick,
 }: {
 	active: boolean;
 	direction: "asc" | "desc" | null;
 	label: string;
+	disabled: boolean;
 	onClick: () => void;
 }) {
 	return (
@@ -174,6 +108,7 @@ function SortableColumnHeader({
 			aria-label={`${label} 정렬`}
 			className="-mx-2 h-auto px-2 py-1 text-label-md text-fg-muted hover:text-fg data-[active=true]:text-fg"
 			data-active={active}
+			disabled={disabled}
 			onClick={onClick}
 		>
 			{label}
@@ -222,124 +157,41 @@ function CampaignTableErrorState({ errorMessage }: { errorMessage: string }) {
 export function CampaignTableCard() {
 	const filter = useAtomValue(globalFilterAtom);
 	const controls = useCampaignTableControls();
-	const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
-	const [statusUpdateErrorMessage, setStatusUpdateErrorMessage] = useState<
-		string | null
-	>(null);
 	const selectAllCheckboxRef = useRef<HTMLInputElement>(null);
-	const query = useQuery({
-		...getDashboardDataQueryOptions(filter),
-		placeholderData: keepPreviousData,
-	});
-	const updateCampaignStatusesMutation = useUpdateCampaignStatuses(filter);
 	const isMobileTableView = useIsMobileTableView();
-	const currentDataSnapshot =
-		query.data === undefined
-			? null
-			: {
-					rows: buildCampaignTableRows({
-						campaigns: query.data.campaigns,
-						dailyStats: query.data.dailyStats,
-					}),
-				};
-	const viewState = resolveCampaignTableViewState({
-		currentDataSnapshot,
-		errorMessage: query.error?.message ?? null,
-		isLoadingError: query.isLoadingError,
-		isPending: query.isPending,
-		isRefetchError: query.isRefetchError,
-		isRefetching: query.isRefetching,
+	const tableData = useCampaignTableData(filter, controls);
+	const bulkAction = useCampaignStatusBulkAction({
+		selectedRowIds: controls.selectedRowIds,
+		isInteractionBlocked: tableData.isShowingPlaceholderData,
+		onClearSelection: () => controls.setSelectedRowIds([]),
 	});
-	const canOpenStatusDialog =
-		controls.selectedRowIds.length > 0 && controls.pendingStatus !== null;
-	const pendingStatusLabel = formatCampaignStatusLabel(controls.pendingStatus);
-
-	const tableView = useMemo(
-		() =>
-			viewState.kind !== "table"
-				? null
-				: deriveCampaignTableView({
-						rows: viewState.rows,
-						searchTerm: controls.searchTerm,
-						page: controls.page,
-						pageSize,
-						sort: controls.sort,
-					}),
-		[controls.page, controls.searchTerm, controls.sort, viewState],
-	);
-
-	const selectableRowIds = tableView?.rows.map((row) => row.id) ?? [];
-	const selectedVisibleRowIds = selectableRowIds.filter((rowId) =>
-		controls.selectedRowIds.includes(rowId),
-	);
-	const areAllVisibleRowsSelected =
-		selectableRowIds.length > 0 &&
-		selectedVisibleRowIds.length === selectableRowIds.length;
-	const isPartiallySelected =
-		selectedVisibleRowIds.length > 0 && !areAllVisibleRowsSelected;
+	const isInteractionDisabled =
+		tableData.isShowingPlaceholderData || bulkAction.isSubmitting;
 
 	useEffect(() => {
 		if (selectAllCheckboxRef.current) {
-			selectAllCheckboxRef.current.indeterminate = isPartiallySelected;
+			selectAllCheckboxRef.current.indeterminate =
+				tableData.isPartiallySelected;
 		}
-	}, [isPartiallySelected]);
+	}, [tableData.isPartiallySelected]);
 
-	useEffect(() => {
-		if (tableView === null) {
-			return;
-		}
-
-		const availableRowIds = new Set(
-			viewState.kind === "table" ? viewState.rows.map((row) => row.id) : [],
-		);
-		const nextSelectedRowIds = controls.selectedRowIds.filter((rowId) =>
-			availableRowIds.has(rowId),
-		);
-
-		if (nextSelectedRowIds.length !== controls.selectedRowIds.length) {
-			controls.setSelectedRowIds(nextSelectedRowIds);
-		}
-	}, [controls, tableView, viewState]);
-
-	async function handleConfirmStatusChange() {
-		if (
-			controls.pendingStatus === null ||
-			controls.selectedRowIds.length === 0
-		) {
-			return;
-		}
-
-		setStatusUpdateErrorMessage(null);
-
-		try {
-			await updateCampaignStatusesMutation.mutateAsync({
-				ids: controls.selectedRowIds,
-				status: controls.pendingStatus,
-			});
-			setIsStatusDialogOpen(false);
-			controls.setSelectedRowIds([]);
-			controls.setPendingStatus(null);
-		} catch (error) {
-			setStatusUpdateErrorMessage(
-				error instanceof Error
-					? error.message
-					: "알 수 없는 오류가 발생했습니다.",
-			);
-		}
-	}
-
-	if (viewState.kind === "loading") {
+	if (tableData.viewState.kind === "loading") {
 		return <CampaignTableLoadingState />;
 	}
 
-	if (viewState.kind === "full-error") {
-		return <CampaignTableErrorState errorMessage={viewState.errorMessage} />;
+	if (tableData.viewState.kind === "full-error") {
+		return (
+			<CampaignTableErrorState
+				errorMessage={tableData.viewState.errorMessage}
+			/>
+		);
 	}
 
-	if (tableView === null) {
+	if (tableData.tableView === null) {
 		return <CampaignTableLoadingState />;
 	}
 
+	const tableView = tableData.tableView;
 	const tableRows = tableView.rows.map((row) => ({
 		id: row.id,
 		select: (
@@ -347,6 +199,7 @@ export function CampaignTableCard() {
 				aria-label={`${row.name} 선택`}
 				checked={controls.selectedRowIds.includes(row.id)}
 				className="size-4 rounded border border-outline accent-primary"
+				disabled={isInteractionDisabled}
 				type="checkbox"
 				onChange={() => controls.toggleRowSelection(row.id)}
 			/>
@@ -370,7 +223,7 @@ export function CampaignTableCard() {
 		roas: formatCampaignMetric(row.roas, "percent"),
 	}));
 	const emptyStateMessage =
-		tableView.totalCount === 0
+		tableData.tableView.totalCount === 0
 			? "조건에 맞는 캠페인이 없습니다."
 			: "검색 결과가 없습니다.";
 
@@ -382,34 +235,27 @@ export function CampaignTableCard() {
 					filteredCount={tableView.filteredCount}
 					totalCount={tableView.totalCount}
 					selectedCount={controls.selectedRowIds.length}
-					pendingStatus={controls.pendingStatus}
-					canApplyStatusChange={canOpenStatusDialog}
+					pendingStatus={bulkAction.pendingStatus}
+					disabled={isInteractionDisabled}
+					canApplyStatusChange={bulkAction.canOpenDialog}
 					onSearchTermChange={controls.setSearchTerm}
-					onPendingStatusChange={(nextPendingStatus) => {
-						setStatusUpdateErrorMessage(null);
-						controls.setPendingStatus(nextPendingStatus);
-					}}
-					onOpenStatusDialog={() => {
-						if (!canOpenStatusDialog) {
-							return;
-						}
-
-						setStatusUpdateErrorMessage(null);
-						setIsStatusDialogOpen(true);
-					}}
+					onPendingStatusChange={bulkAction.setPendingStatus}
+					onOpenStatusDialog={bulkAction.openDialog}
 				/>
 
-				{viewState.staleErrorMessage ? (
+				{tableData.viewState.staleErrorMessage ? (
 					<div className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-3 text-body-sm text-status-danger-fg">
 						<p>
 							최신 캠페인 데이터를 불러오지 못해 마지막 성공 결과를 표시
 							중입니다.
 						</p>
-						<p className="mt-1 text-caption">{viewState.staleErrorMessage}</p>
+						<p className="mt-1 text-caption">
+							{tableData.viewState.staleErrorMessage}
+						</p>
 					</div>
 				) : null}
 
-				{viewState.isSyncing ? (
+				{tableData.viewState.isSyncing ? (
 					<p
 						className="text-body-sm text-fg-muted"
 						role="status"
@@ -427,6 +273,7 @@ export function CampaignTableCard() {
 									key={row.id}
 									row={row}
 									selected={controls.selectedRowIds.includes(row.id)}
+									disabled={isInteractionDisabled}
 									statusToneClassName={getStatusToneClassName(row.status)}
 									onToggleSelection={() => controls.toggleRowSelection(row.id)}
 								/>
@@ -442,16 +289,17 @@ export function CampaignTableCard() {
 										<input
 											ref={selectAllCheckboxRef}
 											aria-checked={
-												isPartiallySelected
+												tableData.isPartiallySelected
 													? "mixed"
-													: areAllVisibleRowsSelected
+													: tableData.areAllVisibleRowsSelected
 											}
 											aria-label="현재 페이지 캠페인 모두 선택"
-											checked={areAllVisibleRowsSelected}
+											checked={tableData.areAllVisibleRowsSelected}
 											className="size-4 rounded border border-outline accent-primary"
+											disabled={isInteractionDisabled}
 											type="checkbox"
 											onChange={() =>
-												controls.togglePageSelection(selectableRowIds)
+												controls.togglePageSelection(tableData.selectableRowIds)
 											}
 										/>
 									),
@@ -464,6 +312,7 @@ export function CampaignTableCard() {
 									header: (
 										<SortableColumnHeader
 											active={controls.sort?.key === "period"}
+											disabled={isInteractionDisabled}
 											direction={
 												controls.sort?.key === "period"
 													? controls.sort.direction
@@ -479,6 +328,7 @@ export function CampaignTableCard() {
 									header: (
 										<SortableColumnHeader
 											active={controls.sort?.key === "cost"}
+											disabled={isInteractionDisabled}
 											direction={
 												controls.sort?.key === "cost"
 													? controls.sort.direction
@@ -495,6 +345,7 @@ export function CampaignTableCard() {
 									header: (
 										<SortableColumnHeader
 											active={controls.sort?.key === "ctr"}
+											disabled={isInteractionDisabled}
 											direction={
 												controls.sort?.key === "ctr"
 													? controls.sort.direction
@@ -511,6 +362,7 @@ export function CampaignTableCard() {
 									header: (
 										<SortableColumnHeader
 											active={controls.sort?.key === "cpc"}
+											disabled={isInteractionDisabled}
 											direction={
 												controls.sort?.key === "cpc"
 													? controls.sort.direction
@@ -527,6 +379,7 @@ export function CampaignTableCard() {
 									header: (
 										<SortableColumnHeader
 											active={controls.sort?.key === "roas"}
+											disabled={isInteractionDisabled}
 											direction={
 												controls.sort?.key === "roas"
 													? controls.sort.direction
@@ -557,7 +410,7 @@ export function CampaignTableCard() {
 							type="button"
 							size="sm"
 							variant="outline"
-							disabled={tableView.page <= 1}
+							disabled={isInteractionDisabled || tableView.page <= 1}
 							onClick={() => controls.setPage(tableView.page - 1)}
 						>
 							이전
@@ -566,7 +419,9 @@ export function CampaignTableCard() {
 							type="button"
 							size="sm"
 							variant="outline"
-							disabled={tableView.page >= tableView.totalPages}
+							disabled={
+								isInteractionDisabled || tableView.page >= tableView.totalPages
+							}
 							onClick={() => controls.setPage(tableView.page + 1)}
 						>
 							다음
@@ -576,22 +431,14 @@ export function CampaignTableCard() {
 			</div>
 
 			<CampaignTableStatusDialog
-				open={isStatusDialogOpen}
+				open={bulkAction.isDialogOpen}
 				selectedCount={controls.selectedRowIds.length}
-				statusLabel={pendingStatusLabel}
-				errorMessage={statusUpdateErrorMessage}
-				isSubmitting={updateCampaignStatusesMutation.isPending}
-				canConfirm={
-					controls.selectedRowIds.length > 0 && controls.pendingStatus !== null
-				}
-				onOpenChange={(open) => {
-					setIsStatusDialogOpen(open);
-
-					if (!open) {
-						setStatusUpdateErrorMessage(null);
-					}
-				}}
-				onConfirm={handleConfirmStatusChange}
+				statusLabel={bulkAction.pendingStatusLabel}
+				errorMessage={bulkAction.errorMessage}
+				isSubmitting={bulkAction.isSubmitting}
+				canConfirm={bulkAction.canConfirm}
+				onOpenChange={bulkAction.setDialogOpen}
+				onConfirm={bulkAction.confirm}
 			/>
 		</section>
 	);

@@ -1,27 +1,20 @@
 import { useState } from "react";
-import type { CampaignStatus } from "@/entities/global-filter/model/types";
-
-export type CampaignTableSortKey = "period" | "cost" | "ctr" | "cpc" | "roas";
-export type CampaignTableSortDirection = "asc" | "desc";
-
-export interface CampaignTableSortState {
-	key: CampaignTableSortKey;
-	direction: CampaignTableSortDirection;
-}
+import type {
+	CampaignTableSortKey,
+	CampaignTableSortState,
+} from "@/widgets/campaign-table/model/campaign-table-sort";
 
 export interface CampaignTableControls {
 	searchTerm: string;
 	page: number;
 	sort: CampaignTableSortState | null;
 	selectedRowIds: string[];
-	pendingStatus: CampaignStatus | null;
 	setSearchTerm: (nextSearchTerm: string) => void;
 	setPage: (nextPage: number) => void;
 	toggleSort: (nextSortKey: CampaignTableSortKey) => void;
 	toggleRowSelection: (rowId: string) => void;
 	togglePageSelection: (pageRowIds: string[]) => void;
 	setSelectedRowIds: (nextSelectedRowIds: string[]) => void;
-	setPendingStatus: (nextPendingStatus: CampaignStatus | null) => void;
 }
 
 export function useCampaignTableControls() {
@@ -29,9 +22,6 @@ export function useCampaignTableControls() {
 	const [page, setPageState] = useState(1);
 	const [sort, setSort] = useState<CampaignTableSortState | null>(null);
 	const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
-	const [pendingStatus, setPendingStatus] = useState<CampaignStatus | null>(
-		null,
-	);
 
 	function setSearchTerm(nextSearchTerm: string) {
 		setSearchTermState(nextSearchTerm);
@@ -94,13 +84,11 @@ export function useCampaignTableControls() {
 		page,
 		sort,
 		selectedRowIds,
-		pendingStatus,
 		setSearchTerm,
 		setPage,
 		toggleSort,
 		toggleRowSelection,
 		togglePageSelection,
 		setSelectedRowIds,
-		setPendingStatus,
 	} satisfies CampaignTableControls;
 }

@@ -422,6 +422,113 @@ describe("CampaignTableCard", () => {
 		expect(screen.getByRole("button", { name: "상태 적용" })).toBeEnabled();
 	});
 
+	it("disables table interactions while previous rows are shown during a filter transition", async () => {
+		seedMockDb({
+			campaigns: [
+				{
+					id: "campaign-april",
+					name: "4월 브랜드 검색",
+					platform: "Google",
+					status: "active",
+					budget: 1000000,
+					startDate: "2026-04-01",
+					endDate: "2026-04-30",
+				},
+				{
+					id: "campaign-may",
+					name: "5월 신규 캠페인",
+					platform: "Meta",
+					status: "paused",
+					budget: 800000,
+					startDate: "2026-05-01",
+					endDate: "2026-05-31",
+				},
+			],
+			daily_stats: [
+				{
+					id: "daily-april",
+					campaignId: "campaign-april",
+					date: "2026-04-10",
+					impressions: 1200,
+					clicks: 30,
+					conversions: 4,
+					cost: 150000,
+					conversionsValue: 450000,
+				},
+				{
+					id: "daily-may",
+					campaignId: "campaign-may",
+					date: "2026-05-10",
+					impressions: 900,
+					clicks: 18,
+					conversions: 2,
+					cost: 90000,
+					conversionsValue: 180000,
+				},
+			],
+		});
+		const mayCampaignRequestGate: { release: null | (() => void) } = {
+			release: null,
+		};
+		const user = userEvent.setup();
+
+		server.use(
+			http.get("/campaigns", async ({ request }) => {
+				const requestUrl = new URL(request.url);
+
+				if (
+					requestUrl.searchParams.get("startDate") ===
+					mayFilter.dateRange.startDate
+				) {
+					await new Promise<void>((resolve) => {
+						mayCampaignRequestGate.release = resolve;
+					});
+				}
+
+				return undefined;
+			}),
+		);
+
+		renderCampaignTableCard({ withMayFilterButton: true });
+
+		await screen.findByText("4월 브랜드 검색");
+		await user.click(
+			screen.getByRole("checkbox", { name: "4월 브랜드 검색 선택" }),
+		);
+		await user.selectOptions(
+			screen.getByRole("combobox", { name: "변경할 상태" }),
+			"ended",
+		);
+
+		expect(screen.getByRole("button", { name: "상태 적용" })).toBeEnabled();
+
+		await user.click(screen.getByRole("button", { name: "5월 필터 적용" }));
+
+		expect(await screen.findByText("동기화 중")).toBeVisible();
+		expect(screen.getByText("4월 브랜드 검색")).toBeVisible();
+		expect(
+			screen.getByRole("searchbox", { name: "캠페인 검색" }),
+		).toBeDisabled();
+		expect(
+			screen.getByRole("combobox", { name: "변경할 상태" }),
+		).toBeDisabled();
+		expect(
+			screen.getByRole("checkbox", { name: "4월 브랜드 검색 선택" }),
+		).toBeDisabled();
+		expect(screen.getByRole("button", { name: "상태 적용" })).toBeDisabled();
+		expect(
+			screen.queryByRole("dialog", { name: "캠페인 상태 변경" }),
+		).not.toBeInTheDocument();
+
+		const releasePendingMayCampaignRequest = mayCampaignRequestGate.release;
+
+		if (typeof releasePendingMayCampaignRequest === "function") {
+			releasePendingMayCampaignRequest();
+		}
+
+		expect(await screen.findByText("5월 신규 캠페인")).toBeVisible();
+	});
+
 	it("clears selection and disables apply when the selected rows disappear after a filter change", async () => {
 		seedMockDb({
 			campaigns: [
@@ -483,7 +590,7 @@ describe("CampaignTableCard", () => {
 		expect(screen.getByText("선택 1건")).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: "상태 적용" })).toBeEnabled();
 
-		screen.getByText("5월 필터 적용").click();
+		await user.click(screen.getByRole("button", { name: "5월 필터 적용" }));
 
 		expect(await screen.findByText("5월 신규 캠페인")).toBeInTheDocument();
 		expect(screen.getByText("선택 0건")).toBeInTheDocument();
@@ -571,7 +678,7 @@ describe("CampaignTableCard", () => {
 		});
 		expect(
 			within(updatedDialog).getByText(
-				"선택한 캠페인 0건의 상태를 종료로 변경합니다.",
+				"선택한 캠페인 0건의 상태를 -로 변경합니다.",
 			),
 		).toBeVisible();
 		expect(

@@ -10,7 +10,6 @@ describe("useCampaignTableControls", () => {
 		expect(result.current.page).toBe(1);
 		expect(result.current.sort).toBeNull();
 		expect(result.current.selectedRowIds).toEqual([]);
-		expect(result.current.pendingStatus).toBeNull();
 
 		act(() => {
 			result.current.setPage(3);
@@ -89,11 +88,5 @@ describe("useCampaignTableControls", () => {
 		});
 
 		expect(result.current.selectedRowIds).toEqual([]);
-
-		act(() => {
-			result.current.setPendingStatus("paused");
-		});
-
-		expect(result.current.pendingStatus).toBe("paused");
 	});
 });

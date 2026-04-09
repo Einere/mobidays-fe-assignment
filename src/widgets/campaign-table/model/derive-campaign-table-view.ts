@@ -2,7 +2,7 @@ import type { CampaignTableRow } from "@/entities/campaign/lib/build-campaign-ta
 import type {
 	CampaignTableSortKey,
 	CampaignTableSortState,
-} from "@/widgets/campaign-table/model/use-campaign-table-controls";
+} from "@/widgets/campaign-table/model/campaign-table-sort";
 
 export interface CampaignTableView {
 	totalCount: number;
