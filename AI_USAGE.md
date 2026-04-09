@@ -1,13 +1,6 @@
 # 사용한 AI 도구
 
-## Claude Code
-
-- 정보 분석
-- 프로젝트 초기화
-
-## Codex
-
-- 디자인 시스템 구체화 및 구현
+## Claude Code + Codex
 
 # 기술스택 선정 과정
 
@@ -16,6 +9,23 @@
 # 기본적인 구현 시 주의사항
 
 [implementation-notes.md](./docs/implementation-notes.md)
+
+# AI 도구 활용
+
+기본적으로 기능 구현 시 superpower 를 이용해서 SDD로 구현합니다. 기본적인 워크플로우는 다음과 같습니다.
+- 스펙 정의 - 리뷰 - 계획 수립 - 리뷰 - 서브 에이전트 기반 구현 - 리뷰
+
+추가로 디자인을 위해 Google Stitch를 이용해 디자인 시스템을 가볍게 정의하고, 이를 기반으로 디자인 시스템을 구체화했습니다.
+ 
+각 기능 구현 후, 네 가지 서브에이전트 병렬 실행으로 코드리뷰를 진행했습니다.
+
+> 비록 Superpower 워크플로우가 매 단계마다 서브 에이전트가 자체적으로 코드리뷰를 하기는 하지만, 더 높은 퀄리티를 위해 직접 유저테스트와 함께 별도의 코드리뷰도 진행했습니다.
+
+1. requesting-code-review 기반 코드 리뷰
+2. vercel-react-best-practice 기반 코드 리뷰
+3. 자체 구현 스킬인 Frontend Clean Code 기반 코드 리뷰
+4. Impeccable 기반 코드 리뷰
+
 
 
 # 의사결정 과정
