@@ -3,6 +3,7 @@ import { TextInput } from "@/shared/ui/input.tsx";
 import { SidebarNav } from "@/shared/ui/sidebar.tsx";
 import { useCampaignTableControls } from "@/widgets/campaign-table/model/use-campaign-table-controls";
 import { CampaignTablePlaceholder } from "@/widgets/campaign-table/ui/campaign-table-placeholder";
+import { DailyTrendChartCard } from "@/widgets/daily-trend-chart/ui/daily-trend-chart-card";
 import { GlobalFilterBar } from "@/widgets/global-filter/ui/global-filter-bar";
 import { GlobalFilterSummary } from "@/widgets/global-filter/ui/global-filter-summary";
 
@@ -48,75 +49,46 @@ function App() {
 						<GlobalFilterSummary />
 					</section>
 
-					<section className="grid gap-panel-gap lg:grid-cols-[1.4fr_1fr]">
-						<div className="rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel">
-							<div className="flex items-start justify-between gap-4">
-								<div className="flex flex-col gap-2">
-									<h2 className="text-heading-lg">성과 개요</h2>
-								</div>
-								<div className="flex gap-2">
-									<Button size="sm" variant="outline">
-										지난 7일
-									</Button>
-									<Button size="sm">보고서 내보내기</Button>
-								</div>
-							</div>
+					<DailyTrendChartCard />
 
-							<div className="mt-8 grid gap-4 md:grid-cols-3">
-								<div className="rounded-card bg-panel-muted p-4">
-									<p className="text-caption text-fg-subtle">총 집행 금액</p>
-									<p className="mt-2 text-metric-lg">₩128.4M</p>
-								</div>
-								<div className="rounded-card bg-panel-muted p-4">
-									<p className="text-caption text-fg-subtle">전환율</p>
-									<p className="mt-2 text-metric-lg">4.82%</p>
-								</div>
-								<div className="rounded-card bg-panel-muted p-4">
-									<p className="text-caption text-fg-subtle">CPA</p>
-									<p className="mt-2 text-metric-lg">₩18,240</p>
-								</div>
-							</div>
+					<section className="rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel">
+						<h2 className="text-title">운영 상태</h2>
+						<div className="mt-5 flex flex-wrap gap-2">
+							<span className="rounded-pill border border-status-success-border bg-status-success px-3 py-1 text-caption text-status-success-fg">
+								운영 중
+							</span>
+							<span className="rounded-pill border border-status-warning-border bg-status-warning px-3 py-1 text-caption text-status-warning-fg">
+								검토 필요
+							</span>
+							<span className="rounded-pill border border-status-danger-border bg-status-danger px-3 py-1 text-caption text-status-danger-fg">
+								예산 초과
+							</span>
+							<span className="rounded-pill border border-status-info-border bg-status-info px-3 py-1 text-caption text-status-info-fg">
+								동기화 중
+							</span>
 						</div>
 
-						<div className="rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel">
-							<h2 className="text-title">운영 상태</h2>
-							<div className="mt-5 flex flex-wrap gap-2">
-								<span className="rounded-pill border border-status-success-border bg-status-success px-3 py-1 text-caption text-status-success-fg">
-									운영 중
-								</span>
-								<span className="rounded-pill border border-status-warning-border bg-status-warning px-3 py-1 text-caption text-status-warning-fg">
-									검토 필요
-								</span>
-								<span className="rounded-pill border border-status-danger-border bg-status-danger px-3 py-1 text-caption text-status-danger-fg">
-									예산 초과
-								</span>
-								<span className="rounded-pill border border-status-info-border bg-status-info px-3 py-1 text-caption text-status-info-fg">
-									동기화 중
-								</span>
+						<div className="mt-8 flex flex-col gap-3">
+							<div className="flex items-center justify-between text-table-sm text-fg-muted">
+								<span>안정 운영</span>
+								<span>+18.4%</span>
 							</div>
-
-							<div className="mt-8 flex flex-col gap-3">
-								<div className="flex items-center justify-between text-table-sm text-fg-muted">
-									<span>안정 운영</span>
-									<span>+18.4%</span>
-								</div>
-								<div className="h-2 rounded-full bg-panel-muted">
-									<div className="h-full w-[72%] rounded-full bg-chart-positive" />
-								</div>
-								<div className="flex items-center justify-between text-table-sm text-fg-muted">
-									<span>주의 필요</span>
-									<span>7 캠페인</span>
-								</div>
-								<div className="h-2 rounded-full bg-panel-muted">
-									<div className="h-full w-[48%] rounded-full bg-chart-warning" />
-								</div>
-								<div className="flex items-center justify-between text-table-sm text-fg-muted">
-									<span>긴급 대응</span>
-									<span>2 캠페인</span>
-								</div>
-								<div className="h-2 rounded-full bg-panel-muted">
-									<div className="h-full w-[21%] rounded-full bg-chart-danger" />
-								</div>
+							<div className="h-2 rounded-full bg-panel-muted">
+								<div className="h-full w-[72%] rounded-full bg-chart-positive" />
+							</div>
+							<div className="flex items-center justify-between text-table-sm text-fg-muted">
+								<span>주의 필요</span>
+								<span>7 캠페인</span>
+							</div>
+							<div className="h-2 rounded-full bg-panel-muted">
+								<div className="h-full w-[48%] rounded-full bg-chart-warning" />
+							</div>
+							<div className="flex items-center justify-between text-table-sm text-fg-muted">
+								<span>긴급 대응</span>
+								<span>2 캠페인</span>
+							</div>
+							<div className="h-2 rounded-full bg-panel-muted">
+								<div className="h-full w-[21%] rounded-full bg-chart-danger" />
 							</div>
 						</div>
 					</section>

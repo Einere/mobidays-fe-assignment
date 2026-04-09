@@ -173,6 +173,7 @@
 	--chart-positive: var(--color-teal-600);
 	--chart-warning: var(--color-amber-500);
 	--chart-danger: var(--color-red-500);
+	--chart-info: var(--color-sky-500);
 	--chart-baseline: var(--color-slate-500);
 	--chart-comparison: var(--color-navy-500);
 
@@ -315,6 +316,7 @@
 	--chart-positive: #5eead4;
 	--chart-warning: #fbbf24;
 	--chart-danger: #f87171;
+	--chart-info: #7dd3fc;
 	--chart-baseline: #94a3b8;
 	--chart-comparison: #bfd2ff;
 }
