@@ -177,6 +177,7 @@ function DailyTrendChartCardMeta({
 				</div>
 			) : null}
 
+			{/* TODO: 제거하던지 위치를 헤더쪽으로 옮기던가 해야 할 듯. 레이아웃 시프트가 발생해서 신경쓰임 */}
 			{viewState.isSyncing ? (
 				<p
 					className="typo-body-sm text-fg-muted"
