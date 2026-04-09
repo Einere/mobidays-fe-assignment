@@ -89,6 +89,9 @@ describe("GlobalFilterSummary", () => {
 		expect(screen.queryByText("조회 상태")).not.toBeInTheDocument();
 		expect(screen.getByText("캠페인 결과")).toBeInTheDocument();
 		expect(screen.getByText("일별 데이터 결과")).toBeInTheDocument();
+		expect(getCampaignResultCard()?.parentElement?.className).toContain(
+			"grid-cols-2",
+		);
 		expect(dateRangeLabel.className).toContain("mb-2");
 		expect(screen.getByText("Google, Meta, Naver")).toBeInTheDocument();
 	});

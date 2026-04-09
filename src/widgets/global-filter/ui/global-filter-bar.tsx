@@ -77,7 +77,7 @@ export function GlobalFilterBar() {
 	return (
 		<section className="rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel">
 			<div className="flex flex-col gap-5">
-				<div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+				<div className="flex items-start justify-between gap-3">
 					<div>
 						<h2 className="typo-heading-md">글로벌 필터</h2>
 					</div>
@@ -127,7 +127,10 @@ export function GlobalFilterBar() {
 						/>
 					</div>
 
-					<div className="grid gap-3 md:hidden">
+					<div
+						className="grid grid-cols-2 gap-3 md:hidden"
+						data-testid="mobile-filter-grid"
+					>
 						<FilterDropdown
 							groupLabel="상태"
 							options={statusOptions}
