@@ -13,10 +13,8 @@ import {
 import { seedMockDb } from "@/shared/api/mock/db";
 import { server } from "@/shared/api/mock/server";
 import { createQueryClient } from "@/shared/api/query-client";
-import {
-	DailyTrendChartCard,
-	toggleDailyTrendMetricSelection,
-} from "@/widgets/daily-trend-chart/ui/daily-trend-chart-card";
+import { DailyTrendChartCard } from "@/widgets/daily-trend-chart/ui/daily-trend-chart-card";
+import { toggleDailyTrendMetricSelection } from "@/widgets/daily-trend-chart/ui/daily-trend-line-chart";
 
 const aprilFilter = createInitialGlobalFilterState(new Date("2026-04-15"));
 const queryClients: QueryClient[] = [];
@@ -142,11 +140,39 @@ function getClosestSection(element: HTMLElement) {
 }
 
 function expectSectionToPrecede(first: HTMLElement, second: HTMLElement) {
-	expect(first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+	expect(
+		first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING,
+	).toBeTruthy();
 }
 
 describe("DailyTrendChartCard", () => {
 	it("keeps filter sections above the chart and the chart ahead of status and campaign sections in App", async () => {
+		seedMockDb({
+			campaigns: [
+				{
+					id: "1",
+					name: "Google Active",
+					platform: "Google",
+					status: "active",
+					budget: 1000,
+					startDate: "2026-04-01",
+					endDate: "2026-04-30",
+				},
+			],
+			daily_stats: [
+				{
+					id: "d1",
+					campaignId: "1",
+					date: "2026-04-01",
+					impressions: 100,
+					clicks: 10,
+					conversions: 1,
+					cost: 1000,
+					conversionsValue: null,
+				},
+			],
+		});
+
 		renderApp();
 
 		const filterSection = getClosestSection(
@@ -171,7 +197,9 @@ describe("DailyTrendChartCard", () => {
 			),
 		).toBeInTheDocument();
 		expect(
-			within(chartSection).getByRole("group", { name: "일별 추이 메트릭" }),
+			await within(chartSection).findByRole("group", {
+				name: "일별 추이 메트릭",
+			}),
 		).toBeInTheDocument();
 		expect(
 			within(chartSection).getByRole("button", { name: "노출수" }),
@@ -288,8 +316,10 @@ describe("DailyTrendChartCard", () => {
 
 		renderChart();
 
+		await screen.findByTestId("daily-trend-line-chart");
+
 		expect(
-			await screen.findByRole("heading", { name: "성과 개요" }),
+			screen.getByRole("heading", { name: "성과 개요" }),
 		).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: "노출수" })).toHaveAttribute(
 			"aria-pressed",
@@ -330,10 +360,11 @@ describe("DailyTrendChartCard", () => {
 			rechartsState.lineProps.slice(-2).map((line) => ({
 				dataKey: line.dataKey,
 				connectNulls: line.connectNulls,
+				dot: line.dot,
 			})),
 		).toEqual([
-			{ dataKey: "impressions", connectNulls: false },
-			{ dataKey: "clicks", connectNulls: false },
+			{ dataKey: "impressions", connectNulls: false, dot: true },
+			{ dataKey: "clicks", connectNulls: false, dot: true },
 		]);
 		expect(
 			within(screen.getByTestId("tooltip")).getByText("클릭수"),
