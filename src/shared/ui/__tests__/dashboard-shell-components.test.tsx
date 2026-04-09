@@ -80,8 +80,8 @@ describe("dashboard shell components", () => {
 		expect(screen.getByText("브랜드 검색")).toBeInTheDocument();
 		expect(screen.getByText("운영 중")).toBeInTheDocument();
 		expect(screen.getByText("₩18,240").className).toContain("text-right");
-		expect(screen.getByRole("table", { name: "캠페인 상태 표" }).className).toContain(
-			"text-table-sm",
-		);
+		expect(
+			screen.getByRole("table", { name: "캠페인 상태 표" }).className,
+		).toContain("text-table-sm");
 	});
 });

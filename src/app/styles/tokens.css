@@ -173,25 +173,23 @@
 	--chart-positive: var(--color-teal-600);
 	--chart-warning: var(--color-amber-500);
 	--chart-danger: var(--color-red-500);
+	--chart-info: var(--color-sky-500);
 	--chart-baseline: var(--color-slate-500);
 	--chart-comparison: var(--color-navy-500);
 
 	/* Typography tokens */
-	--type-display-lg-size: var(--font-size-36);
-	--type-display-lg-line-height: var(--line-height-tight);
-	--type-display-lg-weight: var(--font-weight-semibold);
-
+	--type-heading-xl-size: var(--font-size-36);
+	--type-heading-xl-line-height: var(--line-height-tight);
+	--type-heading-xl-weight: var(--font-weight-semibold);
 	--type-heading-lg-size: var(--font-size-24);
 	--type-heading-lg-line-height: var(--line-height-snug);
 	--type-heading-lg-weight: var(--font-weight-semibold);
-
 	--type-heading-md-size: var(--font-size-20);
 	--type-heading-md-line-height: var(--line-height-snug);
 	--type-heading-md-weight: var(--font-weight-semibold);
-
-	--type-title-size: var(--font-size-16);
-	--type-title-line-height: var(--line-height-snug);
-	--type-title-weight: var(--font-weight-semibold);
+	--type-heading-sm-size: var(--font-size-16);
+	--type-heading-sm-line-height: var(--line-height-snug);
+	--type-heading-sm-weight: var(--font-weight-semibold);
 
 	--type-body-lg-size: var(--font-size-16);
 	--type-body-lg-line-height: var(--line-height-normal);
@@ -315,6 +313,7 @@
 	--chart-positive: #5eead4;
 	--chart-warning: #fbbf24;
 	--chart-danger: #f87171;
+	--chart-info: #7dd3fc;
 	--chart-baseline: #94a3b8;
 	--chart-comparison: #bfd2ff;
 }

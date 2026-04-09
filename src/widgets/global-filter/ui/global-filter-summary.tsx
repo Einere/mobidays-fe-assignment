@@ -30,7 +30,7 @@ export function GlobalFilterSummary() {
 				</p>
 
 				<div className="flex flex-col gap-2">
-					<h2 className="text-title">필터 결과 요약</h2>
+					<h2 className="text-heading-md">필터 결과 요약</h2>
 					<p className="text-body-sm text-fg-muted">
 						전역 필터 기준으로 결과 집합 크기를 확인합니다.
 					</p>

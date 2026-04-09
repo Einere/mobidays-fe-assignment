@@ -79,7 +79,7 @@ export function GlobalFilterBar() {
 			<div className="flex flex-col gap-5">
 				<div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
 					<div>
-						<h2 className="text-title">글로벌 필터</h2>
+						<h2 className="text-heading-md">글로벌 필터</h2>
 					</div>
 					<Button
 						type="button"

@@ -28,7 +28,7 @@ function SidebarNav({ title, items, className }: SidebarNavProps) {
 				<p className="text-caption tracking-[0.08em] text-fg-subtle uppercase">
 					Workspace
 				</p>
-				<h2 className="mt-2 text-title">{title}</h2>
+				<h2 className="mt-2 text-heading-md">{title}</h2>
 			</div>
 			<nav aria-label={title}>
 				<ul className="flex list-none flex-col gap-1 p-0">
