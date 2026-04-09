@@ -13,7 +13,10 @@ import {
 import { seedMockDb } from "@/shared/api/mock/db";
 import { server } from "@/shared/api/mock/server";
 import { createQueryClient } from "@/shared/api/query-client";
-import { DailyTrendChartCard } from "@/widgets/daily-trend-chart/ui/daily-trend-chart-card";
+import {
+	DailyTrendChartCard,
+	resolveDailyTrendChartViewState,
+} from "@/widgets/daily-trend-chart/ui/daily-trend-chart-card";
 import { toggleDailyTrendMetricSelection } from "@/widgets/daily-trend-chart/ui/daily-trend-line-chart";
 
 const aprilFilter = createInitialGlobalFilterState(new Date("2026-04-15"));
@@ -248,7 +251,7 @@ describe("DailyTrendChartCard", () => {
 		await screen.findByText("필터 조건에 맞는 캠페인이 없습니다.");
 	});
 
-	it("renders the line-chart controls with only default metrics exposed and both selected", async () => {
+	it("renders only the supported line-chart controls and keeps both selected by default", async () => {
 		rechartsState.tooltipLabel = "2026-04-02";
 		rechartsState.tooltipPayload = [
 			{
@@ -371,6 +374,67 @@ describe("DailyTrendChartCard", () => {
 		).toBeInTheDocument();
 		expect(
 			within(screen.getByTestId("tooltip")).getByText("1,234"),
+		).toBeInTheDocument();
+	});
+
+	it("formats tooltip values for non-visible metrics through the shared formatter contract", async () => {
+		rechartsState.tooltipLabel = "2026-04-02";
+		rechartsState.tooltipPayload = [
+			{
+				dataKey: "conversions",
+				name: "전환수",
+				value: 3,
+				color: "var(--chart-warning)",
+			},
+			{
+				dataKey: "cost",
+				name: "집행비용",
+				value: 3500,
+				color: "var(--chart-danger)",
+			},
+		];
+
+		seedMockDb({
+			campaigns: [
+				{
+					id: "1",
+					name: "Google Active",
+					platform: "Google",
+					status: "active",
+					budget: 1000,
+					startDate: "2026-04-01",
+					endDate: "2026-04-30",
+				},
+			],
+			daily_stats: [
+				{
+					id: "d1",
+					campaignId: "1",
+					date: "2026-04-02",
+					impressions: 100,
+					clicks: 10,
+					conversions: 3,
+					cost: 3500,
+					conversionsValue: null,
+				},
+			],
+		});
+
+		renderChart();
+
+		await screen.findByTestId("daily-trend-line-chart");
+
+		expect(
+			within(screen.getByTestId("tooltip")).getByText("전환수"),
+		).toBeInTheDocument();
+		expect(
+			within(screen.getByTestId("tooltip")).getByText("3"),
+		).toBeInTheDocument();
+		expect(
+			within(screen.getByTestId("tooltip")).getByText("집행비용"),
+		).toBeInTheDocument();
+		expect(
+			within(screen.getByTestId("tooltip")).getByText("₩3,500"),
 		).toBeInTheDocument();
 	});
 
@@ -783,5 +847,55 @@ describe("DailyTrendChartCard", () => {
 		expect(
 			screen.queryByText("성과 데이터를 불러오지 못했습니다."),
 		).not.toBeInTheDocument();
+	});
+
+	it("resolves the initial loading state before any successful snapshot exists", () => {
+		expect(
+			resolveDailyTrendChartViewState({
+				currentSnapshot: null,
+				errorMessage: null,
+				isError: false,
+				isFetching: false,
+				isPending: true,
+			}),
+		).toEqual({
+			kind: "loading",
+		});
+	});
+
+	it("resolves the stale chart state when a refetch fails after a successful snapshot", () => {
+		expect(
+			resolveDailyTrendChartViewState({
+				currentSnapshot: {
+					campaignsCount: 2,
+					chartData: [
+						{
+							date: "2026-04-01",
+							impressions: 300,
+							clicks: 30,
+							conversions: 3,
+							cost: 3500,
+						},
+					],
+				},
+				errorMessage: "Request failed: 500",
+				isError: true,
+				isFetching: false,
+				isPending: false,
+			}),
+		).toEqual({
+			chartData: [
+				{
+					date: "2026-04-01",
+					impressions: 300,
+					clicks: 30,
+					conversions: 3,
+					cost: 3500,
+				},
+			],
+			kind: "chart",
+			staleErrorMessage: "Request failed: 500",
+			isSyncing: false,
+		});
 	});
 });

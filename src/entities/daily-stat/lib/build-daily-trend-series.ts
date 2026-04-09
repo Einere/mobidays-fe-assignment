@@ -1,13 +1,8 @@
+import {
+	type DailyTrendMetricKey,
+	dailyTrendMetricKeys,
+} from "@/entities/daily-stat/model/daily-trend-metrics";
 import type { DashboardDailyStat } from "@/entities/dashboard/api/parse-dashboard-data";
-
-const dailyTrendMetricKeys = [
-	"impressions",
-	"clicks",
-	"conversions",
-	"cost",
-] as const;
-
-type DailyTrendMetricKey = (typeof dailyTrendMetricKeys)[number];
 
 export interface DailyTrendPoint {
 	date: string;

@@ -13,6 +13,27 @@ type ResolvedChartSnapshot = {
 	chartData: DailyTrendPoint[];
 };
 
+type DailyTrendChartViewState =
+	| {
+			kind: "loading";
+	  }
+	| {
+			kind: "full-error";
+			errorMessage: string;
+	  }
+	| {
+			kind: "empty-campaigns";
+	  }
+	| {
+			kind: "empty-data";
+	  }
+	| {
+			kind: "chart";
+			chartData: DailyTrendPoint[];
+			isSyncing: boolean;
+			staleErrorMessage: string | null;
+	  };
+
 function createResolvedChartSnapshot(
 	dailyStats: Parameters<typeof buildDailyTrendSeries>[0],
 	campaignsCount: number,
@@ -20,6 +41,52 @@ function createResolvedChartSnapshot(
 	return {
 		campaignsCount,
 		chartData: buildDailyTrendSeries(dailyStats),
+	};
+}
+
+export function resolveDailyTrendChartViewState({
+	currentSnapshot,
+	errorMessage,
+	isError,
+	isFetching,
+	isPending,
+}: {
+	currentSnapshot: ResolvedChartSnapshot | null;
+	errorMessage: string | null;
+	isError: boolean;
+	isFetching: boolean;
+	isPending: boolean;
+}): DailyTrendChartViewState {
+	if (currentSnapshot === null) {
+		if (isPending) {
+			return { kind: "loading" };
+		}
+
+		if (isError) {
+			return {
+				kind: "full-error",
+				errorMessage: errorMessage ?? "알 수 없는 오류가 발생했습니다.",
+			};
+		}
+
+		return { kind: "empty-data" };
+	}
+
+	if (currentSnapshot.campaignsCount === 0) {
+		return { kind: "empty-campaigns" };
+	}
+
+	if (currentSnapshot.chartData.length === 0) {
+		return { kind: "empty-data" };
+	}
+
+	return {
+		kind: "chart",
+		chartData: currentSnapshot.chartData,
+		isSyncing: isFetching,
+		staleErrorMessage: isError
+			? (errorMessage ?? "알 수 없는 오류가 발생했습니다.")
+			: null,
 	};
 }
 
@@ -42,10 +109,13 @@ export function DailyTrendChartCard() {
 
 	const currentSnapshot =
 		successfulSnapshot ?? lastSuccessfulSnapshotRef.current;
-	const isInitialLoading = query.isPending && currentSnapshot === null;
-	const isSyncing = query.isFetching && currentSnapshot !== null;
-	const shouldShowFullError = query.isError && currentSnapshot === null;
-	const shouldShowSecondaryError = query.isError && currentSnapshot !== null;
+	const viewState = resolveDailyTrendChartViewState({
+		currentSnapshot,
+		errorMessage: query.error?.message ?? null,
+		isError: query.isError,
+		isFetching: query.isFetching && currentSnapshot !== null,
+		isPending: query.isPending,
+	});
 
 	return (
 		<section className="rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel">
@@ -59,39 +129,38 @@ export function DailyTrendChartCard() {
 					</div>
 				</div>
 
-				{shouldShowFullError ? (
-					<div className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-5 text-body-sm text-status-danger-fg">
-						<p>성과 데이터를 불러오지 못했습니다.</p>
-						<p className="mt-1 text-caption">{query.error.message}</p>
-					</div>
-				) : isInitialLoading ? (
+				{viewState.kind === "loading" ? (
 					<div
 						className="h-80 rounded-card border border-outline-subtle bg-panel-muted"
 						data-testid="daily-trend-loading"
 					/>
-				) : currentSnapshot?.campaignsCount === 0 ? (
+				) : viewState.kind === "full-error" ? (
+					<div className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-5 text-body-sm text-status-danger-fg">
+						<p>성과 데이터를 불러오지 못했습니다.</p>
+						<p className="mt-1 text-caption">{viewState.errorMessage}</p>
+					</div>
+				) : viewState.kind === "empty-campaigns" ? (
 					<div className="flex h-80 items-center justify-center rounded-card border border-outline-subtle bg-panel-muted px-4 text-body-sm text-fg-muted">
 						필터 조건에 맞는 캠페인이 없습니다.
 					</div>
-				) : currentSnapshot === null ||
-					currentSnapshot.chartData.length === 0 ? (
+				) : viewState.kind === "empty-data" ? (
 					<div className="flex h-80 items-center justify-center rounded-card border border-outline-subtle bg-panel-muted px-4 text-body-sm text-fg-muted">
 						선택한 캠페인에 표시할 일별 데이터가 없습니다.
 					</div>
 				) : (
-					<DailyTrendLineChart data={currentSnapshot.chartData} />
+					<DailyTrendLineChart data={viewState.chartData} />
 				)}
 
-				{shouldShowSecondaryError ? (
+				{viewState.kind === "chart" && viewState.staleErrorMessage ? (
 					<div className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-3 text-body-sm text-status-danger-fg">
 						<p>
 							최신 성과 데이터를 불러오지 못해 마지막 성공 결과를 표시 중입니다.
 						</p>
-						<p className="mt-1 text-caption">{query.error.message}</p>
+						<p className="mt-1 text-caption">{viewState.staleErrorMessage}</p>
 					</div>
 				) : null}
 
-				{isSyncing ? (
+				{viewState.kind === "chart" && viewState.isSyncing ? (
 					<p
 						className="text-body-sm text-fg-muted"
 						role="status"

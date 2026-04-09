@@ -13,9 +13,10 @@ import {
 	defaultDailyTrendMetricKeys,
 	formatDailyTrendMetricValue,
 	getDailyTrendMetric,
+	visibleDailyTrendMetricKeys,
 } from "@/widgets/daily-trend-chart/model/metrics";
 
-const toggleMetricDefinitions = defaultDailyTrendMetricKeys.map((metricKey) =>
+const toggleMetricDefinitions = visibleDailyTrendMetricKeys.map((metricKey) =>
 	getDailyTrendMetric(metricKey),
 );
 
@@ -126,14 +127,10 @@ export function DailyTrendLineChart({
 						content={
 							<ChartTooltipContent
 								formatter={(value, metricKey) => {
-									if (metricKey === "impressions" || metricKey === "clicks") {
-										return formatDailyTrendMetricValue(
-											metricKey,
-											typeof value === "number" ? value : null,
-										);
-									}
-
-									return "-";
+									return formatDailyTrendMetricValue(
+										metricKey,
+										typeof value === "number" ? value : null,
+									);
 								}}
 							/>
 						}

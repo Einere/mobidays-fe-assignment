@@ -1,11 +1,14 @@
+import {
+	type DailyTrendMetricKey,
+	dailyTrendMetricKeys,
+} from "@/entities/daily-stat/model/daily-trend-metrics";
+
 const countFormatter = new Intl.NumberFormat("ko-KR");
 const costFormatter = new Intl.NumberFormat("ko-KR", {
 	style: "currency",
 	currency: "KRW",
 	maximumFractionDigits: 0,
 });
-
-type DailyTrendMetricKey = "impressions" | "clicks" | "conversions" | "cost";
 
 type DailyTrendMetricDefinition = {
 	key: DailyTrendMetricKey;
@@ -53,6 +56,11 @@ const dailyTrendMetricDefinitions = Object.values(
 	dailyTrendMetricRegistry,
 ) as readonly DailyTrendMetricDefinition[];
 
+const visibleDailyTrendMetricKeys = [
+	dailyTrendMetricRegistry.impressions.key,
+	dailyTrendMetricRegistry.clicks.key,
+] as const;
+
 const defaultDailyTrendMetricKeys = [
 	dailyTrendMetricRegistry.impressions.key,
 	dailyTrendMetricRegistry.clicks.key,
@@ -78,8 +86,10 @@ function formatDailyTrendMetricValue(
 export type { DailyTrendMetricDefinition, DailyTrendMetricKey };
 export {
 	dailyTrendMetricDefinitions,
+	dailyTrendMetricKeys,
 	dailyTrendMetricMap,
 	defaultDailyTrendMetricKeys,
 	formatDailyTrendMetricValue,
 	getDailyTrendMetric,
+	visibleDailyTrendMetricKeys,
 };
