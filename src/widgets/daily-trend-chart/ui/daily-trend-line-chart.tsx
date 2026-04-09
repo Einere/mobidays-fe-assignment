@@ -38,7 +38,11 @@ function formatYAxisTick(value: number) {
 	return numberFormatter.format(value);
 }
 
-function tooltipFormatter(value: unknown, metricKey: string) {
+function tooltipFormatter(value: unknown, metricKey?: string) {
+	if (metricKey === undefined) {
+		return formatDailyTrendMetricValue("impressions", null);
+	}
+
 	return formatDailyTrendMetricValue(
 		metricKey as DailyTrendMetricKey,
 		typeof value === "number" ? value : null,

@@ -1,7 +1,7 @@
 import { type QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Provider, useSetAtom } from "jotai";
+import { createStore, Provider, useSetAtom } from "jotai";
 import { HttpResponse, http } from "msw";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "@/App";
@@ -107,11 +107,14 @@ function SetMetaOnlyFilterButton() {
 
 function renderChart(options?: { withFilterButton?: boolean }) {
 	const queryClient = createQueryClient();
+	const store = createStore();
+
+	store.set(globalFilterAtom, aprilFilter);
 
 	queryClients.push(queryClient);
 
 	render(
-		<Provider initialValues={[[globalFilterAtom, aprilFilter]]}>
+		<Provider store={store}>
 			<QueryClientProvider client={queryClient}>
 				{options?.withFilterButton ? <SetMetaOnlyFilterButton /> : null}
 				<DailyTrendChartCard />
@@ -122,11 +125,14 @@ function renderChart(options?: { withFilterButton?: boolean }) {
 
 function renderApp() {
 	const queryClient = createQueryClient();
+	const store = createStore();
+
+	store.set(globalFilterAtom, aprilFilter);
 
 	queryClients.push(queryClient);
 
 	render(
-		<Provider initialValues={[[globalFilterAtom, aprilFilter]]}>
+		<Provider store={store}>
 			<QueryClientProvider client={queryClient}>
 				<App />
 			</QueryClientProvider>
@@ -253,7 +259,15 @@ describe("DailyTrendChartCard", () => {
 			expect(releaseCampaignRequest).not.toBeNull();
 		});
 
-		releaseCampaignRequest?.();
+		const releaseRequest = releaseCampaignRequest;
+
+		if (typeof releaseRequest !== "function") {
+			throw new Error(
+				"Expected the delayed campaign request to be registered.",
+			);
+		}
+
+		(releaseRequest as () => void)();
 
 		await screen.findByText("필터 조건에 맞는 캠페인이 없습니다.");
 	});
@@ -680,7 +694,15 @@ describe("DailyTrendChartCard", () => {
 			},
 		]);
 
-		releaseDelayedCampaignRequest?.();
+		const releaseRequest = releaseDelayedCampaignRequest;
+
+		if (typeof releaseRequest !== "function") {
+			throw new Error(
+				"Expected the delayed campaign request to be registered.",
+			);
+		}
+
+		(releaseRequest as () => void)();
 
 		await waitFor(() => {
 			expect(screen.queryByText("동기화 중")).not.toBeInTheDocument();

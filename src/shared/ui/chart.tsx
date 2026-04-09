@@ -1,11 +1,5 @@
 import * as React from "react";
-import {
-	Legend,
-	type LegendProps,
-	ResponsiveContainer,
-	Tooltip,
-	type TooltipProps,
-} from "recharts";
+import { Legend, ResponsiveContainer, Tooltip } from "recharts";
 
 import { cn } from "@/shared/lib/utils";
 
@@ -75,15 +69,28 @@ function formatChartValue(value: unknown) {
 	return String(value ?? "");
 }
 
+type ChartTooltipPayloadItem = {
+	dataKey?: string | number;
+	name?: string | number;
+	value?: unknown;
+	color?: unknown;
+};
+
+type ChartTooltipContentProps = {
+	active?: boolean;
+	payload?: ChartTooltipPayloadItem[];
+	label?: React.ReactNode;
+	className?: string;
+	formatter?: (value: unknown, name: string) => React.ReactNode;
+};
+
 function ChartTooltipContent({
 	active,
 	payload,
 	label,
 	className,
 	formatter,
-}: TooltipProps<number, string> & {
-	formatter?: (value: unknown, name: string) => React.ReactNode;
-}) {
+}: ChartTooltipContentProps) {
 	const { config } = useChart();
 
 	if (!active || !payload?.length) {
@@ -136,14 +143,24 @@ function ChartTooltipContent({
 function ChartTooltip({
 	content,
 	...props
-}: React.ComponentProps<typeof Tooltip>) {
+}: React.ComponentProps<typeof Tooltip> & {
+	content?: React.ReactElement<ChartTooltipContentProps>;
+}) {
 	return <Tooltip content={content ?? <ChartTooltipContent />} {...props} />;
 }
 
-function ChartLegendContent({
-	payload,
-	className,
-}: LegendProps & { className?: string }) {
+type ChartLegendPayloadItem = {
+	dataKey?: string | number;
+	value?: string | number;
+	color?: unknown;
+};
+
+type ChartLegendContentProps = {
+	payload?: ChartLegendPayloadItem[];
+	className?: string;
+};
+
+function ChartLegendContent({ payload, className }: ChartLegendContentProps) {
 	const { config } = useChart();
 
 	if (!payload?.length) {
@@ -185,7 +202,9 @@ function ChartLegendContent({
 function ChartLegend({
 	content,
 	...props
-}: React.ComponentProps<typeof Legend>) {
+}: React.ComponentProps<typeof Legend> & {
+	content?: React.ReactElement<ChartLegendContentProps>;
+}) {
 	return <Legend content={content ?? <ChartLegendContent />} {...props} />;
 }
 

@@ -210,7 +210,15 @@ describe("GlobalFilterSummary", () => {
 			within(getDateResultCard() as HTMLElement).getByText("2건"),
 		).toBeInTheDocument();
 
-		releaseDelayedCampaignRequest?.();
+		const releaseRequest = releaseDelayedCampaignRequest;
+
+		if (typeof releaseRequest !== "function") {
+			throw new Error(
+				"Expected the delayed campaign request to be registered.",
+			);
+		}
+
+		(releaseRequest as () => void)();
 
 		await waitFor(() => {
 			expect(
