@@ -87,7 +87,7 @@ export function DailyTrendMetricToggleGroup({
 }) {
 	return (
 		<fieldset
-			className="flex flex-wrap justify-end gap-2"
+			className="flex w-max flex-nowrap justify-end gap-2"
 			aria-label={metricGroupLabel}
 		>
 			<legend className="sr-only">{metricGroupLabel}</legend>
@@ -117,7 +117,10 @@ export function DailyTrendLineChart({
 	activeMetrics: DailyTrendMetricKey[];
 }) {
 	return (
-		<ChartContainer className="h-80" config={chartConfig}>
+		<ChartContainer
+			className="h-80 min-w-[720px] sm:min-w-0"
+			config={chartConfig}
+		>
 			<LineChart data={data}>
 				<CartesianGrid vertical={false} stroke="var(--color-outline-subtle)" />
 				<XAxis

@@ -155,7 +155,7 @@ function expectSectionToPrecede(first: HTMLElement, second: HTMLElement) {
 }
 
 describe("DailyTrendChartCard", () => {
-	it("keeps filter sections above the chart and the chart ahead of status and campaign sections in App", async () => {
+	it("keeps the page constrained and places the chart between filter sections and the campaign table in App", async () => {
 		seedMockDb({
 			campaigns: [
 				{
@@ -184,6 +184,8 @@ describe("DailyTrendChartCard", () => {
 
 		renderApp();
 
+		expect(screen.getByRole("main").className).toContain("overflow-x-hidden");
+
 		const filterSection = getClosestSection(
 			screen.getByRole("heading", { name: "글로벌 필터" }),
 		);
@@ -192,9 +194,6 @@ describe("DailyTrendChartCard", () => {
 		);
 		const chartSection = getClosestSection(
 			await screen.findByRole("heading", { name: "성과 개요" }),
-		);
-		const statusSection = getClosestSection(
-			screen.getByRole("heading", { name: "운영 상태" }),
 		);
 		const campaignSection = getClosestSection(
 			screen.getByRole("heading", { name: "캠페인 현황" }),
@@ -232,8 +231,45 @@ describe("DailyTrendChartCard", () => {
 
 		expectSectionToPrecede(filterSection, chartSection);
 		expectSectionToPrecede(summarySection, chartSection);
-		expectSectionToPrecede(chartSection, statusSection);
-		expectSectionToPrecede(statusSection, campaignSection);
+		expectSectionToPrecede(chartSection, campaignSection);
+	});
+
+	it("uses an in-card horizontal scroll area for the chart on narrow screens", async () => {
+		seedMockDb({
+			campaigns: [
+				{
+					id: "1",
+					name: "Google Active",
+					platform: "Google",
+					status: "active",
+					budget: 1000,
+					startDate: "2026-04-01",
+					endDate: "2026-04-30",
+				},
+			],
+			daily_stats: [
+				{
+					id: "d1",
+					campaignId: "1",
+					date: "2026-04-01",
+					impressions: 100,
+					clicks: 10,
+					conversions: 1,
+					cost: 1000,
+					conversionsValue: null,
+				},
+			],
+		});
+
+		renderChart();
+
+		const scrollArea = await screen.findByTestId("daily-trend-scroll-area");
+		const chart = within(scrollArea).getByTestId(
+			"responsive-container",
+		).parentElement;
+
+		expect(scrollArea.className).toContain("overflow-x-auto");
+		expect(chart?.className).toContain("min-w-[720px]");
 	});
 
 	it("renders a fixed-height loading placeholder during the initial query", async () => {

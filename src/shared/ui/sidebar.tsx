@@ -1,6 +1,9 @@
+import * as Dialog from "@radix-ui/react-dialog";
+import { Menu } from "lucide-react";
 import type * as React from "react";
 
 import { cn } from "@/shared/lib/utils";
+import { Button } from "@/shared/ui/button";
 
 type SidebarNavItem = {
 	id: string;
@@ -16,14 +19,12 @@ type SidebarNavProps = {
 	className?: string;
 };
 
-function SidebarNav({ title, items, className }: SidebarNavProps) {
+function SidebarNavList({
+	title,
+	items,
+}: Pick<SidebarNavProps, "title" | "items">) {
 	return (
-		<aside
-			className={cn(
-				"rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel",
-				className,
-			)}
-		>
+		<>
 			<div className="mb-5">
 				<p className="typo-caption tracking-[0.08em] text-fg-subtle uppercase">
 					Workspace
@@ -55,8 +56,46 @@ function SidebarNav({ title, items, className }: SidebarNavProps) {
 					))}
 				</ul>
 			</nav>
+		</>
+	);
+}
+
+function SidebarNav({ title, items, className }: SidebarNavProps) {
+	return (
+		<aside
+			className={cn(
+				"rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel",
+				className,
+			)}
+		>
+			<SidebarNavList title={title} items={items} />
 		</aside>
 	);
 }
 
-export { SidebarNav };
+function MobileSidebarNav({ title, items, className }: SidebarNavProps) {
+	return (
+		<Dialog.Root>
+			<Dialog.Trigger asChild>
+				<Button
+					type="button"
+					variant="outline"
+					size="icon"
+					className={cn("lg:hidden", className)}
+					aria-label="메뉴 열기"
+				>
+					<Menu aria-hidden="true" />
+				</Button>
+			</Dialog.Trigger>
+			<Dialog.Portal>
+				<Dialog.Overlay className="fixed inset-0 z-40 bg-black/35 backdrop-blur-[1px]" />
+				<Dialog.Content className="fixed inset-y-0 left-0 z-50 w-[min(88vw,22rem)] border-r border-outline-subtle bg-panel p-panel shadow-panel focus:outline-none">
+					<Dialog.Title className="sr-only">{title} 메뉴</Dialog.Title>
+					<SidebarNavList title={title} items={items} />
+				</Dialog.Content>
+			</Dialog.Portal>
+		</Dialog.Root>
+	);
+}
+
+export { MobileSidebarNav, SidebarNav };
