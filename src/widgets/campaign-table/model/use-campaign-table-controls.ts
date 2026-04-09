@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { CampaignStatus } from "@/entities/global-filter/model/types";
 
 export type CampaignTableSortKey = "period" | "cost" | "ctr" | "cpc" | "roas";
 export type CampaignTableSortDirection = "asc" | "desc";
@@ -13,11 +14,14 @@ export interface CampaignTableControls {
 	page: number;
 	sort: CampaignTableSortState | null;
 	selectedRowIds: string[];
+	pendingStatus: CampaignStatus | null;
 	setSearchTerm: (nextSearchTerm: string) => void;
 	setPage: (nextPage: number) => void;
 	toggleSort: (nextSortKey: CampaignTableSortKey) => void;
 	toggleRowSelection: (rowId: string) => void;
+	togglePageSelection: (pageRowIds: string[]) => void;
 	setSelectedRowIds: (nextSelectedRowIds: string[]) => void;
+	setPendingStatus: (nextPendingStatus: CampaignStatus | null) => void;
 }
 
 export function useCampaignTableControls() {
@@ -25,6 +29,9 @@ export function useCampaignTableControls() {
 	const [page, setPageState] = useState(1);
 	const [sort, setSort] = useState<CampaignTableSortState | null>(null);
 	const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
+	const [pendingStatus, setPendingStatus] = useState<CampaignStatus | null>(
+		null,
+	);
 
 	function setSearchTerm(nextSearchTerm: string) {
 		setSearchTermState(nextSearchTerm);
@@ -32,7 +39,9 @@ export function useCampaignTableControls() {
 	}
 
 	function setPage(nextPage: number) {
-		setPageState(Math.max(1, nextPage));
+		const normalizedPage = Number.isFinite(nextPage) ? Math.floor(nextPage) : 1;
+
+		setPageState(Math.max(1, normalizedPage));
 	}
 
 	function toggleSort(nextSortKey: CampaignTableSortKey) {
@@ -64,15 +73,34 @@ export function useCampaignTableControls() {
 		});
 	}
 
+	function togglePageSelection(pageRowIds: string[]) {
+		setSelectedRowIds((currentSelectedRowIds) => {
+			const areAllPageRowsSelected =
+				pageRowIds.length > 0 &&
+				pageRowIds.every((rowId) => currentSelectedRowIds.includes(rowId));
+
+			if (areAllPageRowsSelected) {
+				return currentSelectedRowIds.filter(
+					(selectedRowId) => !pageRowIds.includes(selectedRowId),
+				);
+			}
+
+			return Array.from(new Set([...currentSelectedRowIds, ...pageRowIds]));
+		});
+	}
+
 	return {
 		searchTerm,
 		page,
 		sort,
 		selectedRowIds,
+		pendingStatus,
 		setSearchTerm,
 		setPage,
 		toggleSort,
 		toggleRowSelection,
+		togglePageSelection,
 		setSelectedRowIds,
+		setPendingStatus,
 	} satisfies CampaignTableControls;
 }
