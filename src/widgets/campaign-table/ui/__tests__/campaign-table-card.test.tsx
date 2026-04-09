@@ -154,6 +154,14 @@ function seedPaginatedCampaignRows() {
 	});
 }
 
+async function selectCampaignStatus(
+	user: ReturnType<typeof userEvent.setup>,
+	label: "진행 중" | "일시중지" | "종료",
+) {
+	await user.click(screen.getByRole("combobox", { name: "변경할 상태" }));
+	await user.click(await screen.findByRole("option", { name: label }));
+}
+
 describe("CampaignTableCard", () => {
 	it("renders campaign rows with search, counts, and sortable columns", async () => {
 		seedDefaultCampaignRows();
@@ -311,7 +319,7 @@ describe("CampaignTableCard", () => {
 		});
 
 		expect(screen.getByText("선택 0건")).toBeInTheDocument();
-		expect(statusSelect).toHaveValue("");
+		expect(statusSelect).toHaveTextContent("상태 선택");
 		expect(applyButton).toBeDisabled();
 		expect(
 			screen.queryByRole("dialog", { name: "캠페인 상태 변경" }),
@@ -324,8 +332,9 @@ describe("CampaignTableCard", () => {
 		expect(screen.getByText("선택 1건")).toBeInTheDocument();
 		expect(applyButton).toBeDisabled();
 
-		await user.selectOptions(statusSelect, "ended");
+		await selectCampaignStatus(user, "종료");
 
+		expect(statusSelect).toHaveTextContent("종료");
 		expect(applyButton).toBeEnabled();
 
 		await user.click(applyButton);
@@ -349,10 +358,7 @@ describe("CampaignTableCard", () => {
 		await user.click(
 			screen.getByRole("checkbox", { name: "브랜드 검색 선택" }),
 		);
-		await user.selectOptions(
-			screen.getByRole("combobox", { name: "변경할 상태" }),
-			"ended",
-		);
+		await selectCampaignStatus(user, "종료");
 		await user.click(screen.getByRole("button", { name: "상태 적용" }));
 
 		const dialog = await screen.findByRole("dialog", {
@@ -374,9 +380,9 @@ describe("CampaignTableCard", () => {
 			expect(within(table).getByText("종료")).toBeInTheDocument();
 		});
 		expect(screen.getByText("선택 0건")).toBeInTheDocument();
-		expect(screen.getByRole("combobox", { name: "변경할 상태" })).toHaveValue(
-			"",
-		);
+		expect(
+			screen.getByRole("combobox", { name: "변경할 상태" }),
+		).toHaveTextContent("상태 선택");
 		expect(screen.getByRole("button", { name: "상태 적용" })).toBeDisabled();
 	});
 
@@ -396,10 +402,7 @@ describe("CampaignTableCard", () => {
 		await user.click(
 			screen.getByRole("checkbox", { name: "브랜드 검색 선택" }),
 		);
-		await user.selectOptions(
-			screen.getByRole("combobox", { name: "변경할 상태" }),
-			"paused",
-		);
+		await selectCampaignStatus(user, "일시중지");
 		await user.click(screen.getByRole("button", { name: "상태 적용" }));
 
 		const dialog = await screen.findByRole("dialog", {
@@ -416,9 +419,9 @@ describe("CampaignTableCard", () => {
 		expect(
 			await screen.findByRole("checkbox", { name: "브랜드 검색 선택" }),
 		).toBeChecked();
-		expect(screen.getByRole("combobox", { name: "변경할 상태" })).toHaveValue(
-			"paused",
-		);
+		expect(
+			screen.getByRole("combobox", { name: "변경할 상태" }),
+		).toHaveTextContent("일시중지");
 		expect(screen.getByRole("button", { name: "상태 적용" })).toBeEnabled();
 	});
 
@@ -495,10 +498,7 @@ describe("CampaignTableCard", () => {
 		await user.click(
 			screen.getByRole("checkbox", { name: "4월 브랜드 검색 선택" }),
 		);
-		await user.selectOptions(
-			screen.getByRole("combobox", { name: "변경할 상태" }),
-			"ended",
-		);
+		await selectCampaignStatus(user, "종료");
 
 		expect(screen.getByRole("button", { name: "상태 적용" })).toBeEnabled();
 
@@ -582,10 +582,7 @@ describe("CampaignTableCard", () => {
 		await user.click(
 			screen.getByRole("checkbox", { name: "4월 브랜드 검색 선택" }),
 		);
-		await user.selectOptions(
-			screen.getByRole("combobox", { name: "변경할 상태" }),
-			"ended",
-		);
+		await selectCampaignStatus(user, "종료");
 
 		expect(screen.getByText("선택 1건")).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: "상태 적용" })).toBeEnabled();
@@ -657,10 +654,7 @@ describe("CampaignTableCard", () => {
 		await user.click(
 			screen.getByRole("checkbox", { name: "4월 브랜드 검색 선택" }),
 		);
-		await user.selectOptions(
-			screen.getByRole("combobox", { name: "변경할 상태" }),
-			"ended",
-		);
+		await selectCampaignStatus(user, "종료");
 		await user.click(screen.getByRole("button", { name: "상태 적용" }));
 
 		const dialog = await screen.findByRole("dialog", {
