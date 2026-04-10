@@ -5,3 +5,7 @@
 @import "@fontsource-variable/geist";
 @import "@/app/styles/tokens.css";
 @import "@/app/styles/base.css";
+
+html {
+	scrollbar-gutter: stable;
+}
