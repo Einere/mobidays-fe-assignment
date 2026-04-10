@@ -3,6 +3,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Provider as JotaiProvider } from "jotai";
 import type { PropsWithChildren } from "react";
 import { createQueryClient } from "@/shared/api/query-client";
+import { Toaster } from "@/shared/ui/sonner";
 
 const queryClient = createQueryClient();
 
@@ -11,6 +12,7 @@ export function AppProviders({ children }: PropsWithChildren) {
 		<JotaiProvider>
 			<QueryClientProvider client={queryClient}>
 				{children}
+				<Toaster />
 				{import.meta.env.DEV ? (
 					<ReactQueryDevtools initialIsOpen={false} />
 				) : null}
