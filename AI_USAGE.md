@@ -98,3 +98,13 @@ AI 도구에게 의견을 뭃어보니, 명확하지 않은 데이터는 "원본
 - 검색 필드에 디바운싱이 빠져 있어, 추가함.
 - 선택된 항목이 없어도 일괄 변경 상태 선택 select 요소가 인터렉션 가능해서, 선택된 항목이 없다면 비활성화 처리함.
 - 공용 컴포넌트(`Select`, `Button`)에 disabled 스타일 처리가 미비해 보완함.
+
+## 04.10.
+
+캠페인 등록 모달 구현 후, Select 요소의 드롭다운이 보이지 않는 문제가 발생
+- AI 도구와 대화를 통해, 모달 내 팝오버용 z-index를 고려하지 않은 것이 원인임을 밝힘.
+- `z-modal-popover` 라는 별도의 디자인 토큰 추가로 문제를 해결함.
+
+추가로, `Select` 요소의 드롭다운을 열거나 `Dialog` 를 열면 레이아웃이 깨지는 현상을 발견함.
+구체적인 해결 과정은 [safari-scrollbar-gutter-breakpoint-debugging.md](./docs/safari-scrollbar-gutter-breakpoint-debugging.md) 참고.
+
