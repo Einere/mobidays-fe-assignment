@@ -6,12 +6,12 @@ import type {
 	CampaignStatus,
 	GlobalFilterState,
 } from "@/entities/global-filter/model/types";
+import type { RawCampaign, RawDailyStat } from "@/shared/api/contracts/mock-db";
 import {
 	appendCampaignToMemoryDb,
 	getMemoryDb,
 	updateCampaignStatusesByIds,
 } from "@/shared/api/mock/memory-db";
-import type { RawCampaign, RawDailyStat } from "@/shared/api/mock/types";
 
 function parseListParam<Value extends string>(value: string | null): Value[] {
 	return (value ?? "").split(",").filter(Boolean) as Value[];

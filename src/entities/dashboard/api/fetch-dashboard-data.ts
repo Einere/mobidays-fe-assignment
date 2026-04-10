@@ -1,10 +1,10 @@
-import { fetchCampaigns } from "@/entities/campaign/api/fetch-campaigns";
+import { fetchCampaigns } from "@/entities/campaign";
 import { fetchDailyStats } from "@/entities/daily-stat/api/fetch-daily-stats";
+import type { GlobalFilterState } from "@/entities/global-filter/model/types";
 import type {
 	DashboardCampaign,
 	DashboardDailyStat,
-} from "@/entities/dashboard/lib/parse-dashboard-data";
-import type { GlobalFilterState } from "@/entities/global-filter/model/types";
+} from "@/shared/api/contracts/dashboard-data";
 
 export interface DashboardData {
 	campaigns: DashboardCampaign[];

@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom";
 import { afterAll, afterEach, beforeAll } from "vitest";
+import { server } from "@/app/mock/server";
 import { resetMockDb } from "@/shared/api/mock/db";
-import { server } from "@/shared/api/mock/server";
 
 if (!HTMLElement.prototype.hasPointerCapture) {
 	HTMLElement.prototype.hasPointerCapture = () => false;

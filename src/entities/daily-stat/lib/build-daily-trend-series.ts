@@ -2,7 +2,7 @@ import {
 	type DailyTrendMetricKey,
 	dailyTrendMetricKeys,
 } from "@/entities/daily-stat/model/daily-trend-metrics";
-import type { DashboardDailyStat } from "@/entities/dashboard/lib/parse-dashboard-data";
+import type { DashboardDailyStat } from "@/shared/api/contracts/dashboard-data";
 
 export interface DailyTrendPoint {
 	date: string;

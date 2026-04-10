@@ -1,1 +1,1 @@
-export * from "@/entities/dashboard/lib/parse-dashboard-data";
+export * from "@/shared/api/contracts/dashboard-data";

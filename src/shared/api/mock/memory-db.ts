@@ -3,7 +3,7 @@ import type {
 	CampaignPlatform,
 	CampaignStatus,
 } from "@/entities/global-filter/model/types";
-import type { MockDb, RawCampaign } from "@/shared/api/mock/types";
+import type { MockDb, RawCampaign } from "@/shared/api/contracts/mock-db";
 
 function cloneMockDb(data: MockDb): MockDb {
 	return structuredClone(data) as MockDb;

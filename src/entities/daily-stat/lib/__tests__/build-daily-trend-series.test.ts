@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildDailyTrendSeries } from "@/entities/daily-stat/lib/build-daily-trend-series";
-import type { DashboardDailyStat } from "@/entities/dashboard/lib/parse-dashboard-data";
-import type { RawDailyStat } from "@/shared/api/mock/types";
+import type { DashboardDailyStat } from "@/shared/api/contracts/dashboard-data";
+import type { RawDailyStat } from "@/shared/api/contracts/mock-db";
 
 function createRawDailyStat(
 	overrides: Partial<RawDailyStat> = {},

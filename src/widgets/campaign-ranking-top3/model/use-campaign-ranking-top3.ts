@@ -6,14 +6,14 @@ import {
 	selectCampaignRankingTop3,
 } from "@/entities/campaign-ranking/lib/build-campaign-ranking-top3";
 import type { CampaignRankingMetricKey } from "@/entities/campaign-ranking/model/types";
-import { getDashboardDataQueryOptions } from "@/entities/dashboard/hooks/use-dashboard-data";
+import { getDashboardDataQueryOptions } from "@/entities/dashboard";
 import { globalFilterAtom } from "@/entities/global-filter/model/store";
 import {
 	defaultCampaignRankingMetricKey,
 	formatCampaignRankingMetricValue,
 	getCampaignRankingMetricDefinition,
 } from "@/widgets/campaign-ranking-top3/model/campaign-ranking-metrics";
-import type { CampaignRankingTop3DisplayRow } from "@/widgets/campaign-ranking-top3/ui/campaign-ranking-top3-bar-chart";
+import type { CampaignRankingTop3DisplayRow } from "@/widgets/campaign-ranking-top3/model/types";
 
 export type CampaignRankingTop3CardState =
 	| {

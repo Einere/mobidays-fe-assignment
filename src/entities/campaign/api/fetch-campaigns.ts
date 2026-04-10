@@ -1,9 +1,9 @@
+import { serializeFilterList } from "@/entities/global-filter/lib/date-range";
+import type { GlobalFilterState } from "@/entities/global-filter/model/types";
 import {
 	type DashboardCampaign,
 	parseCampaignResponse,
-} from "@/entities/dashboard/lib/parse-dashboard-data";
-import { serializeFilterList } from "@/entities/global-filter/lib/date-range";
-import type { GlobalFilterState } from "@/entities/global-filter/model/types";
+} from "@/shared/api/contracts/dashboard-data";
 
 async function fetchJson<T>(url: URL): Promise<T> {
 	const response = await fetch(url);

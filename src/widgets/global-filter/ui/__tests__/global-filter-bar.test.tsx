@@ -4,11 +4,11 @@ import userEvent from "@testing-library/user-event";
 import { Provider, useAtomValue } from "jotai";
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
-import { useDashboardData } from "@/entities/dashboard/hooks/use-dashboard-data";
+import { server } from "@/app/mock/server";
+import { useDashboardData } from "@/entities/dashboard";
 import { createInitialGlobalFilterState } from "@/entities/global-filter/model/defaults";
 import { globalFilterAtom } from "@/entities/global-filter/model/store";
 import { seedMockDb } from "@/shared/api/mock/db";
-import { server } from "@/shared/api/mock/server";
 import { createQueryClient } from "@/shared/api/query-client";
 import { GlobalFilterBar } from "@/widgets/global-filter/ui/global-filter-bar";
 

@@ -1,11 +1,13 @@
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
-import { fetchCampaigns } from "@/entities/campaign/api/fetch-campaigns";
+import { server } from "@/app/mock/server";
+import { fetchCampaigns } from "@/entities/campaign";
 import { fetchDailyStats } from "@/entities/daily-stat/api/fetch-daily-stats";
-import { fetchDashboardData } from "@/entities/dashboard/api/fetch-dashboard-data";
-import { createDashboardDataQueryKey } from "@/entities/dashboard/hooks/dashboard-data-query-key";
+import {
+	createDashboardDataQueryKey,
+	fetchDashboardData,
+} from "@/entities/dashboard";
 import { seedMockDb } from "@/shared/api/mock/db";
-import { server } from "@/shared/api/mock/server";
 
 describe("fetchDashboardData", () => {
 	it("returns campaigns and daily stats filtered on the server", async () => {
