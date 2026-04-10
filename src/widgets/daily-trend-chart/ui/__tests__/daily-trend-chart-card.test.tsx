@@ -218,6 +218,7 @@ describe("DailyTrendChartCard", () => {
 				name: "일별 추이 메트릭",
 			}),
 		).toBeInTheDocument();
+		expect(chartSection.querySelector(".min-h-5")).not.toBeNull();
 		expect(
 			within(chartSection).getByRole("button", { name: "노출수" }),
 		).toBeInTheDocument();

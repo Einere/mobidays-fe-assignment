@@ -57,9 +57,11 @@ function createResolvedChartSnapshot(
 function DailyTrendChartCardFrame({
 	children,
 	actions,
+	status,
 }: {
 	children: ReactNode;
 	actions?: ReactNode;
+	status?: ReactNode;
 }) {
 	return (
 		<section className="rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel">
@@ -77,6 +79,7 @@ function DailyTrendChartCardFrame({
 						</div>
 					) : null}
 				</div>
+				<div className="min-h-5">{status ?? null}</div>
 				{children}
 			</div>
 		</section>
@@ -180,7 +183,6 @@ function DailyTrendChartCardMeta({
 				</div>
 			) : null}
 
-			{/* TODO: 제거하던지 위치를 헤더쪽으로 옮기던가 해야 할 듯. 레이아웃 시프트가 발생해서 신경쓰임 */}
 			{viewState.isSyncing ? (
 				<p
 					className="typo-body-sm text-fg-muted"
@@ -236,6 +238,7 @@ export function DailyTrendChartCard() {
 					/>
 				) : null
 			}
+			status={<DailyTrendChartCardMeta viewState={viewState} />}
 		>
 			{viewState.kind === "chart" ? (
 				<DataDenseScrollArea
@@ -251,7 +254,6 @@ export function DailyTrendChartCard() {
 			) : (
 				renderDailyTrendChartBody(viewState)
 			)}
-			<DailyTrendChartCardMeta viewState={viewState} />
 		</DailyTrendChartCardFrame>
 	);
 }
