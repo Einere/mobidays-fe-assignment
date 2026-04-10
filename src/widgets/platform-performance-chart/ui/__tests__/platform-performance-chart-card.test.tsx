@@ -13,7 +13,9 @@ import {
 import { seedMockDb } from "@/shared/api/mock/db";
 import { server } from "@/shared/api/mock/server";
 import { createQueryClient } from "@/shared/api/query-client";
+import { platformPerformanceMetricDefinitions } from "@/widgets/platform-performance-chart/model/platform-performance-metrics";
 import { PlatformPerformanceChartCard } from "@/widgets/platform-performance-chart/ui/platform-performance-chart-card";
+import { PlatformPerformanceDonut } from "@/widgets/platform-performance-chart/ui/platform-performance-donut-chart";
 
 const aprilFilter = createInitialGlobalFilterState(new Date("2026-04-15"));
 const queryClients: QueryClient[] = [];
@@ -108,6 +110,36 @@ function renderPlatformCard(options?: { withFilterButton?: boolean }) {
 }
 
 describe("PlatformPerformanceChartCard", () => {
+	it("keeps the donut chart and legend horizontal on mobile", () => {
+		const { container } = render(
+			<PlatformPerformanceDonut
+				data={[
+					{
+						platform: "Google",
+						value: 100,
+						sharePercent: 66.7,
+						isSelected: true,
+					},
+					{
+						platform: "Meta",
+						value: 50,
+						sharePercent: 33.3,
+						isSelected: false,
+					},
+				]}
+				metric={platformPerformanceMetricDefinitions[0]}
+				onPlatformSelect={vi.fn()}
+			/>,
+		);
+
+		expect(container.firstElementChild).toHaveClass(
+			"grid-cols-[minmax(0,1.1fr)_320px]",
+		);
+		expect(container.firstElementChild).not.toHaveClass(
+			"lg:grid-cols-[minmax(0,1.1fr)_320px]",
+		);
+	});
+
 	it("renders metric toggles and defaults to 비용", async () => {
 		seedMockDb({
 			campaigns: [

@@ -115,8 +115,8 @@ export function PlatformPerformanceDonut({
 	);
 
 	return (
-		<div className="grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_320px] lg:items-stretch">
-			<div className="relative flex flex-col gap-2 rounded-card border border-outline-subtle bg-panel p-4">
+		<div className="grid grid-cols-[minmax(0,1.1fr)_320px] gap-5 items-stretch">
+			<div className="relative flex min-w-0 flex-col gap-2 rounded-card border border-outline-subtle bg-panel p-4">
 				<div
 					className="typo-caption text-fg-subtle"
 					data-testid="platform-performance-metric-label"
@@ -179,7 +179,7 @@ export function PlatformPerformanceDonut({
 			</div>
 
 			<fieldset
-				className="grid gap-2 border-0 p-0"
+				className="grid min-w-0 gap-2 border-0 p-0"
 				aria-label="플랫폼별 성과 도넛 범례"
 			>
 				<legend className="sr-only">플랫폼별 성과 도넛 범례</legend>
