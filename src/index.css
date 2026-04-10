@@ -7,9 +7,9 @@
 @import "@/app/styles/base.css";
 
 html {
-	scrollbar-gutter: stable;
+	scrollbar-gutter: auto;
 }
 
-html[data-browser="chrome"] {
-	scrollbar-gutter: auto;
+html[data-browser="safari"] {
+	scrollbar-gutter: stable;
 }

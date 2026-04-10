@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { Button } from "@/shared/ui/button";
@@ -62,7 +62,7 @@ describe("dashboard shell components", () => {
 		expect(activeItem.className).toContain("min-h-control-touch");
 	});
 
-	it("opens a mobile navigation dialog from the hamburger trigger", async () => {
+	it("opens and closes a mobile navigation dialog from explicit controls", async () => {
 		const user = userEvent.setup();
 
 		render(
@@ -82,8 +82,45 @@ describe("dashboard shell components", () => {
 			document.querySelector('[data-slot="mobile-sidebar-overlay"]')
 				?.className ?? "",
 		).toContain("bg-overlay-scrim");
+		expect(
+			document.querySelector('[data-slot="mobile-sidebar-content"]')
+				?.className ?? "",
+		).toContain("overflow-y-auto");
 		expect(screen.getByRole("link", { name: "개요" })).toBeInTheDocument();
 		expect(screen.getByRole("link", { name: "캠페인" })).toBeInTheDocument();
+
+		await user.click(screen.getByRole("button", { name: "메뉴 닫기" }));
+
+		await waitFor(() => {
+			expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+		});
+	});
+
+	it("truncates very long sidebar labels to prevent mobile overflow", () => {
+		render(
+			<SidebarNav
+				title="Mobidays Dashboard"
+				items={[
+					{
+						id: "extremely-long-item",
+						label:
+							"아주 길어서 한 줄을 넘어가는 캠페인 운영 메뉴 라벨 테스트 텍스트입니다",
+						active: true,
+					},
+				]}
+			/>,
+		);
+
+		expect(
+			screen.getByRole("link", {
+				name: "아주 길어서 한 줄을 넘어가는 캠페인 운영 메뉴 라벨 테스트 텍스트입니다",
+			}).className,
+		).toContain("min-w-0");
+		expect(
+			screen.getByText(
+				"아주 길어서 한 줄을 넘어가는 캠페인 운영 메뉴 라벨 테스트 텍스트입니다",
+			).className,
+		).toContain("truncate");
 	});
 
 	it("renders a data table using density and status tokens", () => {

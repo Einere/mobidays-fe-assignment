@@ -8,19 +8,51 @@ type NavigatorWithUAData = Navigator & {
 };
 
 function getNavigator() {
+	if (typeof navigator === "undefined") {
+		return null;
+	}
+
 	return navigator as NavigatorWithUAData;
 }
 
-export function isChromeBrowser() {
-	const uaDataBrands = getNavigator().userAgentData?.brands ?? [];
-	if (uaDataBrands.some(({ brand }) => brand === "Google Chrome")) {
+export function isSafariBrowser() {
+	const currentNavigator = getNavigator();
+	if (!currentNavigator) {
+		return false;
+	}
+
+	const uaDataBrands = currentNavigator.userAgentData?.brands ?? [];
+	if (
+		uaDataBrands.some(({ brand }) => brand === "Safari") ||
+		uaDataBrands.some(({ brand }) => brand === "Mobile Safari")
+	) {
 		return true;
 	}
 
-	const userAgent = getNavigator().userAgent;
+	const userAgent = currentNavigator.userAgent;
 	return (
-		/\bChrome\//.test(userAgent) &&
+		/\bSafari\//.test(userAgent) &&
+		!/\bChrome\//.test(userAgent) &&
+		!/\bChromium\//.test(userAgent) &&
+		!/\bCriOS\//.test(userAgent) &&
 		!/\bEdg\//.test(userAgent) &&
-		!/\bOPR\//.test(userAgent)
+		!/\bEdgiOS\//.test(userAgent) &&
+		!/\bOPR\//.test(userAgent) &&
+		!/\bOPiOS\//.test(userAgent) &&
+		!/\bFxiOS\//.test(userAgent)
 	);
+}
+
+export function applyBrowserDatasetAttribute(doc?: Document) {
+	if (typeof document === "undefined" && !doc) {
+		return;
+	}
+
+	const targetDocument = doc ?? document;
+	if (isSafariBrowser()) {
+		targetDocument.documentElement.dataset.browser = "safari";
+		return;
+	}
+
+	delete targetDocument.documentElement.dataset.browser;
 }
