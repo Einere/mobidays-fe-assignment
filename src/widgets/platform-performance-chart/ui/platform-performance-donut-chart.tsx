@@ -74,11 +74,10 @@ export function PlatformPerformanceMetricToggleGroup({
 	metricDefinitionLookup = platformPerformanceMetricDefinitions,
 }: MetricSelectionProps) {
 	return (
-		<fieldset
+		<section
 			className="flex w-max flex-nowrap justify-end gap-2"
 			aria-label="플랫폼별 성과 메트릭"
 		>
-			<legend className="sr-only">플랫폼별 성과 메트릭</legend>
 			{metricDefinitionLookup.map((metric) => (
 				<ToggleButton
 					key={metric.key}
@@ -89,7 +88,7 @@ export function PlatformPerformanceMetricToggleGroup({
 					{metric.label}
 				</ToggleButton>
 			))}
-		</fieldset>
+		</section>
 	);
 }
 
@@ -117,12 +116,6 @@ export function PlatformPerformanceDonut({
 	return (
 		<div className="grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_320px] lg:items-stretch">
 			<div className="relative flex flex-col gap-2 rounded-card border border-outline-subtle bg-panel p-4">
-				<div
-					className="typo-caption text-fg-subtle"
-					data-testid="platform-performance-metric-label"
-				>
-					현재 기준: {metric.label}
-				</div>
 				<div className="relative h-72">
 					<ChartContainer className="absolute inset-0" config={chartConfig}>
 						<PieChart>
@@ -171,18 +164,13 @@ export function PlatformPerformanceDonut({
 							/>
 						</PieChart>
 					</ChartContainer>
-					<div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
-						<p className="typo-caption text-fg-subtle">현재 기준</p>
-						<p className="typo-heading-sm">{metric.label}</p>
-					</div>
 				</div>
 			</div>
 
-			<fieldset
+			<section
 				className="grid gap-2 border-0 p-0"
 				aria-label="플랫폼별 성과 도넛 범례"
 			>
-				<legend className="sr-only">플랫폼별 성과 도넛 범례</legend>
 				{data.map((slice, index) => {
 					const platformColor = getPlatformColor(slice.platform, index);
 
@@ -218,7 +206,7 @@ export function PlatformPerformanceDonut({
 						</div>
 					);
 				})}
-			</fieldset>
+			</section>
 		</div>
 	);
 }
