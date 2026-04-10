@@ -110,9 +110,10 @@ function ChartTooltipContent({
 			<div className="grid gap-2">
 				{payload.map((item) => {
 					const key = String(item.dataKey ?? item.name ?? "");
+					const name = String(item.name ?? key);
 					const series = config[key];
 					const value = formatter
-						? formatter(item.value, key)
+						? formatter(item.value, name)
 						: formatChartValue(item.value);
 
 					return (
