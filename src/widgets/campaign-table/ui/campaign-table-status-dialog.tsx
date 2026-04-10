@@ -12,6 +12,7 @@ interface CampaignTableStatusDialogProps {
 	onConfirm: () => void;
 }
 
+/* TODO: 특별한 이유가 없다면 공용 Dialog 컴포넌트를 사용하기 */
 export function CampaignTableStatusDialog({
 	open,
 	selectedCount,

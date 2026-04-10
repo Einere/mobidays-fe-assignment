@@ -1,10 +1,12 @@
 import { useAtomValue } from "jotai";
 import { useMemo } from "react";
 import { globalFilterAtom } from "@/entities/global-filter/model/store";
+import { useCampaignCreateDialog } from "@/widgets/campaign-table/model/use-campaign-create-dialog";
 import { useCampaignStatusBulkAction } from "@/widgets/campaign-table/model/use-campaign-status-bulk-action";
 import { useCampaignTableControls } from "@/widgets/campaign-table/model/use-campaign-table-controls";
 import { useCampaignTableData } from "@/widgets/campaign-table/model/use-campaign-table-data";
 import { useCampaignTableSelection } from "@/widgets/campaign-table/model/use-campaign-table-selection";
+import { CampaignCreateDialog } from "@/widgets/campaign-table/ui/campaign-create-dialog";
 import { CampaignTableStatusDialog } from "@/widgets/campaign-table/ui/campaign-table-status-dialog";
 import { CampaignTableTable } from "@/widgets/campaign-table/ui/campaign-table-table";
 import { CampaignTableToolbar } from "@/widgets/campaign-table/ui/campaign-table-toolbar";
@@ -46,6 +48,7 @@ function CampaignTableErrorState() {
 export function CampaignTableCard() {
 	const filter = useAtomValue(globalFilterAtom);
 	const controls = useCampaignTableControls();
+	const createDialog = useCampaignCreateDialog();
 	const tableData = useCampaignTableData(filter, controls);
 	const visibleRowIds = tableData.tableView?.rows.map((row) => row.id) ?? [];
 	const selectionResetKey = useMemo(
@@ -102,6 +105,7 @@ export function CampaignTableCard() {
 					onSearchInputChange={controls.setSearchInput}
 					onPendingStatusChange={bulkAction.setPendingStatus}
 					onOpenStatusDialog={bulkAction.openDialog}
+					onOpenCreateDialog={createDialog.openDialog}
 				/>
 
 				{tableData.viewState.staleErrorMessage ? (
@@ -152,6 +156,14 @@ export function CampaignTableCard() {
 				canConfirm={bulkAction.canConfirm}
 				onOpenChange={bulkAction.setDialogOpen}
 				onConfirm={bulkAction.confirm}
+			/>
+			<CampaignCreateDialog
+				open={createDialog.open}
+				commonError={createDialog.commonError}
+				isSubmitting={createDialog.isSubmitting}
+				form={createDialog.form}
+				onOpenChange={createDialog.setOpen}
+				onSubmit={createDialog.submit}
 			/>
 		</section>
 	);

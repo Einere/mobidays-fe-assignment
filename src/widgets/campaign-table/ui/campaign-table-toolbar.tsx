@@ -21,6 +21,7 @@ interface CampaignTableToolbarProps {
 	onSearchInputChange: (nextSearchInput: string) => void;
 	onPendingStatusChange: (nextPendingStatus: CampaignStatus | null) => void;
 	onOpenStatusDialog: () => void;
+	onOpenCreateDialog?: () => void;
 }
 
 export function CampaignTableToolbar({
@@ -34,8 +35,10 @@ export function CampaignTableToolbar({
 	onSearchInputChange,
 	onPendingStatusChange,
 	onOpenStatusDialog,
+	onOpenCreateDialog,
 }: CampaignTableToolbarProps) {
 	const isStatusControlDisabled = disabled || selectedCount === 0;
+	const isCreateButtonDisabled = disabled || onOpenCreateDialog === undefined;
 
 	return (
 		<div className="flex flex-col gap-4 border-b border-outline-subtle pb-4">
@@ -90,6 +93,14 @@ export function CampaignTableToolbar({
 						onClick={onOpenStatusDialog}
 					>
 						상태 적용
+					</Button>
+					<Button
+						type="button"
+						variant="outline"
+						disabled={isCreateButtonDisabled}
+						onClick={() => onOpenCreateDialog?.()}
+					>
+						캠페인 등록
 					</Button>
 				</div>
 			</div>
