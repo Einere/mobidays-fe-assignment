@@ -1,5 +1,13 @@
-import { Cell, Pie, PieChart } from "recharts";
-import type { PlatformPerformanceSlice } from "@/entities/platform-performance/model/types";
+import type { ComponentProps } from "react";
+import { Cell, Pie, PieChart, Sector } from "recharts";
+import {
+	type CampaignPlatform,
+	campaignPlatformValues,
+} from "@/entities/global-filter/model/platforms";
+import type {
+	PlatformMetricKey,
+	PlatformPerformanceSlice,
+} from "@/entities/platform-performance/model/types";
 import {
 	ChartContainer,
 	ChartTooltip,
@@ -12,8 +20,8 @@ import {
 } from "@/widgets/platform-performance-chart/model/platform-performance-metrics";
 
 type MetricSelectionProps = {
-	activeMetricKey: string;
-	onMetricChange: (metricKey: string) => void;
+	activeMetricKey: PlatformMetricKey;
+	onMetricChange: (metricKey: PlatformMetricKey) => void;
 	metricDefinitionLookup?: readonly PlatformPerformanceMetricDefinition[];
 };
 
@@ -43,13 +51,44 @@ function getPlatformColor(platform: string, index: number) {
 	);
 }
 
+type PlatformPerformanceSectorProps = ComponentProps<typeof Sector> & {
+	payload?: PlatformPerformanceSlice;
+	onPlatformSelect: (platform: CampaignPlatform) => void;
+};
+
+export function PlatformPerformancePieSector({
+	payload,
+	onPlatformSelect,
+	...props
+}: PlatformPerformanceSectorProps) {
+	const platform = payload?.platform;
+
+	if (platform === undefined) {
+		return <Sector {...props} />;
+	}
+
+	return (
+		<Sector
+			{...props}
+			role="button"
+			tabIndex={0}
+			aria-label={`${platform} 선택`}
+			aria-pressed={payload.isSelected}
+			onClick={() => onPlatformSelect(platform)}
+			onKeyDown={(event) => {
+				if (event.key === "Enter" || event.key === " ") {
+					event.preventDefault();
+					onPlatformSelect(platform);
+				}
+			}}
+		/>
+	);
+}
+
 type PieClickPayload = {
 	payload?: {
 		platform?: string;
-		name?: string;
 	};
-	name?: string;
-	platform?: string;
 };
 
 function extractPlatformFromPiePayload(payload: PieClickPayload | unknown) {
@@ -58,14 +97,12 @@ function extractPlatformFromPiePayload(payload: PieClickPayload | unknown) {
 	}
 
 	const maybe = payload as PieClickPayload;
+	const platform = maybe.payload?.platform;
 
-	return (
-		maybe.platform ??
-		maybe.name ??
-		maybe.payload?.platform ??
-		maybe.payload?.name ??
-		null
-	);
+	return platform &&
+		campaignPlatformValues.includes(platform as CampaignPlatform)
+		? (platform as CampaignPlatform)
+		: null;
 }
 
 export function PlatformPerformanceMetricToggleGroup({
@@ -96,7 +133,7 @@ export function PlatformPerformanceMetricToggleGroup({
 type DonutData = {
 	data: PlatformPerformanceSlice[];
 	metric: PlatformPerformanceMetricDefinition;
-	onPlatformSelect: (platform: string) => void;
+	onPlatformSelect: (platform: CampaignPlatform) => void;
 };
 
 export function PlatformPerformanceDonut({
@@ -127,6 +164,11 @@ export function PlatformPerformanceDonut({
 								innerRadius={60}
 								outerRadius={105}
 								paddingAngle={4}
+								shape={
+									<PlatformPerformancePieSector
+										onPlatformSelect={onPlatformSelect}
+									/>
+								}
 								onClick={(payload: unknown) => {
 									const platform = extractPlatformFromPiePayload(payload);
 

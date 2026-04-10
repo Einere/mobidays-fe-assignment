@@ -6,6 +6,7 @@ import {
 	globalFilterAtom,
 	toggleGlobalFilterPlatformAtom,
 } from "@/entities/global-filter/model/store";
+import type { CampaignPlatform } from "@/entities/global-filter/model/types";
 import { aggregatePlatformPerformance } from "@/entities/platform-performance/lib/aggregate-platform-performance";
 import type {
 	PlatformMetricKey,
@@ -59,19 +60,19 @@ function resolvePlatformPerformanceChartState({
 	err: Error | null;
 	slices: PlatformPerformanceSlice[];
 }) {
+	if (isLoadingError) {
+		return {
+			kind: "full-error",
+			errorMessage: err?.message ?? "알 수 없는 오류가 발생했습니다.",
+		} satisfies PlatformPerformanceChartState;
+	}
+
 	if (campaigns === null && isPending) {
 		return { kind: "loading" } satisfies PlatformPerformanceChartState;
 	}
 
 	if (campaigns === null) {
 		return { kind: "empty-data" } satisfies PlatformPerformanceChartState;
-	}
-
-	if (isLoadingError) {
-		return {
-			kind: "full-error",
-			errorMessage: err?.message ?? "알 수 없는 오류가 발생했습니다.",
-		} satisfies PlatformPerformanceChartState;
 	}
 
 	if (campaigns.length === 0) {
@@ -94,7 +95,13 @@ function resolvePlatformPerformanceChartState({
 
 function PlatformPerformanceLoadingState() {
 	return (
-		<div className="rounded-card border border-outline-subtle bg-panel-muted">
+		<div
+			className="rounded-card border border-outline-subtle bg-panel-muted"
+			role="status"
+			aria-live="polite"
+			aria-busy="true"
+			aria-label="성과 데이터를 불러오는 중"
+		>
 			<div className="h-80" data-testid="platform-performance-loading" />
 		</div>
 	);
@@ -157,13 +164,13 @@ export function PlatformPerformanceChartCard() {
 	});
 	const toggleGlobalFilterPlatform = useSetAtom(toggleGlobalFilterPlatformAtom);
 
-	const handleMetricChange = useCallback((metricKey: string) => {
-		setActiveMetricKey(metricKey as PlatformMetricKey);
+	const handleMetricChange = useCallback((metricKey: PlatformMetricKey) => {
+		setActiveMetricKey(metricKey);
 	}, []);
 
 	const handlePlatformSelection = useCallback(
-		(platform: string) => {
-			toggleGlobalFilterPlatform(platform as never);
+		(platform: CampaignPlatform) => {
+			toggleGlobalFilterPlatform(platform);
 		},
 		[toggleGlobalFilterPlatform],
 	);

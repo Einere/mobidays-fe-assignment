@@ -483,6 +483,22 @@ describe("PlatformPerformanceChartCard", () => {
 		expect(googleItem).toHaveTextContent("0%");
 	});
 
+	it("renders error state when the initial fetch fails", async () => {
+		server.use(
+			http.get("/campaigns", () =>
+				HttpResponse.json({ message: "boom" }, { status: 500 }),
+			),
+			http.get("/daily_stats", () => HttpResponse.json([])),
+		);
+
+		renderPlatformCard();
+
+		expect(
+			await screen.findByText("성과 데이터를 불러오지 못했습니다."),
+		).toBeInTheDocument();
+		expect(screen.getByText("Request failed: 500")).toBeInTheDocument();
+	});
+
 	it("shows loading state before first query resolves", async () => {
 		let releaseCampaignRequest: (() => void) | null = null;
 
@@ -499,6 +515,9 @@ describe("PlatformPerformanceChartCard", () => {
 
 		renderPlatformCard();
 
+		expect(
+			screen.getByRole("status", { name: "성과 데이터를 불러오는 중" }),
+		).toBeInTheDocument();
 		expect(
 			screen.getByTestId("platform-performance-loading"),
 		).toBeInTheDocument();
