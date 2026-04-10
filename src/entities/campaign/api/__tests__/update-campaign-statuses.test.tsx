@@ -3,7 +3,7 @@ import { act, renderHook } from "@testing-library/react";
 import { HttpResponse, http } from "msw";
 import { describe, expect, it, vi } from "vitest";
 import { updateCampaignStatuses } from "@/entities/campaign/api/update-campaign-statuses";
-import { useUpdateCampaignStatuses } from "@/entities/campaign/api/use-update-campaign-statuses";
+import { useUpdateCampaignStatuses } from "@/entities/campaign/hooks/use-update-campaign-statuses";
 import type { GlobalFilterState } from "@/entities/global-filter/model/types";
 import { mockDb, seedMockDb } from "@/shared/api/mock/db";
 import {

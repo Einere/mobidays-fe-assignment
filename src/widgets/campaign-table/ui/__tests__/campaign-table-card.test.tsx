@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { createStore, Provider, useAtomValue, useSetAtom } from "jotai";
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
-import { createDashboardDataQueryKey } from "@/entities/dashboard/api/use-dashboard-data";
+import { createDashboardDataQueryKey } from "@/entities/dashboard/hooks/dashboard-data-query-key";
 import { createInitialGlobalFilterState } from "@/entities/global-filter/model/defaults";
 import {
 	globalFilterAtom,

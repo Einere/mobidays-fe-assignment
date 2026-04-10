@@ -3,7 +3,7 @@ import { act, renderHook } from "@testing-library/react";
 import { HttpResponse, http } from "msw";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createCampaign } from "@/entities/campaign/api/create-campaign";
-import { useCreateCampaign } from "@/entities/campaign/api/use-create-campaign";
+import { useCreateCampaign } from "@/entities/campaign/hooks/use-create-campaign";
 import { getMemoryDb, seedMemoryDb } from "@/shared/api/mock/memory-db";
 import { server } from "@/shared/api/mock/server";
 import { createQueryClient } from "@/shared/api/query-client";

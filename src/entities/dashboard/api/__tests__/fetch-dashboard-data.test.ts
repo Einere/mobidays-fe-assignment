@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { fetchCampaigns } from "@/entities/campaign/api/fetch-campaigns";
 import { fetchDailyStats } from "@/entities/daily-stat/api/fetch-daily-stats";
 import { fetchDashboardData } from "@/entities/dashboard/api/fetch-dashboard-data";
-import { createDashboardDataQueryKey } from "@/entities/dashboard/api/use-dashboard-data";
+import { createDashboardDataQueryKey } from "@/entities/dashboard/hooks/dashboard-data-query-key";
 import { seedMockDb } from "@/shared/api/mock/db";
 import { server } from "@/shared/api/mock/server";
 

@@ -2,7 +2,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { useEffect, useRef } from "react";
 import type { DashboardData } from "@/entities/dashboard/api/fetch-dashboard-data";
-import { getDashboardDataQueryOptions } from "@/entities/dashboard/api/use-dashboard-data";
+import { getDashboardDataQueryOptions } from "@/entities/dashboard/hooks/use-dashboard-data";
 import { globalFilterAtom } from "@/entities/global-filter/model/store";
 
 export function GlobalFilterSummary() {

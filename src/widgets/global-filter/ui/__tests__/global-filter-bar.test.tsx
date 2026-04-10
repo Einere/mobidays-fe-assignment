@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { Provider, useAtomValue } from "jotai";
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
-import { useDashboardData } from "@/entities/dashboard/api/use-dashboard-data";
+import { useDashboardData } from "@/entities/dashboard/hooks/use-dashboard-data";
 import { createInitialGlobalFilterState } from "@/entities/global-filter/model/defaults";
 import { globalFilterAtom } from "@/entities/global-filter/model/store";
 import { seedMockDb } from "@/shared/api/mock/db";
