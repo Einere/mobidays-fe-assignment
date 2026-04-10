@@ -1,10 +1,12 @@
 import { HttpResponse, http } from "msw";
+import { createCampaignInputSchema } from "@/entities/campaign/lib/create-campaign-schema";
 import type {
 	CampaignPlatform,
 	CampaignStatus,
 	GlobalFilterState,
 } from "@/entities/global-filter/model/types";
 import {
+	appendCampaignToMemoryDb,
 	getMemoryDb,
 	updateCampaignStatusesByIds,
 } from "@/shared/api/mock/memory-db";
@@ -132,6 +134,29 @@ export const handlers = [
 				matchesDailyStatFilters(dailyStat, campaignIds, filter.dateRange),
 			),
 		);
+	}),
+	http.post("/campaigns", async ({ request }) => {
+		const body = await request.json();
+		const parsedBody = createCampaignInputSchema.safeParse(body);
+
+		if (!parsedBody.success) {
+			return HttpResponse.json(
+				{ message: "Invalid request body" },
+				{ status: 400 },
+			);
+		}
+
+		const validatedBody = parsedBody.data;
+
+		const createdCampaign = appendCampaignToMemoryDb({
+			name: validatedBody.name,
+			platform: validatedBody.platform,
+			budget: validatedBody.budget,
+			startDate: validatedBody.startDate,
+			endDate: validatedBody.endDate,
+		});
+
+		return HttpResponse.json(createdCampaign, { status: 201 });
 	}),
 	http.patch("/campaigns/status", async ({ request }) => {
 		const body = await request.json();

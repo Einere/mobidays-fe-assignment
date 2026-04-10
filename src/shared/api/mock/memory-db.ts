@@ -1,6 +1,9 @@
 import dbJson from "@/db.json";
-import type { CampaignStatus } from "@/entities/global-filter/model/types";
-import type { MockDb } from "@/shared/api/mock/types";
+import type {
+	CampaignPlatform,
+	CampaignStatus,
+} from "@/entities/global-filter/model/types";
+import type { MockDb, RawCampaign } from "@/shared/api/mock/types";
 
 function cloneMockDb(data: MockDb): MockDb {
 	return structuredClone(data) as MockDb;
@@ -9,6 +12,10 @@ function cloneMockDb(data: MockDb): MockDb {
 export const mockDb: MockDb = cloneMockDb(dbJson as MockDb);
 
 let memoryDb = cloneMockDb(mockDb);
+
+function createCampaignId() {
+	return `campaign-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
 
 export function getMemoryDb(): MockDb {
 	return memoryDb;
@@ -22,6 +29,35 @@ export function seedMemoryDb(data: MockDb): MockDb {
 
 export function resetMemoryDb(): MockDb {
 	return seedMemoryDb(mockDb);
+}
+
+export interface AppendCampaignInput {
+	name: string;
+	platform: CampaignPlatform;
+	budget: number;
+	startDate: string;
+	endDate: string | null;
+}
+
+export function appendCampaignToMemoryDb(
+	input: AppendCampaignInput,
+): RawCampaign {
+	const createdCampaign: RawCampaign = {
+		id: createCampaignId(),
+		name: input.name,
+		platform: input.platform,
+		status: "active",
+		budget: input.budget,
+		startDate: input.startDate,
+		endDate: input.endDate,
+	};
+
+	memoryDb = {
+		...memoryDb,
+		campaigns: [...memoryDb.campaigns, createdCampaign],
+	};
+
+	return createdCampaign;
 }
 
 export function updateCampaignStatusesByIds(
