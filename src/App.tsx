@@ -3,6 +3,7 @@ import { CampaignTableCard } from "@/widgets/campaign-table/ui/campaign-table-ca
 import { DailyTrendChartCard } from "@/widgets/daily-trend-chart/ui/daily-trend-chart-card";
 import { GlobalFilterBar } from "@/widgets/global-filter/ui/global-filter-bar";
 import { GlobalFilterSummary } from "@/widgets/global-filter/ui/global-filter-summary";
+import { PlatformPerformanceChartCard } from "@/widgets/platform-performance-chart/ui/platform-performance-chart-card";
 
 function App() {
 	const sidebarItems = [
@@ -44,6 +45,7 @@ function App() {
 					</section>
 
 					<DailyTrendChartCard />
+					<PlatformPerformanceChartCard />
 
 					<CampaignTableCard />
 				</div>
