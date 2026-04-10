@@ -1,4 +1,5 @@
 import { MobileSidebarNav, SidebarNav } from "@/shared/ui/sidebar.tsx";
+import { CampaignRankingTop3Card } from "@/widgets/campaign-ranking-top3/ui/campaign-ranking-top3-card";
 import { CampaignTableCard } from "@/widgets/campaign-table/ui/campaign-table-card";
 import { DailyTrendChartCard } from "@/widgets/daily-trend-chart/ui/daily-trend-chart-card";
 import { GlobalFilterBar } from "@/widgets/global-filter/ui/global-filter-bar";
@@ -45,7 +46,10 @@ function App() {
 					</section>
 
 					<DailyTrendChartCard />
-					<PlatformPerformanceChartCard />
+					<section className="grid min-w-0 gap-panel-gap lg:grid-cols-2">
+						<PlatformPerformanceChartCard />
+						<CampaignRankingTop3Card />
+					</section>
 
 					<CampaignTableCard />
 				</div>
