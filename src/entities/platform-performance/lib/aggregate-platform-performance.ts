@@ -10,6 +10,7 @@ import type {
 } from "@/entities/platform-performance/model/types";
 import { unknownPlatformLabel } from "@/entities/platform-performance/model/types";
 
+/*TODO: 이런 범용 유틸은 shared/lib 으로 이동 */
 function toSafeNumber(value: number | null): number {
 	return typeof value === "number" && Number.isFinite(value) && value >= 0
 		? value

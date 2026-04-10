@@ -6,6 +6,7 @@ import type { CreateCampaignInput } from "@/entities/campaign/lib/create-campaig
 export const CREATE_CAMPAIGN_ERROR_MESSAGE =
 	"캠페인을 등록하지 못했습니다. 잠시 후 다시 시도해주세요.";
 
+/*TODO: 적절한 위치의 hooks 로 이동해야 함. entities/campaign/hooks 정도..? */
 export function useCreateCampaign() {
 	const queryClient = useQueryClient();
 

@@ -25,6 +25,7 @@ async function fetchJson<T>(url: URL): Promise<T> {
 export async function fetchDashboardData(
 	filter: GlobalFilterState,
 ): Promise<DashboardData> {
+	/*TODO: 캠페인 패칭 동작은 entities/campaign/api 로 이동해야 하지 않나? */
 	const campaignsUrl = new URL("/campaigns", window.location.origin);
 	campaignsUrl.searchParams.set("startDate", filter.dateRange.startDate);
 	campaignsUrl.searchParams.set("endDate", filter.dateRange.endDate);
@@ -40,6 +41,7 @@ export async function fetchDashboardData(
 	const campaignsResponse = await fetchJson<unknown>(campaignsUrl);
 	const campaigns = parseCampaignResponse(campaignsResponse);
 
+	/*TODO: 일간 성과 패칭 동작은 entities/daily-stat/api 로 이동해야 하지 않나? */
 	const dailyStatsUrl = new URL("/daily_stats", window.location.origin);
 	dailyStatsUrl.searchParams.set("startDate", filter.dateRange.startDate);
 	dailyStatsUrl.searchParams.set("endDate", filter.dateRange.endDate);
