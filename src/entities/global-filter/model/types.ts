@@ -1,6 +1,6 @@
-export type CampaignStatus = "active" | "paused" | "ended";
+import type { CampaignPlatform } from "@/entities/global-filter/model/platforms";
 
-export type CampaignPlatform = "Google" | "Meta" | "Naver";
+export type CampaignStatus = "active" | "paused" | "ended";
 
 export interface GlobalDateRange {
 	startDate: string;
