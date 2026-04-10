@@ -110,7 +110,7 @@ function renderPlatformCard(options?: { withFilterButton?: boolean }) {
 }
 
 describe("PlatformPerformanceChartCard", () => {
-	it("keeps the donut chart and legend horizontal on mobile", () => {
+	it("stacks the donut chart and keeps the legend scrollable on mobile", () => {
 		const { container } = render(
 			<PlatformPerformanceDonut
 				data={[
@@ -132,15 +132,18 @@ describe("PlatformPerformanceChartCard", () => {
 			/>,
 		);
 
+		expect(container.firstElementChild).toHaveClass("grid-cols-1");
 		expect(container.firstElementChild).toHaveClass(
-			"grid-cols-[minmax(0,1.1fr)_320px]",
-		);
-		expect(container.firstElementChild).not.toHaveClass(
 			"lg:grid-cols-[minmax(0,1.1fr)_320px]",
 		);
-		expect(
-			screen.queryByTestId("platform-performance-metric-label"),
-		).not.toBeInTheDocument();
+
+		const legend = screen.getByRole("group", {
+			name: "플랫폼별 성과 도넛 범례",
+		});
+		const legendScroller = legend.querySelector(":scope > div");
+
+		expect(legend).toHaveClass("lg:grid");
+		expect(legendScroller).toHaveClass("overflow-x-auto");
 	});
 
 	it("renders metric toggles and defaults to 비용", async () => {

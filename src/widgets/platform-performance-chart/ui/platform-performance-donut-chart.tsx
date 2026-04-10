@@ -115,9 +115,9 @@ export function PlatformPerformanceDonut({
 	);
 
 	return (
-		<div className="grid grid-cols-[minmax(0,1.1fr)_320px] gap-5 items-stretch">
-			<div className="relative flex min-w-0 flex-col rounded-card border border-outline-subtle bg-panel p-4">
-				<div className="relative h-72">
+		<div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[minmax(0,1.1fr)_320px] lg:gap-5">
+			<div className="relative flex min-w-0 flex-col rounded-card border border-outline-subtle bg-panel p-3 sm:p-4">
+				<div className="relative h-64 sm:h-72">
 					<ChartContainer className="absolute inset-0" config={chartConfig}>
 						<PieChart>
 							<Pie
@@ -173,45 +173,47 @@ export function PlatformPerformanceDonut({
 			</div>
 
 			<fieldset
-				className="grid min-w-0 gap-2 border-0 p-0"
+				className="min-w-0 border-0 p-0 lg:grid lg:gap-2"
 				aria-label="플랫폼별 성과 도넛 범례"
 			>
 				<legend className="sr-only">플랫폼별 성과 도넛 범례</legend>
-				{data.map((slice, index) => {
-					const platformColor = getPlatformColor(slice.platform, index);
+				<div className="flex gap-2 overflow-x-auto pb-1 lg:grid lg:gap-2 lg:overflow-visible lg:pb-0">
+					{data.map((slice, index) => {
+						const platformColor = getPlatformColor(slice.platform, index);
 
-					return (
-						<div
-							key={slice.platform}
-							className="rounded-card border border-outline-subtle bg-panel-muted p-3"
-						>
-							<button
-								type="button"
-								className="w-full text-left"
-								onClick={() => onPlatformSelect(slice.platform)}
-								aria-pressed={slice.isSelected}
+						return (
+							<div
+								key={slice.platform}
+								className="min-w-[12rem] shrink-0 rounded-card border border-outline-subtle bg-panel-muted p-3 lg:min-w-0 lg:shrink"
 							>
-								<div className="mb-1 flex items-center gap-2">
-									<span
-										className="size-2 rounded-full"
-										style={{ backgroundColor: platformColor }}
-										aria-hidden
-									/>
-									<span className="typo-body-md">{slice.platform}</span>
-									<span className="ml-auto typo-caption text-fg-subtle">
-										{percentageFormatter.format(slice.sharePercent)}%
-									</span>
-								</div>
-								<div className="typo-body-sm font-medium">
-									{metric.label}{" "}
-									{Number.isFinite(slice.value)
-										? metric.formatValue(slice.value)
-										: "-"}
-								</div>
-							</button>
-						</div>
-					);
-				})}
+								<button
+									type="button"
+									className="w-full text-left"
+									onClick={() => onPlatformSelect(slice.platform)}
+									aria-pressed={slice.isSelected}
+								>
+									<div className="mb-1 flex items-center gap-2">
+										<span
+											className="size-2 rounded-full"
+											style={{ backgroundColor: platformColor }}
+											aria-hidden
+										/>
+										<span className="typo-body-md">{slice.platform}</span>
+										<span className="ml-auto typo-caption text-fg-subtle">
+											{percentageFormatter.format(slice.sharePercent)}%
+										</span>
+									</div>
+									<div className="typo-body-sm font-medium">
+										{metric.label}{" "}
+										{Number.isFinite(slice.value)
+											? metric.formatValue(slice.value)
+											: "-"}
+									</div>
+								</button>
+							</div>
+						);
+					})}
+				</div>
 			</fieldset>
 		</div>
 	);
