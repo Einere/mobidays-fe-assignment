@@ -84,7 +84,7 @@ describe("PlatformPerformancePieSector", () => {
 		const onParentClick = vi.fn();
 
 		render(
-			<div onClick={onParentClick}>
+			<button type="button" onClick={onParentClick}>
 				<PlatformPerformancePieSector
 					cx={0}
 					cy={0}
@@ -101,7 +101,7 @@ describe("PlatformPerformancePieSector", () => {
 					}}
 					onPlatformSelect={onPlatformSelect}
 				/>
-			</div>,
+			</button>,
 		);
 
 		await user.click(screen.getByRole("button", { name: "Google 선택" }));
