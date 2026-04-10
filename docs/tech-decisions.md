@@ -173,8 +173,8 @@ const campaignFormSchema = z.object({
 }).refine(data => data.cost <= data.budget, {
   message: '집행 금액은 예산을 초과할 수 없습니다',
   path: ['cost'],
-}).refine(data => data.endDate > data.startDate, {
-  message: '종료일은 시작일 이후여야 합니다',
+}).refine(data => data.endDate >= data.startDate, {
+  message: '종료일은 시작일과 같거나 이후여야 합니다',
   path: ['endDate'],
 })
 
@@ -183,7 +183,7 @@ type CampaignFormValues = z.infer<typeof campaignFormSchema>
 ```
 
 - `zodResolver`로 react-hook-form과 타입 안전하게 연동
-- cross-field validation (종료일 > 시작일, 집행금액 ≤ 예산) `.refine()`으로 처리
+- cross-field validation (종료일 >= 시작일, 집행금액 ≤ 예산) `.refine()`으로 처리
 
 **결정**: react-hook-form + Zod
 
@@ -236,4 +236,3 @@ src/
 ```
 
 **결정**: FSD 4레이어 간소화 (app / widgets / entities / shared)
-

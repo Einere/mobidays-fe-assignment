@@ -10,6 +10,7 @@ import {
 	globalFilterAtom,
 	setGlobalFilterAtom,
 } from "@/entities/global-filter/model/store";
+import type { GlobalFilterState } from "@/entities/global-filter/model/types";
 import { seedMockDb } from "@/shared/api/mock/db";
 import { server } from "@/shared/api/mock/server";
 import { createQueryClient } from "@/shared/api/query-client";
@@ -22,6 +23,10 @@ const mayFilter = {
 		startDate: "2026-05-01",
 		endDate: "2026-05-31",
 	},
+};
+const aprilMetaOnlyFilter: GlobalFilterState = {
+	...aprilFilter,
+	platforms: ["Meta"],
 };
 
 function SetMayFilterButton() {
@@ -55,11 +60,12 @@ function RefetchCurrentFilterButton() {
 function renderCampaignTableCard(options?: {
 	withMayFilterButton?: boolean;
 	withRefetchButton?: boolean;
+	initialFilter?: typeof aprilFilter;
 }) {
 	const queryClient = createQueryClient();
 	const store = createStore();
 
-	store.set(globalFilterAtom, aprilFilter);
+	store.set(globalFilterAtom, options?.initialFilter ?? aprilFilter);
 
 	render(
 		<Provider store={store}>
@@ -162,6 +168,32 @@ async function selectCampaignStatus(
 	await user.click(await screen.findByRole("option", { name: label }));
 }
 
+interface CreateCampaignFormInput {
+	name: string;
+	platform: "Google" | "Meta" | "Naver";
+	budget: string;
+	spend: string;
+	startDate: string;
+	endDate: string;
+}
+
+async function submitCampaignCreateForm(
+	user: ReturnType<typeof userEvent.setup>,
+	input: CreateCampaignFormInput,
+) {
+	await user.click(screen.getByRole("button", { name: "캠페인 등록" }));
+	await user.type(screen.getByLabelText("캠페인명"), input.name);
+	await user.click(screen.getByRole("combobox", { name: "광고 매체" }));
+	await user.click(await screen.findByRole("option", { name: input.platform }));
+	await user.type(screen.getByLabelText("예산"), input.budget);
+	await user.type(screen.getByLabelText("집행 금액"), input.spend);
+	await user.clear(screen.getByLabelText("시작일"));
+	await user.type(screen.getByLabelText("시작일"), input.startDate);
+	await user.clear(screen.getByLabelText("종료일"));
+	await user.type(screen.getByLabelText("종료일"), input.endDate);
+	await user.click(screen.getByRole("button", { name: "등록하기" }));
+}
+
 describe("CampaignTableCard", () => {
 	it("renders campaign rows with search, counts, and sortable columns", async () => {
 		seedDefaultCampaignRows();
@@ -253,6 +285,64 @@ describe("CampaignTableCard", () => {
 
 		expect(await screen.findByText("검색 결과가 없습니다.")).toBeVisible();
 		expect(screen.getByText("총 2건 중 0건 표시")).toBeInTheDocument();
+	});
+
+	it("creates a campaign and shows it in the table when current filters match", async () => {
+		seedDefaultCampaignRows();
+		const user = userEvent.setup();
+
+		renderCampaignTableCard();
+
+		await screen.findByText("총 2건 중 2건 표시");
+
+		await submitCampaignCreateForm(user, {
+			name: "신규 검색 캠페인",
+			platform: "Google",
+			budget: "100000",
+			spend: "10000",
+			startDate: "2026-04-10",
+			endDate: "2026-04-20",
+		});
+
+		await waitFor(() => {
+			expect(
+				screen.queryByRole("dialog", { name: "캠페인 등록" }),
+			).not.toBeInTheDocument();
+		});
+		expect(
+			await screen.findByRole("cell", { name: "신규 검색 캠페인" }),
+		).toBeInTheDocument();
+		expect(screen.getByText("총 3건 중 3건 표시")).toBeInTheDocument();
+	});
+
+	it("keeps create success but does not show the row when current filter excludes it", async () => {
+		seedDefaultCampaignRows();
+		const user = userEvent.setup();
+
+		renderCampaignTableCard({ initialFilter: aprilMetaOnlyFilter });
+
+		await screen.findByText("총 1건 중 1건 표시");
+		expect(screen.getByRole("cell", { name: "리타겟팅 세트" })).toBeVisible();
+
+		await submitCampaignCreateForm(user, {
+			name: "구글 브랜드 캠페인",
+			platform: "Google",
+			budget: "120000",
+			spend: "50000",
+			startDate: "2026-04-10",
+			endDate: "2026-04-20",
+		});
+
+		await waitFor(() => {
+			expect(
+				screen.queryByRole("dialog", { name: "캠페인 등록" }),
+			).not.toBeInTheDocument();
+		});
+		expect(
+			screen.queryByRole("cell", { name: "구글 브랜드 캠페인" }),
+		).not.toBeInTheDocument();
+		expect(screen.getByRole("cell", { name: "리타겟팅 세트" })).toBeVisible();
+		expect(screen.getByText("총 1건 중 1건 표시")).toBeInTheDocument();
 	});
 
 	it("keeps the table layout on mobile view and allows horizontal comparison", async () => {

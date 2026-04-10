@@ -53,4 +53,23 @@ describe("CampaignTableToolbar", () => {
 		).toContain("cursor-not-allowed");
 		expect(screen.getByRole("button", { name: "상태 적용" })).toBeDisabled();
 	});
+
+	it("disables the create button when no create handler is provided", () => {
+		render(
+			<CampaignTableToolbar
+				searchInput=""
+				filteredCount={2}
+				totalCount={2}
+				selectedCount={1}
+				pendingStatus={null}
+				disabled={false}
+				canApplyStatusChange={false}
+				onSearchInputChange={vi.fn()}
+				onPendingStatusChange={vi.fn()}
+				onOpenStatusDialog={vi.fn()}
+			/>,
+		);
+
+		expect(screen.getByRole("button", { name: "캠페인 등록" })).toBeDisabled();
+	});
 });

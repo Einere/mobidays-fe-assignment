@@ -21,6 +21,7 @@ function App() {
 					items={sidebarItems}
 				/>
 
+				{/* TODO: 모바일용 메뉴 오버레이가 열리고 닫힐 때 부드러운 전환 애니메이션 추가 */}
 				<div className="min-w-0 flex flex-col gap-panel-gap">
 					<header className="flex flex-col gap-3">
 						<div className="lg:hidden">
