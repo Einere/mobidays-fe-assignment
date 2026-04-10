@@ -68,6 +68,7 @@ describe("PlatformPerformancePieSector", () => {
 		const sector = screen.getByRole("button", { name: "Google 선택" });
 
 		expect(sector).toHaveAttribute("aria-pressed", "true");
+		expect(sector).toHaveStyle({ cursor: "pointer" });
 
 		await user.click(sector);
 		expect(onPlatformSelect).toHaveBeenCalledWith("Google");
@@ -109,6 +110,32 @@ describe("PlatformPerformancePieSector", () => {
 		expect(onParentClick).not.toHaveBeenCalled();
 	});
 
+	it("marks unknown platform slices as disabled with a not-allowed cursor", () => {
+		render(
+			<PlatformPerformancePieSector
+				cx={0}
+				cy={0}
+				innerRadius={0}
+				outerRadius={0}
+				startAngle={0}
+				endAngle={90}
+				fill="var(--chart-series-4)"
+				payload={{
+					platform: "알 수 없음",
+					value: 75,
+					sharePercent: 25,
+					isSelected: false,
+				}}
+				onPlatformSelect={vi.fn()}
+			/>,
+		);
+
+		const sector = screen.getByLabelText("알 수 없음");
+
+		expect(sector).toHaveAttribute("aria-disabled", "true");
+		expect(sector).toHaveStyle({ cursor: "not-allowed" });
+	});
+
 	it("renders unknown platform slices as non-interactive data", () => {
 		render(
 			<PlatformPerformanceDonut
@@ -136,5 +163,35 @@ describe("PlatformPerformancePieSector", () => {
 			"data-opacity",
 			"1",
 		);
+	});
+
+	it("marks legend items with matching interactive affordances", () => {
+		render(
+			<PlatformPerformanceDonut
+				data={[
+					{
+						platform: "Google",
+						value: 100,
+						sharePercent: 80,
+						isSelected: true,
+					},
+					{
+						platform: "알 수 없음",
+						value: 25,
+						sharePercent: 20,
+						isSelected: false,
+					},
+				]}
+				metric={platformPerformanceMetricDefinitions[0]}
+				onPlatformSelect={vi.fn()}
+			/>,
+		);
+
+		const legendButton = screen.getByRole("button", { name: /Google/ });
+		const unknownLegend = screen.getByLabelText("알 수 없음");
+
+		expect(legendButton).toHaveClass("cursor-pointer");
+		expect(unknownLegend).toHaveAttribute("aria-disabled", "true");
+		expect(unknownLegend).toHaveClass("cursor-not-allowed");
 	});
 });

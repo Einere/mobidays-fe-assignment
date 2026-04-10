@@ -77,7 +77,14 @@ export function PlatformPerformancePieSector({
 	}
 
 	if (!isKnownCampaignPlatform(platform)) {
-		return <Sector {...props} aria-label={platform} />;
+		return (
+			<Sector
+				{...props}
+				aria-label={platform}
+				aria-disabled="true"
+				style={{ cursor: "not-allowed", ...(props.style ?? {}) }}
+			/>
+		);
 	}
 
 	return (
@@ -87,6 +94,7 @@ export function PlatformPerformancePieSector({
 			tabIndex={0}
 			aria-label={`${platform} 선택`}
 			aria-pressed={isSelected}
+			style={{ cursor: "pointer", ...(props.style ?? {}) }}
 			onClick={(event) => {
 				event.stopPropagation();
 				onPlatformSelect(platform);
@@ -248,19 +256,19 @@ export function PlatformPerformanceDonut({
 						const isKnownPlatform = isKnownCampaignPlatform(slice.platform);
 
 						return (
-							<div
-								key={slice.platform}
-								className="min-w-[12rem] shrink-0 rounded-card border border-outline-subtle bg-panel-muted p-3 lg:min-w-0 lg:shrink"
-							>
-								{isKnownPlatform ? (
-									<button
-										type="button"
-										className="w-full text-left"
-										onClick={() =>
-											onPlatformSelect(slice.platform as CampaignPlatform)
-										}
-										aria-pressed={slice.isSelected}
-									>
+								<div
+									key={slice.platform}
+									className="min-w-[12rem] shrink-0 rounded-card border border-outline-subtle bg-panel-muted p-3 lg:min-w-0 lg:shrink"
+								>
+									{isKnownPlatform ? (
+										<button
+											type="button"
+											className="w-full cursor-pointer text-left"
+											onClick={() =>
+												onPlatformSelect(slice.platform as CampaignPlatform)
+											}
+											aria-pressed={slice.isSelected}
+										>
 										<div className="mb-1 flex items-center gap-2">
 											<span
 												className="size-2 rounded-full"
@@ -279,12 +287,12 @@ export function PlatformPerformanceDonut({
 												: "-"}
 										</div>
 									</button>
-								) : (
-									<section
-										className="w-full text-left"
-										aria-label="알 수 없음"
-										aria-disabled="true"
-									>
+									) : (
+										<section
+											className="w-full cursor-not-allowed text-left"
+											aria-label="알 수 없음"
+											aria-disabled="true"
+										>
 										<div className="mb-1 flex items-center gap-2">
 											<span
 												className="size-2 rounded-full"
