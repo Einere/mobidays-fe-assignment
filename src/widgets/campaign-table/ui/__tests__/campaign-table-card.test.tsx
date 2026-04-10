@@ -187,7 +187,9 @@ async function submitCampaignCreateForm(
 	await user.click(await screen.findByRole("option", { name: input.platform }));
 	await user.type(screen.getByLabelText("예산"), input.budget);
 	await user.type(screen.getByLabelText("집행 금액"), input.spend);
+	await user.clear(screen.getByLabelText("시작일"));
 	await user.type(screen.getByLabelText("시작일"), input.startDate);
+	await user.clear(screen.getByLabelText("종료일"));
 	await user.type(screen.getByLabelText("종료일"), input.endDate);
 	await user.click(screen.getByRole("button", { name: "등록하기" }));
 }
