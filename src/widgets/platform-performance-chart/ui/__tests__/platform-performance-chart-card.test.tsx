@@ -134,7 +134,7 @@ describe("PlatformPerformanceChartCard", () => {
 
 		expect(container.firstElementChild).toHaveClass("grid-cols-1");
 		expect(container.firstElementChild).toHaveClass(
-			"lg:grid-cols-[minmax(0,1.1fr)_160px]",
+			"lg:grid-cols-[minmax(0,1.1fr)_220px]",
 		);
 
 		const legend = screen.getByRole("group", {
@@ -559,6 +559,7 @@ describe("PlatformPerformanceChartCard", () => {
 		expect(
 			await screen.findByText("성과 데이터를 불러오지 못했습니다."),
 		).toBeInTheDocument();
+		expect(await screen.findByRole("alert")).toBeInTheDocument();
 		expect(screen.getByText("Request failed: 500")).toBeInTheDocument();
 	});
 

@@ -1,4 +1,4 @@
-import type { ComponentProps } from "react";
+import { type ComponentProps, useId, useMemo } from "react";
 import { Cell, Pie, PieChart, Sector } from "recharts";
 import {
 	type CampaignPlatform,
@@ -166,20 +166,72 @@ export function PlatformPerformanceDonut({
 	metric,
 	onPlatformSelect,
 }: DonutData) {
-	const chartConfig = Object.fromEntries(
-		data.map((slice, index) => [
-			slice.platform,
-			{
-				label: slice.platform,
-				color: getPlatformColor(slice.platform, index),
-			},
-		]),
+	const summaryId = useId();
+	const chartConfig = useMemo(
+		() =>
+			Object.fromEntries(
+				data.map((slice, index) => [
+					slice.platform,
+					{
+						label: slice.platform,
+						color: getPlatformColor(slice.platform, index),
+					},
+				]),
+			),
+		[data],
+	);
+	const sliceByPlatform = useMemo(
+		() =>
+			new Map<string, PlatformPerformanceSlice>(
+				data.map((slice) => [slice.platform, slice]),
+			),
+		[data],
+	);
+	const tooltipFormatter = useMemo(
+		() => (_: unknown, name: string | number) => {
+			const matchedSlice = sliceByPlatform.get(String(name));
+			const metricLabel = matchedSlice
+				? `${metric.label} ${metric.formatValue(matchedSlice.value)}`
+				: "-";
+			const share = matchedSlice
+				? ` (${percentageFormatter.format(matchedSlice.sharePercent)}%)`
+				: "";
+
+			return `${metricLabel}${share}`;
+		},
+		[metric, sliceByPlatform],
 	);
 
 	return (
-		<div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[minmax(0,1.1fr)_160px] lg:gap-5">
+		<div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[minmax(0,1.1fr)_220px] lg:gap-5">
+			<table id={summaryId} className="sr-only" aria-label="플랫폼별 성과 요약">
+				<caption className="sr-only">
+					선택한 메트릭 기준 플랫폼별 성과 및 점유율 요약
+				</caption>
+				<thead>
+					<tr>
+						<th scope="col">플랫폼</th>
+						<th scope="col">점유율</th>
+						<th scope="col">{metric.label}</th>
+					</tr>
+				</thead>
+				<tbody>
+					{data.map((slice) => (
+						<tr key={slice.platform}>
+							<td>{slice.platform}</td>
+							<td>{percentageFormatter.format(slice.sharePercent)}%</td>
+							<td>{metric.formatValue(slice.value)}</td>
+						</tr>
+					))}
+				</tbody>
+			</table>
 			<div className="relative flex min-w-0 flex-col rounded-card border border-outline-subtle bg-panel p-3 sm:p-4">
-				<div className="relative h-64 sm:h-72">
+				<div
+					className="relative h-64 sm:h-72"
+					aria-describedby={summaryId}
+					role="img"
+					aria-label={`플랫폼별 ${metric.label} 도넛 차트`}
+				>
 					<ChartContainer className="absolute inset-0" config={chartConfig}>
 						<PieChart>
 							<Pie
@@ -218,23 +270,7 @@ export function PlatformPerformanceDonut({
 								))}
 							</Pie>
 							<ChartTooltip
-								content={
-									<ChartTooltipContent
-										formatter={(_, name) => {
-											const matchedSlice = data.find(
-												(entry) => entry.platform === name,
-											);
-											const metricLabel = matchedSlice
-												? `${metric.label} ${metric.formatValue(matchedSlice.value)}`
-												: "-";
-											const share = matchedSlice
-												? ` (${percentageFormatter.format(matchedSlice.sharePercent)}%)`
-												: "";
-
-											return `${metricLabel}${share}`;
-										}}
-									/>
-								}
+								content={<ChartTooltipContent formatter={tooltipFormatter} />}
 							/>
 						</PieChart>
 					</ChartContainer>
@@ -258,7 +294,7 @@ export function PlatformPerformanceDonut({
 						return (
 							<div
 								key={slice.platform}
-								className="min-w-[12rem] shrink-0 rounded-card border border-outline-subtle bg-panel-muted p-3 lg:min-w-0 lg:shrink"
+								className="min-w-[12rem] shrink-0 rounded-card border border-outline-subtle bg-panel-muted p-3 lg:min-w-0 lg:w-full lg:shrink"
 							>
 								{isKnownPlatform ? (
 									<button
