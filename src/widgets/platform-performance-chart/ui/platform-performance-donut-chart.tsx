@@ -177,7 +177,7 @@ export function PlatformPerformanceDonut({
 	);
 
 	return (
-		<div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[minmax(0,1.1fr)_320px] lg:gap-5">
+		<div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[minmax(0,1.1fr)_200px] lg:gap-5">
 			<div className="relative flex min-w-0 flex-col rounded-card border border-outline-subtle bg-panel p-3 sm:p-4">
 				<div className="relative h-64 sm:h-72">
 					<ChartContainer className="absolute inset-0" config={chartConfig}>
@@ -281,7 +281,7 @@ export function PlatformPerformanceDonut({
 											</span>
 										</div>
 										<div className="typo-body-sm font-medium">
-											{metric.label}{" "}
+											{metric.label}&nbsp;
 											{Number.isFinite(slice.value)
 												? metric.formatValue(slice.value)
 												: "-"}
@@ -305,7 +305,7 @@ export function PlatformPerformanceDonut({
 											</span>
 										</div>
 										<div className="typo-body-sm font-medium">
-											{metric.label}{" "}
+											{metric.label}&nbsp;
 											{Number.isFinite(slice.value)
 												? metric.formatValue(slice.value)
 												: "-"}
