@@ -64,6 +64,49 @@ describe("fetchDashboardData", () => {
 		expect(result.dailyStats[0]?.campaignId).toBe("1");
 	});
 
+	it("preserves campaigns with unknown platform values for chart-level grouping", async () => {
+		seedMockDb({
+			campaigns: [
+				{
+					id: "1",
+					name: "Unknown Active",
+					platform: "TikTok",
+					status: "active",
+					budget: 1000,
+					startDate: "2026-04-01",
+					endDate: "2026-04-30",
+				},
+			],
+			daily_stats: [
+				{
+					id: "d1",
+					campaignId: "1",
+					date: "2026-04-02",
+					impressions: 10,
+					clicks: 1,
+					conversions: 0,
+					cost: 100,
+					conversionsValue: null,
+				},
+			],
+		});
+
+		const result = await fetchDashboardData({
+			dateRange: { startDate: "2026-04-01", endDate: "2026-04-30" },
+			statuses: ["active"],
+			platforms: ["Google", "Meta", "Naver"],
+		});
+
+		expect(result.campaigns).toEqual([
+			expect.objectContaining({
+				id: "1",
+				platform: null,
+				rawPlatform: "TikTok",
+			}),
+		]);
+		expect(result.dailyStats).toHaveLength(1);
+	});
+
 	it("throws when the campaigns request returns a non-ok response", async () => {
 		server.use(
 			http.get("/campaigns", () => {
@@ -121,6 +164,7 @@ describe("fetchDashboardData", () => {
 			expect.objectContaining({
 				id: "1",
 				platform: null,
+				rawPlatform: "Facebook",
 				status: null,
 				budget: null,
 				startDate: "2026/04/12",

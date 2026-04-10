@@ -9,8 +9,12 @@ type PlatformCampaign = AggregatePlatformPerformanceInput["campaigns"][number];
 type PlatformDailyStat =
 	AggregatePlatformPerformanceInput["dailyStats"][number];
 
-function createCampaign(id: string, platform: string | null): PlatformCampaign {
-	return { id, platform };
+function createCampaign(
+	id: string,
+	platform: PlatformCampaign["platform"],
+	rawPlatform: string | null = platform,
+): PlatformCampaign {
+	return { id, platform, rawPlatform };
 }
 
 function createStat(
@@ -31,7 +35,7 @@ const campaigns: PlatformCampaign[] = [
 	createCampaign("cmp-1", "Google"),
 	createCampaign("cmp-2", "Meta"),
 	createCampaign("cmp-3", "Naver"),
-	createCampaign("cmp-4", "TikTok"),
+	createCampaign("cmp-4", null, "TikTok"),
 ];
 
 describe("aggregatePlatformPerformance", () => {
@@ -49,7 +53,7 @@ describe("aggregatePlatformPerformance", () => {
 				campaigns,
 				dailyStats,
 				metricKey: "cost",
-				selectedPlatforms: ["Google", "TikTok"],
+				selectedPlatforms: ["Google"],
 			}),
 		).toEqual([
 			{
@@ -71,10 +75,10 @@ describe("aggregatePlatformPerformance", () => {
 				isSelected: false,
 			},
 			{
-				platform: "TikTok",
+				platform: "알 수 없음",
 				value: 100,
 				sharePercent: 14.29,
-				isSelected: true,
+				isSelected: false,
 			},
 		]);
 	});
@@ -118,7 +122,7 @@ describe("aggregatePlatformPerformance", () => {
 				isSelected: false,
 			},
 			{
-				platform: "TikTok",
+				platform: "알 수 없음",
 				value: 0,
 				sharePercent: 0,
 				isSelected: false,
@@ -126,7 +130,7 @@ describe("aggregatePlatformPerformance", () => {
 		]);
 	});
 
-	it("keeps unknown platform rows and marks selection by selectedPlatforms", () => {
+	it("keeps unknown platform rows visible but unselected", () => {
 		const dailyStats: PlatformDailyStat[] = [
 			createStat("cmp-4", { cost: 100 }),
 		];
@@ -136,14 +140,14 @@ describe("aggregatePlatformPerformance", () => {
 				campaigns,
 				dailyStats,
 				metricKey: "cost",
-				selectedPlatforms: ["TikTok"],
+				selectedPlatforms: ["Google"],
 			}),
 		).toEqual([
 			{
 				platform: "Google",
 				value: 0,
 				sharePercent: 0,
-				isSelected: false,
+				isSelected: true,
 			},
 			{
 				platform: "Meta",
@@ -158,10 +162,10 @@ describe("aggregatePlatformPerformance", () => {
 				isSelected: false,
 			},
 			{
-				platform: "TikTok",
+				platform: "알 수 없음",
 				value: 100,
 				sharePercent: 100,
-				isSelected: true,
+				isSelected: false,
 			},
 		]);
 	});
