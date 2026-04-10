@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useUpdateCampaignStatuses } from "@/entities/campaign/api/use-update-campaign-statuses";
+import { useUpdateCampaignStatuses } from "@/entities/campaign/hooks/use-update-campaign-statuses";
 import { formatCampaignStatusLabel } from "@/entities/campaign/lib/format-campaign-table";
 import type { CampaignStatus } from "@/entities/global-filter/model/types";
 

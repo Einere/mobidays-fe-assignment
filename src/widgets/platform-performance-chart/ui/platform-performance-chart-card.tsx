@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback, useMemo, useState } from "react";
-import { getDashboardDataQueryOptions } from "@/entities/dashboard/api/use-dashboard-data";
+import { getDashboardDataQueryOptions } from "@/entities/dashboard/hooks/use-dashboard-data";
 import {
 	globalFilterAtom,
 	toggleGlobalFilterPlatformAtom,
@@ -227,15 +227,17 @@ export function PlatformPerformanceChartCard() {
 							</div>
 						) : null}
 
-						{state.isSyncing ? (
-							<p
-								className="typo-body-sm text-fg-muted"
-								role="status"
-								aria-live="polite"
-							>
-								동기화 중
-							</p>
-						) : null}
+						<div className="min-h-5">
+							{state.isSyncing ? (
+								<p
+									className="typo-body-sm text-fg-muted"
+									role="status"
+									aria-live="polite"
+								>
+									동기화 중
+								</p>
+							) : null}
+						</div>
 
 						<div className="-mx-1 overflow-x-auto px-1 lg:mx-0 lg:self-start lg:px-0">
 							<PlatformPerformanceMetricToggleGroup

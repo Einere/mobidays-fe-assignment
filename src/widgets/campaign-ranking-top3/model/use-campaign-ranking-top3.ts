@@ -6,7 +6,7 @@ import {
 	selectCampaignRankingTop3,
 } from "@/entities/campaign-ranking/lib/build-campaign-ranking-top3";
 import type { CampaignRankingMetricKey } from "@/entities/campaign-ranking/model/types";
-import { getDashboardDataQueryOptions } from "@/entities/dashboard/api/use-dashboard-data";
+import { getDashboardDataQueryOptions } from "@/entities/dashboard/hooks/use-dashboard-data";
 import { globalFilterAtom } from "@/entities/global-filter/model/store";
 import {
 	defaultCampaignRankingMetricKey,

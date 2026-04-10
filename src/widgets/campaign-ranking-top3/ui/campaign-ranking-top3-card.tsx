@@ -106,15 +106,17 @@ export function CampaignRankingTop3Card() {
 					</div>
 				) : null}
 
-				{state.kind === "chart" && state.isSyncing ? (
-					<p
-						className="typo-body-sm text-fg-muted"
-						role="status"
-						aria-live="polite"
-					>
-						동기화 중
-					</p>
-				) : null}
+				<div className="min-h-5">
+					{state.kind === "chart" && state.isSyncing ? (
+						<p
+							className="typo-body-sm text-fg-muted"
+							role="status"
+							aria-live="polite"
+						>
+							동기화 중
+						</p>
+					) : null}
+				</div>
 			</div>
 		</section>
 	);

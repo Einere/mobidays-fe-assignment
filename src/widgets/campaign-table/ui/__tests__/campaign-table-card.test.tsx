@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { createStore, Provider, useAtomValue, useSetAtom } from "jotai";
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
-import { createDashboardDataQueryKey } from "@/entities/dashboard/api/use-dashboard-data";
+import { createDashboardDataQueryKey } from "@/entities/dashboard/hooks/dashboard-data-query-key";
 import { createInitialGlobalFilterState } from "@/entities/global-filter/model/defaults";
 import {
 	globalFilterAtom,
@@ -234,6 +234,12 @@ describe("CampaignTableCard", () => {
 		expect(
 			tableScope.getByRole("cell", { name: "리타겟팅 세트" }),
 		).toBeVisible();
+
+		const cardSection = screen
+			.getByRole("heading", { name: "캠페인 현황" })
+			.closest("section");
+
+		expect(cardSection?.querySelector(".min-h-5")).not.toBeNull();
 	});
 
 	it("shows a filtered-empty message when no campaigns exist for the global filter", async () => {

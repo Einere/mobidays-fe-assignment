@@ -5,7 +5,6 @@ export interface UpdateCampaignStatusesParams {
 	status: CampaignStatus;
 }
 
-/*TODO: shared/api 로 이동해야 하는게 맞는거 아닌가? */
 export async function updateCampaignStatuses({
 	ids,
 	status,

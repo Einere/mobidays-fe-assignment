@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { buildCampaignTableRows } from "@/entities/campaign/lib/build-campaign-table-rows";
-import { getDashboardDataQueryOptions } from "@/entities/dashboard/api/use-dashboard-data";
+import { getDashboardDataQueryOptions } from "@/entities/dashboard/hooks/use-dashboard-data";
 import type { GlobalFilterState } from "@/entities/global-filter/model/types";
 import { deriveCampaignTableView } from "@/widgets/campaign-table/model/derive-campaign-table-view";
 import type { CampaignTableControls } from "@/widgets/campaign-table/model/use-campaign-table-controls";

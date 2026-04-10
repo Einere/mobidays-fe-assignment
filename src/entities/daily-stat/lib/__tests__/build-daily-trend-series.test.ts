@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildDailyTrendSeries } from "@/entities/daily-stat/lib/build-daily-trend-series";
-import type { DashboardDailyStat } from "@/entities/dashboard/api/parse-dashboard-data";
+import type { DashboardDailyStat } from "@/entities/dashboard/lib/parse-dashboard-data";
 import type { RawDailyStat } from "@/shared/api/mock/types";
 
 function createRawDailyStat(

@@ -29,8 +29,7 @@ describe("CampaignTableStatusDialog", () => {
 			).className,
 		).toContain("bg-status-warning/30");
 		expect(
-			document.querySelector('[data-slot="campaign-status-dialog-overlay"]')
-				?.className ?? "",
+			document.querySelector('[data-slot="dialog-overlay"]')?.className ?? "",
 		).toContain("bg-overlay-scrim");
 		expect(
 			screen
@@ -66,5 +65,27 @@ describe("CampaignTableStatusDialog", () => {
 		expect(
 			screen.getByRole("dialog", { name: "캠페인 상태 변경" }),
 		).toBeInTheDocument();
+	});
+
+	it("closes through the cancel button when the dialog is not submitting", async () => {
+		const user = userEvent.setup();
+		const onOpenChange = vi.fn();
+
+		render(
+			<CampaignTableStatusDialog
+				open
+				selectedCount={2}
+				statusLabel="종료"
+				errorMessage={null}
+				isSubmitting={false}
+				canConfirm
+				onOpenChange={onOpenChange}
+				onConfirm={vi.fn()}
+			/>,
+		);
+
+		await user.click(screen.getByRole("button", { name: "취소" }));
+
+		expect(onOpenChange).toHaveBeenCalledWith(false);
 	});
 });
