@@ -134,7 +134,7 @@ describe("PlatformPerformanceChartCard", () => {
 
 		expect(container.firstElementChild).toHaveClass("grid-cols-1");
 		expect(container.firstElementChild).toHaveClass(
-			"lg:grid-cols-[minmax(0,1.1fr)_200px]",
+			"lg:grid-cols-[minmax(0,1.1fr)_160px]",
 		);
 
 		const legend = screen.getByRole("group", {

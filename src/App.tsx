@@ -16,9 +16,9 @@ function App() {
 
 	return (
 		<main className="min-h-screen overflow-x-hidden bg-canvas text-fg">
-			<section className="mx-auto grid min-h-screen w-full max-w-page-max gap-panel-gap px-page-gutter py-8 lg:grid-cols-[260px_minmax(0,1fr)]">
+			<section className="mx-auto grid min-h-screen w-full max-w-page-max gap-panel-gap px-page-gutter py-8 xl:grid-cols-[260px_minmax(0,1fr)]">
 				<SidebarNav
-					className="hidden min-w-0 lg:block"
+					className="hidden min-w-0 xl:block"
 					title="Mobidays Dashboard"
 					items={sidebarItems}
 				/>
@@ -26,7 +26,7 @@ function App() {
 				{/* TODO: 모바일용 메뉴 오버레이가 열리고 닫힐 때 부드러운 전환 애니메이션 추가 */}
 				<div className="min-w-0 flex flex-col gap-panel-gap">
 					<header className="flex flex-col gap-3">
-						<div className="lg:hidden">
+						<div className="xl:hidden">
 							<MobileSidebarNav
 								title="Mobidays Dashboard"
 								items={sidebarItems}

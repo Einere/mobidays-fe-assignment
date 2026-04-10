@@ -81,7 +81,7 @@ function MobileSidebarNav({ title, items, className }: SidebarNavProps) {
 					type="button"
 					variant="outline"
 					size="icon"
-					className={cn("lg:hidden", className)}
+					className={cn("xl:hidden", className)}
 					aria-label="메뉴 열기"
 				>
 					<Menu aria-hidden="true" />
