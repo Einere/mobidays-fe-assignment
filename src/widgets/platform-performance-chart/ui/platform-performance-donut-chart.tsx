@@ -239,7 +239,7 @@ export function PlatformPerformanceDonut({
 				aria-label="플랫폼별 성과 도넛 범례"
 			>
 				<legend className="sr-only">플랫폼별 성과 도넛 범례</legend>
-				<div className="flex gap-2 overflow-x-auto pb-1 lg:grid lg:gap-2 lg:overflow-visible lg:pb-0">
+				<div className="flex gap-2 overflow-x-auto pb-1 lg:grid lg:gap-2 lg:pb-0">
 					{data.map((slice, index) => {
 						const platformColor = getPlatformColor(slice.platform, index);
 						const isKnownPlatform = isKnownCampaignPlatform(slice.platform);
