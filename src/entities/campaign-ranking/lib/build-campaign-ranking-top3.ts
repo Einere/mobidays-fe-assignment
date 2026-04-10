@@ -16,7 +16,7 @@ interface CampaignMetrics {
 	conversionsValue: MetricAccumulator;
 }
 
-interface RankableCampaign extends CampaignRankingTop3Item {
+export interface CampaignRankingTop3Candidate extends CampaignRankingTop3Item {
 	inputIndex: number;
 }
 
@@ -75,11 +75,13 @@ function getSortDirection(metricKey: CampaignRankingMetricKey) {
 	return metricKey === "cpc" ? 1 : -1;
 }
 
-export function buildCampaignRankingTop3({
+export function buildCampaignRankingTop3Candidates({
 	campaigns,
 	dailyStats,
-	metricKey,
-}: BuildCampaignRankingTop3Input): CampaignRankingTop3Item[] {
+}: Omit<
+	BuildCampaignRankingTop3Input,
+	"metricKey"
+>): CampaignRankingTop3Candidate[] {
 	const campaignIds = new Set(campaigns.map((campaign) => campaign.id));
 	const metricsByCampaignId = new Map<string, CampaignMetrics>();
 
@@ -101,9 +103,7 @@ export function buildCampaignRankingTop3({
 		}
 	}
 
-	const rankableCampaigns: RankableCampaign[] = [];
-	const sortDirection = getSortDirection(metricKey);
-
+	const rankableCampaigns: CampaignRankingTop3Candidate[] = [];
 	for (const [index, campaign] of campaigns.entries()) {
 		const metrics =
 			metricsByCampaignId.get(campaign.id) ?? createCampaignMetrics();
@@ -115,7 +115,7 @@ export function buildCampaignRankingTop3({
 		const cpc = calculateCostPerClick(cost, clicks);
 		const roas = calculateRate(conversionsValue, cost);
 
-		const row: RankableCampaign = {
+		const row: CampaignRankingTop3Candidate = {
 			id: campaign.id,
 			name: campaign.name,
 			roas,
@@ -123,16 +123,21 @@ export function buildCampaignRankingTop3({
 			cpc,
 			inputIndex: index,
 		};
-		const rankValue = row[metricKey];
-
-		if (rankValue === null) {
-			continue;
-		}
 
 		rankableCampaigns.push(row);
 	}
 
-	return rankableCampaigns
+	return rankableCampaigns;
+}
+
+export function selectCampaignRankingTop3(
+	candidates: CampaignRankingTop3Candidate[],
+	metricKey: CampaignRankingMetricKey,
+): CampaignRankingTop3Item[] {
+	const sortDirection = getSortDirection(metricKey);
+
+	return [...candidates]
+		.filter((candidate) => candidate[metricKey] !== null)
 		.sort((a, b) => {
 			const aMetricValue = a[metricKey] as number;
 			const bMetricValue = b[metricKey] as number;
@@ -146,4 +151,15 @@ export function buildCampaignRankingTop3({
 		})
 		.slice(0, 3)
 		.map(({ inputIndex: _inputIndex, ...campaign }) => campaign);
+}
+
+export function buildCampaignRankingTop3({
+	campaigns,
+	dailyStats,
+	metricKey,
+}: BuildCampaignRankingTop3Input): CampaignRankingTop3Item[] {
+	return selectCampaignRankingTop3(
+		buildCampaignRankingTop3Candidates({ campaigns, dailyStats }),
+		metricKey,
+	);
 }

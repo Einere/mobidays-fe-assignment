@@ -1,3 +1,4 @@
+import { useId, useMemo } from "react";
 import {
 	Bar,
 	BarChart,
@@ -31,16 +32,56 @@ export function CampaignRankingTop3BarChart({
 	rows,
 	metric,
 }: CampaignRankingTop3BarChartProps) {
-	const chartConfig = {
-		metricValue: {
-			label: metric.label,
-			color: metric.chartColor,
-		},
-	} satisfies ChartConfig;
+	const summaryId = useId();
+	const chartConfig = useMemo(
+		() =>
+			({
+				metricValue: {
+					label: metric.label,
+					color: metric.chartColor,
+				},
+			}) satisfies ChartConfig,
+		[metric.chartColor, metric.label],
+	);
+	const tooltipContent = useMemo(
+		() => (
+			<ChartTooltipContent
+				formatter={(value) =>
+					metric.formatValue(typeof value === "number" ? value : null)
+				}
+			/>
+		),
+		[metric],
+	);
 
 	return (
 		<div className="rounded-card border border-outline-subtle bg-panel p-3 sm:p-4">
-			<div className="h-72" data-testid="campaign-ranking-top3-chart">
+			<table id={summaryId} className="sr-only" aria-label="캠페인 TOP 3 요약">
+				<caption className="sr-only">
+					선택한 메트릭 기준 상위 3개 캠페인 요약
+				</caption>
+				<thead>
+					<tr>
+						<th scope="col">순위</th>
+						<th scope="col">캠페인</th>
+						<th scope="col">{metric.label}</th>
+					</tr>
+				</thead>
+				<tbody>
+					{rows.map((row) => (
+						<tr key={row.id}>
+							<td>{row.rankLabel}</td>
+							<td>{row.campaignLabel}</td>
+							<td>{row.metricDisplayValue}</td>
+						</tr>
+					))}
+				</tbody>
+			</table>
+			<div
+				className="h-72"
+				data-testid="campaign-ranking-top3-chart"
+				aria-describedby={summaryId}
+			>
 				<ChartContainer className="h-full w-full" config={chartConfig}>
 					<BarChart
 						data={rows}
@@ -56,21 +97,12 @@ export function CampaignRankingTop3BarChart({
 						<YAxis
 							type="category"
 							dataKey="campaignLabel"
-							width={136}
+							width={164}
 							tickLine={false}
 							axisLine={false}
 							interval={0}
 						/>
-						<ChartTooltip
-							cursor={false}
-							content={
-								<ChartTooltipContent
-									formatter={(value) =>
-										metric.formatValue(typeof value === "number" ? value : null)
-									}
-								/>
-							}
-						/>
+						<ChartTooltip cursor={false} content={tooltipContent} />
 						<Bar
 							dataKey="metricValue"
 							fill="var(--color-metricValue)"

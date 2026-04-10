@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { buildCampaignRankingTop3 } from "@/entities/campaign-ranking/lib/build-campaign-ranking-top3";
+import {
+	buildCampaignRankingTop3,
+	buildCampaignRankingTop3Candidates,
+	selectCampaignRankingTop3,
+} from "@/entities/campaign-ranking/lib/build-campaign-ranking-top3";
 import type {
 	CampaignRankingCampaign,
 	CampaignRankingDailyStat,
@@ -130,5 +134,49 @@ describe("buildCampaignRankingTop3", () => {
 		expect(
 			buildCampaignRankingTop3({ campaigns, dailyStats, metricKey: "ctr" }),
 		).toEqual([]);
+	});
+
+	it("builds reusable campaign candidates that can be ranked by different metrics", () => {
+		const campaigns = [
+			createCampaign("cmp-1", "A"),
+			createCampaign("cmp-2", "B"),
+			createCampaign("cmp-3", "C"),
+		];
+		const dailyStats = [
+			createStat("cmp-1", {
+				impressions: 100,
+				clicks: 10,
+				cost: 30,
+				conversionsValue: 90,
+			}),
+			createStat("cmp-2", {
+				impressions: 100,
+				clicks: 20,
+				cost: 40,
+				conversionsValue: 120,
+			}),
+			createStat("cmp-3", {
+				impressions: 100,
+				clicks: 5,
+				cost: 10,
+				conversionsValue: 20,
+			}),
+		];
+
+		const candidates = buildCampaignRankingTop3Candidates({
+			campaigns,
+			dailyStats,
+		});
+
+		expect(selectCampaignRankingTop3(candidates, "roas")).toEqual([
+			{ id: "cmp-1", name: "A", roas: 300, ctr: 10, cpc: 3 },
+			{ id: "cmp-2", name: "B", roas: 300, ctr: 20, cpc: 2 },
+			{ id: "cmp-3", name: "C", roas: 200, ctr: 5, cpc: 2 },
+		]);
+		expect(selectCampaignRankingTop3(candidates, "cpc")).toEqual([
+			{ id: "cmp-2", name: "B", roas: 300, ctr: 20, cpc: 2 },
+			{ id: "cmp-3", name: "C", roas: 200, ctr: 5, cpc: 2 },
+			{ id: "cmp-1", name: "A", roas: 300, ctr: 10, cpc: 3 },
+		]);
 	});
 });

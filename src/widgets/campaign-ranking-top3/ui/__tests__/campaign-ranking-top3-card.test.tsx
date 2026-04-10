@@ -153,17 +153,20 @@ describe("CampaignRankingTop3Card", () => {
 			"aria-pressed",
 			"false",
 		);
-
 		await waitFor(() => {
 			expect(rechartsState.barChartData).toHaveLength(2);
 		});
+
+		expect(
+			await screen.findByRole("table", { name: "캠페인 TOP 3 요약" }),
+		).toBeInTheDocument();
 
 		const firstRow = rechartsState.barChartData[0] as {
 			campaignLabel: string;
 			metricValue: number;
 		};
 
-		expect(firstRow.campaignLabel).toBe("Google 브랜딩");
+		expect(firstRow.campaignLabel).toBe("1위 Google 브랜딩");
 		expect(firstRow.metricValue).toBe(200);
 	});
 
@@ -229,7 +232,7 @@ describe("CampaignRankingTop3Card", () => {
 				metricValue: number;
 			};
 
-			expect(firstRow.campaignLabel).toBe("Meta 리타겟팅");
+			expect(firstRow.campaignLabel).toBe("1위 Meta 리타겟팅");
 			expect(firstRow.metricValue).toBe(50);
 		});
 
@@ -240,6 +243,70 @@ describe("CampaignRankingTop3Card", () => {
 		expect(screen.getByRole("button", { name: "CPC" })).toHaveAttribute(
 			"aria-pressed",
 			"true",
+		);
+	});
+
+	it("uses rank-prefixed labels so unnamed campaigns stay distinguishable", async () => {
+		seedMockDb({
+			campaigns: [
+				{
+					id: "cmp-1",
+					name: null,
+					platform: "Google",
+					status: "active",
+					budget: 1000,
+					startDate: "2026-04-01",
+					endDate: "2026-04-30",
+				},
+				{
+					id: "cmp-2",
+					name: "   ",
+					platform: "Meta",
+					status: "active",
+					budget: 1000,
+					startDate: "2026-04-01",
+					endDate: "2026-04-30",
+				},
+			],
+			daily_stats: [
+				{
+					id: "d-1",
+					campaignId: "cmp-1",
+					date: "2026-04-01",
+					impressions: 100,
+					clicks: 10,
+					conversions: 1,
+					cost: 1000,
+					conversionsValue: 2000,
+				},
+				{
+					id: "d-2",
+					campaignId: "cmp-2",
+					date: "2026-04-01",
+					impressions: 100,
+					clicks: 20,
+					conversions: 2,
+					cost: 1000,
+					conversionsValue: 1500,
+				},
+			],
+		});
+
+		renderCampaignRankingTop3Card();
+
+		await waitFor(() => {
+			expect(rechartsState.barChartData).toHaveLength(2);
+		});
+
+		expect(rechartsState.barChartData).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({
+					campaignLabel: "1위 이름 없음",
+				}),
+				expect.objectContaining({
+					campaignLabel: "2위 이름 없음",
+				}),
+			]),
 		);
 	});
 
@@ -291,9 +358,10 @@ describe("CampaignRankingTop3Card", () => {
 
 		renderCampaignRankingTop3Card();
 
-		expect(
-			await screen.findByText("선택한 메트릭에 표시할 데이터가 없습니다."),
-		).toBeInTheDocument();
+		const emptyState = await screen.findByText(
+			"선택한 메트릭에 표시할 데이터가 없습니다.",
+		);
+		expect(emptyState.closest("div")).toHaveAttribute("role", "status");
 		expect(
 			screen.queryByTestId("campaign-ranking-top3-chart"),
 		).not.toBeInTheDocument();

@@ -1,131 +1,10 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useAtomValue } from "jotai";
-import { useCallback, useMemo, useState } from "react";
-import { buildCampaignRankingTop3 } from "@/entities/campaign-ranking/lib/build-campaign-ranking-top3";
-import type { CampaignRankingMetricKey } from "@/entities/campaign-ranking/model/types";
-import { getDashboardDataQueryOptions } from "@/entities/dashboard/api/use-dashboard-data";
-import { globalFilterAtom } from "@/entities/global-filter/model/store";
 import { ToggleButton } from "@/shared/ui/toggle-button";
+import { campaignRankingMetricDefinitions } from "@/widgets/campaign-ranking-top3/model/campaign-ranking-metrics";
 import {
-	campaignRankingMetricDefinitions,
-	defaultCampaignRankingMetricKey,
-	formatCampaignRankingMetricValue,
-	getCampaignRankingMetricDefinition,
-} from "@/widgets/campaign-ranking-top3/model/campaign-ranking-metrics";
-import {
-	CampaignRankingTop3BarChart,
-	type CampaignRankingTop3DisplayRow,
-} from "@/widgets/campaign-ranking-top3/ui/campaign-ranking-top3-bar-chart";
-
-type CampaignRankingTop3CardState =
-	| {
-			kind: "loading";
-	  }
-	| {
-			kind: "full-error";
-			errorMessage: string;
-	  }
-	| {
-			kind: "empty-campaigns";
-	  }
-	| {
-			kind: "empty-data";
-	  }
-	| {
-			kind: "chart";
-			rows: CampaignRankingTop3DisplayRow[];
-			isSyncing: boolean;
-			staleErrorMessage: string | null;
-	  };
-
-function normalizeCampaignLabel(name: string | null) {
-	if (name === null) {
-		return "-";
-	}
-
-	return name.trim() === "" ? "-" : name;
-}
-
-function buildDisplayRows({
-	metricKey,
-	rankedRows,
-}: {
-	metricKey: CampaignRankingMetricKey;
-	rankedRows: ReturnType<typeof buildCampaignRankingTop3>;
-}) {
-	return rankedRows
-		.map((row, index) => {
-			const metricValue = row[metricKey];
-
-			if (metricValue === null) {
-				return null;
-			}
-
-			const rank = index + 1;
-
-			return {
-				id: row.id,
-				rankLabel: `${rank}위`,
-				campaignLabel: normalizeCampaignLabel(row.name),
-				metricValue,
-				metricDisplayValue: formatCampaignRankingMetricValue(
-					metricKey,
-					metricValue,
-				),
-			} satisfies CampaignRankingTop3DisplayRow;
-		})
-		.filter((row): row is CampaignRankingTop3DisplayRow => row !== null);
-}
-
-function resolveCampaignRankingTop3CardState({
-	campaigns,
-	errorMessage,
-	isLoadingError,
-	isPending,
-	isRefetchError,
-	isRefetching,
-	rows,
-}: {
-	campaigns: unknown[] | null;
-	errorMessage: string | null;
-	isLoadingError: boolean;
-	isPending: boolean;
-	isRefetchError: boolean;
-	isRefetching: boolean;
-	rows: CampaignRankingTop3DisplayRow[];
-}): CampaignRankingTop3CardState {
-	if (isLoadingError) {
-		return {
-			kind: "full-error",
-			errorMessage: errorMessage ?? "알 수 없는 오류가 발생했습니다.",
-		};
-	}
-
-	if (campaigns === null && isPending) {
-		return { kind: "loading" };
-	}
-
-	if (campaigns === null) {
-		return { kind: "empty-data" };
-	}
-
-	if (campaigns.length === 0) {
-		return { kind: "empty-campaigns" };
-	}
-
-	if (rows.length === 0) {
-		return { kind: "empty-data" };
-	}
-
-	return {
-		kind: "chart",
-		rows,
-		isSyncing: isRefetching,
-		staleErrorMessage: isRefetchError
-			? (errorMessage ?? "알 수 없는 오류가 발생했습니다.")
-			: null,
-	};
-}
+	type CampaignRankingTop3CardState,
+	useCampaignRankingTop3CardViewModel,
+} from "@/widgets/campaign-ranking-top3/model/use-campaign-ranking-top3";
+import { CampaignRankingTop3BarChart } from "@/widgets/campaign-ranking-top3/ui/campaign-ranking-top3-bar-chart";
 
 function renderBody(state: CampaignRankingTop3CardState) {
 	switch (state.kind) {
@@ -134,24 +13,37 @@ function renderBody(state: CampaignRankingTop3CardState) {
 				<div
 					className="h-72 rounded-card border border-outline-subtle bg-panel-muted"
 					data-testid="campaign-ranking-top3-loading"
+					role="status"
+					aria-live="polite"
+					aria-busy="true"
+					aria-label="캠페인 랭킹 데이터를 불러오는 중"
 				/>
 			);
 		case "full-error":
 			return (
-				<div className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-5 typo-body-sm text-status-danger-fg">
+				<div
+					className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-5 typo-body-sm text-status-danger-fg"
+					role="alert"
+				>
 					<p>캠페인 랭킹 데이터를 불러오지 못했습니다.</p>
 					<p className="mt-1 text-fg-muted">{state.errorMessage}</p>
 				</div>
 			);
 		case "empty-campaigns":
 			return (
-				<div className="flex h-72 items-center justify-center rounded-card border border-outline-subtle bg-panel-muted px-4 text-center typo-body-sm text-fg-muted">
+				<div
+					className="flex h-72 items-center justify-center rounded-card border border-outline-subtle bg-panel-muted px-4 text-center typo-body-sm text-fg-muted"
+					role="status"
+				>
 					필터 조건에 맞는 캠페인이 없습니다.
 				</div>
 			);
 		case "empty-data":
 			return (
-				<div className="flex h-72 items-center justify-center rounded-card border border-outline-subtle bg-panel-muted px-4 text-center typo-body-sm text-fg-muted">
+				<div
+					className="flex h-72 items-center justify-center rounded-card border border-outline-subtle bg-panel-muted px-4 text-center typo-body-sm text-fg-muted"
+					role="status"
+				>
 					선택한 메트릭에 표시할 데이터가 없습니다.
 				</div>
 			);
@@ -161,46 +53,8 @@ function renderBody(state: CampaignRankingTop3CardState) {
 }
 
 export function CampaignRankingTop3Card() {
-	const filter = useAtomValue(globalFilterAtom);
-	const [metricKey, setMetricKey] = useState<CampaignRankingMetricKey>(
-		defaultCampaignRankingMetricKey,
-	);
-	const query = useQuery({
-		...getDashboardDataQueryOptions(filter),
-		placeholderData: keepPreviousData,
-	});
-	const metricDefinition = getCampaignRankingMetricDefinition(metricKey);
-	const rows = useMemo(() => {
-		if (query.data === undefined) {
-			return [] as CampaignRankingTop3DisplayRow[];
-		}
-
-		const rankedRows = buildCampaignRankingTop3({
-			campaigns: query.data.campaigns,
-			dailyStats: query.data.dailyStats,
-			metricKey,
-		});
-
-		return buildDisplayRows({
-			metricKey,
-			rankedRows,
-		});
-	}, [metricKey, query.data]);
-	const state = resolveCampaignRankingTop3CardState({
-		campaigns: query.data?.campaigns ?? null,
-		errorMessage: query.error?.message ?? null,
-		isLoadingError: query.isLoadingError,
-		isPending: query.isPending,
-		isRefetchError: query.isRefetchError,
-		isRefetching: query.isRefetching,
-		rows,
-	});
-	const handleMetricChange = useCallback(
-		(nextMetricKey: CampaignRankingMetricKey) => {
-			setMetricKey(nextMetricKey);
-		},
-		[],
-	);
+	const { metricDefinition, metricKey, setMetricKey, state } =
+		useCampaignRankingTop3CardViewModel();
 
 	return (
 		<section className="rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel">
@@ -223,7 +77,7 @@ export function CampaignRankingTop3Card() {
 									key={metric.key}
 									type="button"
 									pressed={metricKey === metric.key}
-									onClick={() => handleMetricChange(metric.key)}
+									onClick={() => setMetricKey(metric.key)}
 								>
 									{metric.label}
 								</ToggleButton>
@@ -242,7 +96,10 @@ export function CampaignRankingTop3Card() {
 				)}
 
 				{state.kind === "chart" && state.staleErrorMessage ? (
-					<div className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-3 typo-body-sm text-status-danger-fg">
+					<div
+						className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-3 typo-body-sm text-status-danger-fg"
+						role="alert"
+					>
 						<p>
 							최신 랭킹 데이터를 불러오지 못해 마지막 성공 결과를 표시 중입니다.
 						</p>
