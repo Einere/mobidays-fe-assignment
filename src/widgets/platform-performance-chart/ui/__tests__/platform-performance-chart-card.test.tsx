@@ -197,6 +197,12 @@ describe("PlatformPerformanceChartCard", () => {
 			"aria-pressed",
 			"false",
 		);
+
+		const cardSection = screen
+			.getByRole("heading", { name: "플랫폼별 성과" })
+			.closest("section");
+
+		expect(cardSection?.querySelector(".min-h-5")).not.toBeNull();
 	});
 
 	it("aggregates selected metric and refreshes results when metric changes", async () => {

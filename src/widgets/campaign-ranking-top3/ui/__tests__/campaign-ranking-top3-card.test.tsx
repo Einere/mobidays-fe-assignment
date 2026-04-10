@@ -161,6 +161,12 @@ describe("CampaignRankingTop3Card", () => {
 			await screen.findByRole("table", { name: "캠페인 TOP 3 요약" }),
 		).toBeInTheDocument();
 
+		const cardSection = screen
+			.getByRole("heading", { name: "캠페인 TOP 3" })
+			.closest("section");
+
+		expect(cardSection?.querySelector(".min-h-5")).not.toBeNull();
+
 		const firstRow = rechartsState.barChartData[0] as {
 			campaignLabel: string;
 			metricValue: number;

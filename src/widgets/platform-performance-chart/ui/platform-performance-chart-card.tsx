@@ -227,15 +227,17 @@ export function PlatformPerformanceChartCard() {
 							</div>
 						) : null}
 
-						{state.isSyncing ? (
-							<p
-								className="typo-body-sm text-fg-muted"
-								role="status"
-								aria-live="polite"
-							>
-								동기화 중
-							</p>
-						) : null}
+						<div className="min-h-5">
+							{state.isSyncing ? (
+								<p
+									className="typo-body-sm text-fg-muted"
+									role="status"
+									aria-live="polite"
+								>
+									동기화 중
+								</p>
+							) : null}
+						</div>
 
 						<div className="-mx-1 overflow-x-auto px-1 lg:mx-0 lg:self-start lg:px-0">
 							<PlatformPerformanceMetricToggleGroup

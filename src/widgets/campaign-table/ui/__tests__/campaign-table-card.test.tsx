@@ -234,6 +234,12 @@ describe("CampaignTableCard", () => {
 		expect(
 			tableScope.getByRole("cell", { name: "리타겟팅 세트" }),
 		).toBeVisible();
+
+		const cardSection = screen
+			.getByRole("heading", { name: "캠페인 현황" })
+			.closest("section");
+
+		expect(cardSection?.querySelector(".min-h-5")).not.toBeNull();
 	});
 
 	it("shows a filtered-empty message when no campaigns exist for the global filter", async () => {
