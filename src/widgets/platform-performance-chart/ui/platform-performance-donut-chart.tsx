@@ -116,13 +116,7 @@ export function PlatformPerformanceDonut({
 
 	return (
 		<div className="grid grid-cols-[minmax(0,1.1fr)_320px] gap-5 items-stretch">
-			<div className="relative flex min-w-0 flex-col gap-2 rounded-card border border-outline-subtle bg-panel p-4">
-				<div
-					className="typo-caption text-fg-subtle"
-					data-testid="platform-performance-metric-label"
-				>
-					현재 기준: {metric.label}
-				</div>
+			<div className="relative flex min-w-0 flex-col rounded-card border border-outline-subtle bg-panel p-4">
 				<div className="relative h-72">
 					<ChartContainer className="absolute inset-0" config={chartConfig}>
 						<PieChart>

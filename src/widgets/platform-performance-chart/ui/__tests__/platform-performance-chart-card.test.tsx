@@ -138,6 +138,9 @@ describe("PlatformPerformanceChartCard", () => {
 		expect(container.firstElementChild).not.toHaveClass(
 			"lg:grid-cols-[minmax(0,1.1fr)_320px]",
 		);
+		expect(
+			screen.queryByTestId("platform-performance-metric-label"),
+		).not.toBeInTheDocument();
 	});
 
 	it("renders metric toggles and defaults to 비용", async () => {
