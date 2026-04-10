@@ -77,6 +77,38 @@ describe("PlatformPerformancePieSector", () => {
 		expect(onPlatformSelect).toHaveBeenCalledTimes(2);
 	});
 
+	it("stops click bubbling so the slice is toggled only once", async () => {
+		const user = userEvent.setup();
+		const onPlatformSelect = vi.fn();
+		const onParentClick = vi.fn();
+
+		render(
+			<div onClick={onParentClick}>
+				<PlatformPerformancePieSector
+					cx={0}
+					cy={0}
+					innerRadius={0}
+					outerRadius={0}
+					startAngle={0}
+					endAngle={90}
+					fill="var(--chart-danger)"
+					payload={{
+						platform: "Google",
+						value: 1500,
+						sharePercent: 75,
+						isSelected: false,
+					}}
+					onPlatformSelect={onPlatformSelect}
+				/>
+			</div>,
+		);
+
+		await user.click(screen.getByRole("button", { name: "Google 선택" }));
+
+		expect(onPlatformSelect).toHaveBeenCalledTimes(1);
+		expect(onParentClick).not.toHaveBeenCalled();
+	});
+
 	it("renders unknown platform slices as non-interactive data", () => {
 		render(
 			<PlatformPerformanceDonut

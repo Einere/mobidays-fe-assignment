@@ -87,7 +87,10 @@ export function PlatformPerformancePieSector({
 			tabIndex={0}
 			aria-label={`${platform} 선택`}
 			aria-pressed={isSelected}
-			onClick={() => onPlatformSelect(platform)}
+			onClick={(event) => {
+				event.stopPropagation();
+				onPlatformSelect(platform);
+			}}
 			onKeyDown={(event) => {
 				if (event.key === "Enter" || event.key === " ") {
 					event.preventDefault();
