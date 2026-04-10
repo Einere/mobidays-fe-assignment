@@ -141,7 +141,7 @@ describe("PlatformPerformanceChartCard", () => {
 			await screen.findByRole("heading", { name: "플랫폼별 성과" }),
 		).toBeInTheDocument();
 		expect(
-			await screen.findByLabelText("플랫폼별 성과 메트릭"),
+			await screen.findByRole("group", { name: "플랫폼별 성과 메트릭" }),
 		).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: "비용" })).toHaveAttribute(
 			"aria-pressed",
@@ -218,7 +218,9 @@ describe("PlatformPerformanceChartCard", () => {
 
 		renderPlatformCard();
 
-		const list = await screen.findByLabelText("플랫폼별 성과 도넛 범례");
+		const list = await screen.findByRole("group", {
+			name: "플랫폼별 성과 도넛 범례",
+		});
 		const googleItem = within(list).getByRole("button", { name: /Google/ });
 		const metaItem = within(list).getByRole("button", { name: /Meta/ });
 
@@ -356,7 +358,9 @@ describe("PlatformPerformanceChartCard", () => {
 
 		renderPlatformCard({ withFilterButton: true });
 
-		const list = await screen.findByLabelText("플랫폼별 성과 도넛 범례");
+		const list = await screen.findByRole("group", {
+			name: "플랫폼별 성과 도넛 범례",
+		});
 		const googleItem = within(list).getByRole("button", { name: /Google/ });
 		const metaItem = within(list).getByRole("button", { name: /Meta/ });
 		const naverItem = within(list).getByRole("button", { name: /Naver/ });
@@ -368,7 +372,9 @@ describe("PlatformPerformanceChartCard", () => {
 		await userEvent.click(screen.getByRole("button", { name: "메타만 보기" }));
 
 		await waitFor(() => {
-			const updatedList = screen.getByLabelText("플랫폼별 성과 도넛 범례");
+			const updatedList = screen.getByRole("group", {
+				name: "플랫폼별 성과 도넛 범례",
+			});
 			const updatedGoogleItem = within(updatedList).getByRole("button", {
 				name: /Google/,
 			});
@@ -430,7 +436,9 @@ describe("PlatformPerformanceChartCard", () => {
 
 		renderPlatformCard();
 
-		const list = await screen.findByLabelText("플랫폼별 성과 도넛 범례");
+		const list = await screen.findByRole("group", {
+			name: "플랫폼별 성과 도넛 범례",
+		});
 		const googleItem = within(list).getByRole("button", { name: /Google/ });
 
 		expect(googleItem).toHaveTextContent("₩0");
