@@ -1,7 +1,7 @@
 import { z } from "zod";
-import type { CampaignPlatform } from "@/entities/global-filter/model/types";
 
 const campaignPlatforms = ["Google", "Meta", "Naver"] as const;
+type KnownCampaignPlatform = (typeof campaignPlatforms)[number];
 const currencyLimitMessage = "10억 원 이하의 정수여야 합니다.";
 const budgetValidationMessage = `예산은 100원 이상 ${currencyLimitMessage}`;
 const spendValidationMessage = `집행 금액은 0원 이상 ${currencyLimitMessage}`;
@@ -80,8 +80,8 @@ const platformSchema = z
 	.string()
 	.trim()
 	.refine(
-		(value): value is CampaignPlatform =>
-			campaignPlatforms.includes(value as CampaignPlatform),
+		(value): value is KnownCampaignPlatform =>
+			campaignPlatforms.includes(value as KnownCampaignPlatform),
 		{
 			message: "광고 매체를 선택해주세요.",
 		},

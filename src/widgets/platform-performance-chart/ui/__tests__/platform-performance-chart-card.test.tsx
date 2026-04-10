@@ -25,19 +25,20 @@ const rechartsState = vi.hoisted(() => ({
 
 vi.mock("recharts", async () => {
 	const actual = await vi.importActual("recharts");
-	const React = await import("react");
 
 	return {
 		...actual,
-		ResponsiveContainer: ({ children }: { children: React.ReactNode }) => (
-			<div data-testid="platform-responsive-container">{children}</div>
-		),
+		ResponsiveContainer: ({
+			children,
+		}: {
+			children: import("react").ReactNode;
+		}) => <div data-testid="platform-responsive-container">{children}</div>,
 		Cell: ({ name }: { name?: string }) => (
 			<div data-testid={`platform-cell-${String(name)}`} />
 		),
 		Pie: (props: {
 			data?: unknown[];
-			children?: React.ReactNode;
+			children?: import("react").ReactNode;
 			onClick?: (payload: unknown) => void;
 		}) => {
 			rechartsState.pieOnClick = props.onClick ?? null;
@@ -45,7 +46,7 @@ vi.mock("recharts", async () => {
 
 			return <div data-testid="platform-pie">{props.children}</div>;
 		},
-		PieChart: ({ children }: { children: React.ReactNode }) => (
+		PieChart: ({ children }: { children: import("react").ReactNode }) => (
 			<div data-testid="platform-pie-chart">{children}</div>
 		),
 		Tooltip: () => <div data-testid="platform-tooltip" />,
@@ -468,11 +469,11 @@ describe("PlatformPerformanceChartCard", () => {
 			expect(releaseCampaignRequest).not.toBeNull();
 		});
 
-		const release = releaseCampaignRequest;
-
-		if (release === null) {
-			throw new Error("Expected delayed campaign request to be registered");
-		}
+		const release =
+			releaseCampaignRequest ??
+			(() => {
+				throw new Error("Expected delayed campaign request to be registered");
+			});
 
 		release();
 	});
