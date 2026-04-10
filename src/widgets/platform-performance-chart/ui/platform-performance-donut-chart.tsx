@@ -146,7 +146,6 @@ export function PlatformPerformanceDonut({
 										key={slice.platform}
 										name={slice.platform}
 										fill={getPlatformColor(slice.platform, index)}
-										value={slice.value}
 										opacity={slice.isSelected ? 1 : 0.35}
 									/>
 								))}

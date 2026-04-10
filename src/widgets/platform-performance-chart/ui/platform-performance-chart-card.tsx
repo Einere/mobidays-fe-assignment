@@ -19,7 +19,7 @@ import {
 import {
 	PlatformPerformanceDonut,
 	PlatformPerformanceMetricToggleGroup,
-} from "@/widgets/platform-performance-chart/ui/platform-performance-donut";
+} from "@/widgets/platform-performance-chart/ui/platform-performance-donut-chart";
 
 type PlatformPerformanceChartState =
 	| {
