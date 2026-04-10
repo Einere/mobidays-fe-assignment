@@ -125,7 +125,10 @@ function PlatformPerformanceErrorState({
 	errorMessage: string;
 }) {
 	return (
-		<div className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-5 typo-body-sm text-status-danger-fg">
+		<div
+			className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-5 typo-body-sm text-status-danger-fg"
+			role="alert"
+		>
 			<p>성과 데이터를 불러오지 못했습니다.</p>
 			<p className="mt-1 text-fg-muted">{errorMessage}</p>
 		</div>
@@ -213,7 +216,10 @@ export function PlatformPerformanceChartCard() {
 				{state.kind === "chart" ? (
 					<>
 						{state.staleErrorMessage ? (
-							<div className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-3 typo-body-sm text-status-danger-fg">
+							<div
+								className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-3 typo-body-sm text-status-danger-fg"
+								role="alert"
+							>
 								<p>
 									최신 성과 데이터를 불러오지 못해 마지막 성공 결과를 표시
 									중입니다.

@@ -6,8 +6,11 @@ import {
 } from "@/app/bootstrap/start-mock-api";
 import { AppProviders } from "@/app/providers/app-providers";
 import { worker } from "@/shared/api/mock/browser";
+import { applyBrowserDatasetAttribute } from "@/shared/lib/browser";
 import "./index.css";
 import App from "./App.tsx";
+
+applyBrowserDatasetAttribute();
 
 function mountApp() {
 	const rootElement = document.getElementById("root");

@@ -8,6 +8,7 @@ import type { RawCampaign, RawDailyStat } from "@/shared/api/mock/types";
 const campaignStatuses = ["active", "paused", "ended"] as const;
 const campaignPlatforms = ["Google", "Meta", "Naver"] as const;
 
+/* TODO: 각종 파싱 함수의 정의는 api 계층이 아닌 entities/.../lib에 있어야 할 듯. 공유 파싱 로직은 shared 하위로, 엔티티 특화 파싱 함수는 entities/.../lib으로 */
 function isNonEmptyString(value: unknown): value is string {
 	return typeof value === "string" && value.trim().length > 0;
 }

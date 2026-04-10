@@ -7,6 +7,7 @@ function sortValues(values: string[]) {
 }
 
 /*TODO: 추후 쿼리키 빌더 패턴 도입 */
+/*TODO: 적절한 위치로 옮기기. entities/dashboard/hooks 라던지...*/
 export function createDashboardDataQueryKey(filter: GlobalFilterState) {
 	return [
 		"dashboard-data",

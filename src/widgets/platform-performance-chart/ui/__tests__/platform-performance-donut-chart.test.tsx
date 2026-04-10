@@ -194,4 +194,37 @@ describe("PlatformPerformancePieSector", () => {
 		expect(unknownLegend).toHaveAttribute("aria-disabled", "true");
 		expect(unknownLegend).toHaveClass("cursor-not-allowed");
 	});
+
+	it("provides an accessible textual summary for screen readers", () => {
+		render(
+			<PlatformPerformanceDonut
+				data={[
+					{
+						platform: "Google",
+						value: 100,
+						sharePercent: 80,
+						isSelected: true,
+					},
+					{
+						platform: "Meta",
+						value: 25,
+						sharePercent: 20,
+						isSelected: false,
+					},
+				]}
+				metric={platformPerformanceMetricDefinitions[0]}
+				onPlatformSelect={vi.fn()}
+			/>,
+		);
+
+		expect(
+			screen.getByRole("img", { name: "플랫폼별 비용 도넛 차트" }),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("table", { name: "플랫폼별 성과 요약" }),
+		).toBeInTheDocument();
+		expect(screen.getByRole("cell", { name: "Google" })).toBeInTheDocument();
+		expect(screen.getByRole("cell", { name: "80%" })).toBeInTheDocument();
+		expect(screen.getByRole("cell", { name: "₩100" })).toBeInTheDocument();
+	});
 });

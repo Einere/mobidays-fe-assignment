@@ -10,6 +10,7 @@ import type {
 	GlobalFilterState,
 } from "@/entities/global-filter/model/types";
 
+/*TODO: 파일 위치를 shared/store 로 이동하는게 맞지 않나..? */
 export const campaignStatusValues = ["active", "paused", "ended"] as const;
 
 function toggleFilterValue<T extends string>(

@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import type * as React from "react";
 
 import { cn } from "@/shared/lib/utils";
@@ -38,16 +38,16 @@ function SidebarNavList({
 							<a
 								href={item.href ?? "#"}
 								className={cn(
-									"flex min-h-control-touch sm:min-h-control-md items-center justify-between rounded-md px-3 typo-label-md transition-colors duration-[var(--duration-fast)] ease-standard",
+									"flex min-h-control-touch sm:min-h-control-md min-w-0 items-center justify-between rounded-md px-3 typo-label-md transition-colors duration-[var(--duration-fast)] ease-standard",
 									item.active
 										? "bg-selected text-selected-fg"
 										: "text-fg-muted hover:bg-ghost-hover hover:text-fg",
 								)}
 								aria-current={item.active ? "page" : undefined}
 							>
-								<span>{item.label}</span>
+								<span className="min-w-0 truncate">{item.label}</span>
 								{item.meta ? (
-									<span className="typo-caption text-fg-subtle">
+									<span className="typo-caption shrink-0 pl-3 text-fg-subtle">
 										{item.meta}
 									</span>
 								) : null}
@@ -81,7 +81,7 @@ function MobileSidebarNav({ title, items, className }: SidebarNavProps) {
 					type="button"
 					variant="outline"
 					size="icon"
-					className={cn("lg:hidden", className)}
+					className={className}
 					aria-label="메뉴 열기"
 				>
 					<Menu aria-hidden="true" />
@@ -90,14 +90,26 @@ function MobileSidebarNav({ title, items, className }: SidebarNavProps) {
 			<Dialog.Portal>
 				<Dialog.Overlay
 					data-slot="mobile-sidebar-overlay"
-					className="fixed inset-0 z-40 bg-overlay-scrim backdrop-blur-[1px]"
+					className="fixed inset-0 z-40 bg-overlay-scrim backdrop-blur-[1px] data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0 motion-reduce:transition-none"
 				/>
 				<Dialog.Content
 					data-slot="mobile-sidebar-content"
 					aria-describedby={undefined}
-					className="fixed inset-y-0 left-0 z-50 w-[min(88vw,22rem)] border-r border-outline-subtle bg-panel p-panel shadow-panel focus:outline-none"
+					className="fixed inset-y-0 left-0 z-50 w-[min(88vw,22rem)] overflow-y-auto border-r border-outline-subtle bg-panel p-panel shadow-panel focus:outline-none data-[state=closed]:animate-out data-[state=closed]:slide-out-to-left-4 data-[state=open]:animate-in data-[state=open]:slide-in-from-left-4 motion-reduce:transition-none"
 				>
 					<Dialog.Title className="sr-only">{title} 메뉴</Dialog.Title>
+					<div className="mb-4 flex justify-end">
+						<Dialog.Close asChild>
+							<Button
+								type="button"
+								variant="ghost"
+								size="icon"
+								aria-label="메뉴 닫기"
+							>
+								<X aria-hidden="true" />
+							</Button>
+						</Dialog.Close>
+					</div>
 					<SidebarNavList title={title} items={items} />
 				</Dialog.Content>
 			</Dialog.Portal>
