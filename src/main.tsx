@@ -6,8 +6,13 @@ import {
 } from "@/app/bootstrap/start-mock-api";
 import { AppProviders } from "@/app/providers/app-providers";
 import { worker } from "@/shared/api/mock/browser";
+import { isChromeBrowser } from "@/shared/lib/browser";
 import "./index.css";
 import App from "./App.tsx";
+
+document.documentElement.dataset.browser = isChromeBrowser()
+	? "chrome"
+	: "other";
 
 function mountApp() {
 	const rootElement = document.getElementById("root");

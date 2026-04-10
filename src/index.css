@@ -9,3 +9,7 @@
 html {
 	scrollbar-gutter: stable;
 }
+
+html[data-browser="chrome"] {
+	scrollbar-gutter: auto;
+}
