@@ -89,6 +89,7 @@ export interface DashboardCampaign {
 	id: string;
 	name: string | null;
 	platform: CampaignPlatform | null;
+	rawPlatform?: string | null;
 	status: CampaignStatus | null;
 	budget: number | null;
 	startDate: string | null;
@@ -116,6 +117,7 @@ export function parseCampaignResponse(response: unknown): DashboardCampaign[] {
 			id: item.id,
 			name: parseOptionalString(rawCampaign.name),
 			platform: parseEnumValue(rawCampaign.platform, campaignPlatforms),
+			rawPlatform: parseOptionalString(rawCampaign.platform),
 			status: parseEnumValue(rawCampaign.status, campaignStatuses),
 			budget: parseNullableNumber(rawCampaign.budget),
 			startDate: parseNullableDateLikeString(rawCampaign.startDate),

@@ -9,6 +9,7 @@ import {
 import { ToggleButton } from "@/shared/ui/toggle-button";
 import {
 	type DailyTrendMetricKey,
+	dailyTrendMetricDefinitions,
 	formatDailyTrendMetricValue,
 	getDailyTrendMetric,
 	visibleDailyTrendMetricKeys,
@@ -40,11 +41,19 @@ function formatYAxisTick(value: number) {
 
 function tooltipFormatter(value: unknown, metricKey?: string) {
 	if (metricKey === undefined) {
-		return formatDailyTrendMetricValue("impressions", null);
+		return "-";
+	}
+
+	const resolvedMetricKey = dailyTrendMetricDefinitions.find(
+		(metric) => metric.key === metricKey || metric.label === metricKey,
+	)?.key;
+
+	if (resolvedMetricKey === undefined) {
+		return "-";
 	}
 
 	return formatDailyTrendMetricValue(
-		metricKey as DailyTrendMetricKey,
+		resolvedMetricKey as DailyTrendMetricKey,
 		typeof value === "number" ? value : null,
 	);
 }

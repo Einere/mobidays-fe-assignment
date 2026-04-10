@@ -23,6 +23,7 @@ describe("parseCampaignResponse", () => {
 				id: "META-007",
 				status: null,
 				platform: null,
+				rawPlatform: "Facebook",
 				budget: null,
 				startDate: "2026/04/12",
 				endDate: null,

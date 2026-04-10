@@ -1,5 +1,6 @@
 import { HttpResponse, http } from "msw";
 import { createCampaignInputSchema } from "@/entities/campaign/lib/create-campaign-schema";
+import { campaignPlatformValues } from "@/entities/global-filter/model/platforms";
 import type {
 	CampaignPlatform,
 	CampaignStatus,
@@ -37,6 +38,13 @@ function parseDateValue(value: unknown): number | null {
 
 function isCampaignStatus(value: unknown): value is CampaignStatus {
 	return value === "active" || value === "paused" || value === "ended";
+}
+
+function isKnownCampaignPlatform(value: unknown): value is CampaignPlatform {
+	return (
+		typeof value === "string" &&
+		campaignPlatformValues.includes(value as CampaignPlatform)
+	);
 }
 
 function isUpdateCampaignStatusesBody(
@@ -79,12 +87,18 @@ function matchesCampaignFilters(
 	campaign: RawCampaign,
 	filter: GlobalFilterState,
 ) {
+	const platformMatches =
+		typeof campaign.platform === "string"
+			? isKnownCampaignPlatform(campaign.platform)
+				? filter.platforms.includes(campaign.platform)
+				: true
+			: false;
+
 	return (
 		matchesCampaignDateRange(campaign, filter) &&
 		typeof campaign.status === "string" &&
 		filter.statuses.includes(campaign.status as CampaignStatus) &&
-		typeof campaign.platform === "string" &&
-		filter.platforms.includes(campaign.platform as CampaignPlatform)
+		platformMatches
 	);
 }
 

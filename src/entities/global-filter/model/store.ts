@@ -1,14 +1,16 @@
 import { atom } from "jotai";
 import { createInitialGlobalFilterState } from "@/entities/global-filter/model/defaults";
+import {
+	type CampaignPlatform,
+	campaignPlatformValues,
+} from "@/entities/global-filter/model/platforms";
 import type {
-	CampaignPlatform,
 	CampaignStatus,
 	GlobalDateRange,
 	GlobalFilterState,
 } from "@/entities/global-filter/model/types";
 
 export const campaignStatusValues = ["active", "paused", "ended"] as const;
-export const campaignPlatformValues = ["Google", "Meta", "Naver"] as const;
 
 function toggleFilterValue<T extends string>(
 	selectedValues: T[],

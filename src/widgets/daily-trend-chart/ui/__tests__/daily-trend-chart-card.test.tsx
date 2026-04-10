@@ -73,6 +73,15 @@ vi.mock("recharts", async () => {
 
 			return <div data-testid={`line-${String(props.dataKey)}`} />;
 		},
+		PieChart: ({ children }: { children: React.ReactNode }) => (
+			<div data-testid="platform-pie-chart">{children}</div>
+		),
+		Pie: ({ children }: { children: React.ReactNode }) => (
+			<div data-testid="platform-pie">{children}</div>
+		),
+		Cell: ({ name }: { name?: string }) => (
+			<div data-testid={`platform-cell-${String(name)}`} />
+		),
 	};
 });
 

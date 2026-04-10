@@ -1,8 +1,8 @@
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { isValidDateRange } from "@/entities/global-filter/lib/date-range";
+import { getCampaignPlatformOptions } from "@/entities/global-filter/model/platforms";
 import {
-	campaignPlatformValues,
 	globalFilterAtom,
 	resetGlobalFilterAtom,
 	selectAllGlobalFilterPlatformsAtom,
@@ -30,12 +30,6 @@ const statusOptions: FilterOption<CampaignStatus>[] = [
 	{ value: "ended", label: "종료" },
 ];
 
-const platformOptions: FilterOption<CampaignPlatform>[] =
-	campaignPlatformValues.map((platform) => ({
-		value: platform,
-		label: platform,
-	}));
-
 const invalidDateRangeMessage = "시작일은 종료일보다 늦을 수 없습니다.";
 
 export function GlobalFilterBar() {
@@ -51,6 +45,8 @@ export function GlobalFilterBar() {
 	const [validationMessage, setValidationMessage] = useState<string | null>(
 		null,
 	);
+	const platformOptions: FilterOption<CampaignPlatform>[] =
+		getCampaignPlatformOptions();
 
 	useEffect(() => {
 		setDraftDateRange(filter.dateRange);
