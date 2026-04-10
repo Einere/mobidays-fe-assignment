@@ -8,6 +8,7 @@ import type {
 	PlatformMetricKey,
 	PlatformPerformanceSlice,
 } from "@/entities/platform-performance/model/types";
+import { unknownPlatformLabel } from "@/entities/platform-performance/model/types";
 import {
 	ChartContainer,
 	ChartTooltip,
@@ -34,6 +35,7 @@ const platformColorMap: Record<string, string> = {
 	Google: "var(--chart-danger)",
 	Meta: "var(--chart-positive)",
 	Naver: "var(--chart-warning)",
+	[unknownPlatformLabel]: "var(--chart-series-4)",
 };
 
 const fallbackPlatformColors = [
@@ -51,6 +53,12 @@ function getPlatformColor(platform: string, index: number) {
 	);
 }
 
+function isKnownCampaignPlatform(
+	platform: string,
+): platform is CampaignPlatform {
+	return campaignPlatformValues.includes(platform as CampaignPlatform);
+}
+
 type PlatformPerformanceSectorProps = ComponentProps<typeof Sector> & {
 	payload?: PlatformPerformanceSlice;
 	onPlatformSelect: (platform: CampaignPlatform) => void;
@@ -62,9 +70,14 @@ export function PlatformPerformancePieSector({
 	...props
 }: PlatformPerformanceSectorProps) {
 	const platform = payload?.platform;
+	const isSelected = payload?.isSelected ?? false;
 
 	if (platform === undefined) {
 		return <Sector {...props} />;
+	}
+
+	if (!isKnownCampaignPlatform(platform)) {
+		return <Sector {...props} aria-label={platform} />;
 	}
 
 	return (
@@ -73,7 +86,7 @@ export function PlatformPerformancePieSector({
 			role="button"
 			tabIndex={0}
 			aria-label={`${platform} 선택`}
-			aria-pressed={payload.isSelected}
+			aria-pressed={isSelected}
 			onClick={() => onPlatformSelect(platform)}
 			onKeyDown={(event) => {
 				if (event.key === "Enter" || event.key === " ") {
@@ -86,6 +99,7 @@ export function PlatformPerformancePieSector({
 }
 
 type PieClickPayload = {
+	platform?: string;
 	payload?: {
 		platform?: string;
 	};
@@ -97,7 +111,7 @@ function extractPlatformFromPiePayload(payload: PieClickPayload | unknown) {
 	}
 
 	const maybe = payload as PieClickPayload;
-	const platform = maybe.payload?.platform;
+	const platform = maybe.platform ?? maybe.payload?.platform;
 
 	return platform &&
 		campaignPlatformValues.includes(platform as CampaignPlatform)
@@ -182,7 +196,13 @@ export function PlatformPerformanceDonut({
 										key={slice.platform}
 										name={slice.platform}
 										fill={getPlatformColor(slice.platform, index)}
-										opacity={slice.isSelected ? 1 : 0.35}
+										opacity={
+											isKnownCampaignPlatform(slice.platform)
+												? slice.isSelected
+													? 1
+													: 0.35
+												: 1
+										}
 									/>
 								))}
 							</Pie>
@@ -222,36 +242,65 @@ export function PlatformPerformanceDonut({
 				<div className="flex gap-2 overflow-x-auto pb-1 lg:grid lg:gap-2 lg:overflow-visible lg:pb-0">
 					{data.map((slice, index) => {
 						const platformColor = getPlatformColor(slice.platform, index);
+						const isKnownPlatform = isKnownCampaignPlatform(slice.platform);
 
 						return (
 							<div
 								key={slice.platform}
 								className="min-w-[12rem] shrink-0 rounded-card border border-outline-subtle bg-panel-muted p-3 lg:min-w-0 lg:shrink"
 							>
-								<button
-									type="button"
-									className="w-full text-left"
-									onClick={() => onPlatformSelect(slice.platform)}
-									aria-pressed={slice.isSelected}
-								>
-									<div className="mb-1 flex items-center gap-2">
-										<span
-											className="size-2 rounded-full"
-											style={{ backgroundColor: platformColor }}
-											aria-hidden
-										/>
-										<span className="typo-body-md">{slice.platform}</span>
-										<span className="ml-auto typo-caption text-fg-subtle">
-											{percentageFormatter.format(slice.sharePercent)}%
-										</span>
-									</div>
-									<div className="typo-body-sm font-medium">
-										{metric.label}{" "}
-										{Number.isFinite(slice.value)
-											? metric.formatValue(slice.value)
-											: "-"}
-									</div>
-								</button>
+								{isKnownPlatform ? (
+									<button
+										type="button"
+										className="w-full text-left"
+										onClick={() =>
+											onPlatformSelect(slice.platform as CampaignPlatform)
+										}
+										aria-pressed={slice.isSelected}
+									>
+										<div className="mb-1 flex items-center gap-2">
+											<span
+												className="size-2 rounded-full"
+												style={{ backgroundColor: platformColor }}
+												aria-hidden
+											/>
+											<span className="typo-body-md">{slice.platform}</span>
+											<span className="ml-auto typo-caption text-fg-subtle">
+												{percentageFormatter.format(slice.sharePercent)}%
+											</span>
+										</div>
+										<div className="typo-body-sm font-medium">
+											{metric.label}{" "}
+											{Number.isFinite(slice.value)
+												? metric.formatValue(slice.value)
+												: "-"}
+										</div>
+									</button>
+								) : (
+									<section
+										className="w-full text-left"
+										aria-label="알 수 없음"
+										aria-disabled="true"
+									>
+										<div className="mb-1 flex items-center gap-2">
+											<span
+												className="size-2 rounded-full"
+												style={{ backgroundColor: platformColor }}
+												aria-hidden
+											/>
+											<span className="typo-body-md">{slice.platform}</span>
+											<span className="ml-auto typo-caption text-fg-subtle">
+												{percentageFormatter.format(slice.sharePercent)}%
+											</span>
+										</div>
+										<div className="typo-body-sm font-medium">
+											{metric.label}{" "}
+											{Number.isFinite(slice.value)
+												? metric.formatValue(slice.value)
+												: "-"}
+										</div>
+									</section>
+								)}
 							</div>
 						);
 					})}

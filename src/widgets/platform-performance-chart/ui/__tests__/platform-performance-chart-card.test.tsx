@@ -335,9 +335,7 @@ describe("PlatformPerformanceChartCard", () => {
 
 		await act(async () => {
 			rechartsState.pieOnClick?.({
-				payload: {
-					platform: "Meta",
-				},
+				platform: "Meta",
 			});
 		});
 
@@ -429,6 +427,71 @@ describe("PlatformPerformanceChartCard", () => {
 			expect(updatedGoogleItem).toHaveAttribute("aria-pressed", "false");
 			expect(updatedMetaItem).toHaveAttribute("aria-pressed", "true");
 			expect(updatedNaverItem).toHaveAttribute("aria-pressed", "false");
+		});
+	});
+
+	it("toggles the global platform filter when a known legend item is clicked", async () => {
+		const user = userEvent.setup();
+
+		seedMockDb({
+			campaigns: [
+				{
+					id: "cmp-1",
+					name: "Google Active",
+					platform: "Google",
+					status: "active",
+					budget: 1000,
+					startDate: "2026-04-01",
+					endDate: "2026-04-30",
+				},
+				{
+					id: "cmp-2",
+					name: "Meta Active",
+					platform: "Meta",
+					status: "active",
+					budget: 1000,
+					startDate: "2026-04-01",
+					endDate: "2026-04-30",
+				},
+			],
+			daily_stats: [
+				{
+					id: "d-1",
+					campaignId: "cmp-1",
+					date: "2026-04-01",
+					impressions: 100,
+					clicks: 10,
+					conversions: 1,
+					cost: 1000,
+					conversionsValue: null,
+				},
+				{
+					id: "d-2",
+					campaignId: "cmp-2",
+					date: "2026-04-01",
+					impressions: 100,
+					clicks: 20,
+					conversions: 2,
+					cost: 2000,
+					conversionsValue: null,
+				},
+			],
+		});
+
+		renderPlatformCard();
+
+		const legend = await screen.findByRole("group", {
+			name: "플랫폼별 성과 도넛 범례",
+		});
+		const metaItem = within(legend).getByRole("button", { name: /Meta/ });
+
+		await user.click(metaItem);
+
+		await waitFor(() => {
+			expect(screen.getByTestId("platform-filter-state")).toHaveTextContent(
+				"Google,Naver",
+			);
+			expect(metaItem).toHaveAttribute("aria-pressed", "false");
 		});
 	});
 

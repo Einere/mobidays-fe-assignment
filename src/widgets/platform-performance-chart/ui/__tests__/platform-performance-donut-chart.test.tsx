@@ -1,7 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import { PlatformPerformancePieSector } from "@/widgets/platform-performance-chart/ui/platform-performance-donut-chart";
+import { platformPerformanceMetricDefinitions } from "@/widgets/platform-performance-chart/model/platform-performance-metrics";
+import {
+	PlatformPerformanceDonut,
+	PlatformPerformancePieSector,
+} from "@/widgets/platform-performance-chart/ui/platform-performance-donut-chart";
 
 vi.mock("recharts", async () => {
 	const actual = await vi.importActual("recharts");
@@ -23,11 +27,15 @@ vi.mock("recharts", async () => {
 		}: {
 			children: import("react").ReactNode;
 		}) => <div>{children}</div>,
-		Pie: () => null,
+		Pie: ({ children }: { children: import("react").ReactNode }) => (
+			<div>{children}</div>
+		),
 		PieChart: ({ children }: { children: import("react").ReactNode }) => (
 			<div>{children}</div>
 		),
-		Cell: () => null,
+		Cell: ({ name, opacity }: { name?: string; opacity?: number }) => (
+			<div data-testid={`cell-${String(name)}`} data-opacity={opacity} />
+		),
 		Tooltip: () => null,
 		Legend: () => null,
 	};
@@ -67,5 +75,34 @@ describe("PlatformPerformancePieSector", () => {
 		sector.focus();
 		await user.keyboard("{Enter}");
 		expect(onPlatformSelect).toHaveBeenCalledTimes(2);
+	});
+
+	it("renders unknown platform slices as non-interactive data", () => {
+		render(
+			<PlatformPerformanceDonut
+				data={[
+					{
+						platform: "알 수 없음",
+						value: 75,
+						sharePercent: 25,
+						isSelected: false,
+					},
+				]}
+				metric={platformPerformanceMetricDefinitions[0]}
+				onPlatformSelect={vi.fn()}
+			/>,
+		);
+
+		expect(screen.getByLabelText("알 수 없음")).toHaveAttribute(
+			"aria-disabled",
+			"true",
+		);
+		expect(
+			screen.queryByRole("button", { name: "알 수 없음" }),
+		).not.toBeInTheDocument();
+		expect(screen.getByTestId("cell-알 수 없음")).toHaveAttribute(
+			"data-opacity",
+			"1",
+		);
 	});
 });
