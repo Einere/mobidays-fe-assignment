@@ -3,7 +3,6 @@ import { createInitialGlobalFilterState } from "@/entities/global-filter/model/d
 import {
 	type CampaignPlatform,
 	campaignPlatformValues,
-	mergeCampaignPlatformValues,
 } from "@/entities/global-filter/model/platforms";
 import type {
 	CampaignStatus,
@@ -94,7 +93,7 @@ export const selectAllGlobalFilterPlatformsAtom = atom(null, (get, set) => {
 
 	set(globalFilterAtom, {
 		...currentFilter,
-		platforms: mergeCampaignPlatformValues(currentFilter.platforms),
+		platforms: [...campaignPlatformValues],
 	});
 });
 

@@ -1,19 +1,12 @@
 import {
-	type AggregatePlatformPerformanceInput,
-	defaultPlatformOrder,
-	type PlatformMetricKey,
-	type PlatformPerformanceSlice,
+	type CampaignPlatform,
+	campaignPlatformValues,
+} from "@/entities/global-filter/model/platforms";
+import type {
+	AggregatePlatformPerformanceInput,
+	PlatformMetricKey,
+	PlatformPerformanceSlice,
 } from "@/entities/platform-performance/model/types";
-
-const UNKNOWN_PLATFORM = "Unknown";
-
-function normalizePlatform(platform: string | null): string {
-	if (typeof platform !== "string" || platform.trim().length === 0) {
-		return UNKNOWN_PLATFORM;
-	}
-
-	return platform;
-}
 
 function toSafeNumber(value: number | null): number {
 	return typeof value === "number" && Number.isFinite(value) && value >= 0
@@ -43,19 +36,18 @@ export function aggregatePlatformPerformance({
 	metricKey,
 	selectedPlatforms,
 }: AggregatePlatformPerformanceInput): PlatformPerformanceSlice[] {
-	const campaignPlatformById = new Map<string, string>();
+	const campaignPlatformById = new Map<string, CampaignPlatform>();
 	for (const campaign of campaigns) {
-		campaignPlatformById.set(campaign.id, normalizePlatform(campaign.platform));
+		if (campaign.platform === null) {
+			continue;
+		}
+
+		campaignPlatformById.set(campaign.id, campaign.platform);
 	}
 
-	const platformValues = new Map<string, number>();
-	for (const defaultPlatform of defaultPlatformOrder) {
-		platformValues.set(defaultPlatform, 0);
-	}
-
-	for (const platform of campaignPlatformById.values()) {
-		platformValues.set(platform, platformValues.get(platform) ?? 0);
-	}
+	const platformValues = new Map<CampaignPlatform, number>(
+		campaignPlatformValues.map((platform) => [platform, 0]),
+	);
 
 	for (const selectedPlatform of selectedPlatforms) {
 		platformValues.set(selectedPlatform, 0);

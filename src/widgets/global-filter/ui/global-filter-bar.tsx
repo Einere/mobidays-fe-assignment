@@ -1,7 +1,7 @@
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { isValidDateRange } from "@/entities/global-filter/lib/date-range";
-import { mergeCampaignPlatformValues } from "@/entities/global-filter/model/platforms";
+import { getCampaignPlatformOptions } from "@/entities/global-filter/model/platforms";
 import {
 	globalFilterAtom,
 	resetGlobalFilterAtom,
@@ -46,10 +46,7 @@ export function GlobalFilterBar() {
 		null,
 	);
 	const platformOptions: FilterOption<CampaignPlatform>[] =
-		mergeCampaignPlatformValues(filter.platforms).map((platform) => ({
-			value: platform,
-			label: platform,
-		}));
+		getCampaignPlatformOptions();
 
 	useEffect(() => {
 		setDraftDateRange(filter.dateRange);

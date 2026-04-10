@@ -1,19 +1,15 @@
+import type { CampaignPlatform } from "@/entities/global-filter/model/types";
+
 export type PlatformMetricKey =
 	| "cost"
 	| "impressions"
 	| "clicks"
 	| "conversions";
 
-export const defaultPlatformOrder: readonly string[] = [
-	"Google",
-	"Meta",
-	"Naver",
-];
-
 export interface AggregatePlatformPerformanceInput {
 	campaigns: {
 		id: string;
-		platform: string | null;
+		platform: CampaignPlatform | null;
 	}[];
 	dailyStats: {
 		campaignId: string;
@@ -23,11 +19,11 @@ export interface AggregatePlatformPerformanceInput {
 		conversions: number | null;
 	}[];
 	metricKey: PlatformMetricKey;
-	selectedPlatforms: string[];
+	selectedPlatforms: CampaignPlatform[];
 }
 
 export interface PlatformPerformanceSlice {
-	platform: string;
+	platform: CampaignPlatform;
 	value: number;
 	sharePercent: number;
 	isSelected: boolean;
