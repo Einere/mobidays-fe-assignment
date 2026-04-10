@@ -25,7 +25,7 @@ const { mutationState, mutateAsyncMock } = vi.hoisted(() => {
 	};
 });
 
-vi.mock("@/entities/campaign/hooks/use-create-campaign", () => ({
+vi.mock("@/entities/campaign", () => ({
 	CREATE_CAMPAIGN_ERROR_MESSAGE:
 		"캠페인을 등록하지 못했습니다. 잠시 후 다시 시도해주세요.",
 	useCreateCampaign: () => mutationState,

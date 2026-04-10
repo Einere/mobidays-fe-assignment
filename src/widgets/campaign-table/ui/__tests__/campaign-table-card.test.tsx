@@ -4,7 +4,8 @@ import userEvent from "@testing-library/user-event";
 import { createStore, Provider, useAtomValue, useSetAtom } from "jotai";
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
-import { createDashboardDataQueryKey } from "@/entities/dashboard/hooks/dashboard-data-query-key";
+import { server } from "@/app/mock/server";
+import { createDashboardDataQueryKey } from "@/entities/dashboard";
 import { createInitialGlobalFilterState } from "@/entities/global-filter/model/defaults";
 import {
 	globalFilterAtom,
@@ -12,7 +13,6 @@ import {
 } from "@/entities/global-filter/model/store";
 import type { GlobalFilterState } from "@/entities/global-filter/model/types";
 import { seedMockDb } from "@/shared/api/mock/db";
-import { server } from "@/shared/api/mock/server";
 import { createQueryClient } from "@/shared/api/query-client";
 import { CampaignTableCard } from "@/widgets/campaign-table/ui/campaign-table-card";
 

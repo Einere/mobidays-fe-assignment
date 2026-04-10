@@ -4,8 +4,8 @@ import {
 	shouldStartMockApi,
 	startMockApi,
 } from "@/app/bootstrap/start-mock-api";
+import { worker } from "@/app/mock/browser";
 import { AppProviders } from "@/app/providers/app-providers";
-import { worker } from "@/shared/api/mock/browser";
 import { applyBrowserDatasetAttribute } from "@/shared/lib/browser";
 import "./index.css";
 import App from "./App.tsx";

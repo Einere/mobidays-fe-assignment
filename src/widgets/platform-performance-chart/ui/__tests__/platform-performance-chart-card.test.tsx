@@ -5,13 +5,13 @@ import { createStore, Provider, useAtomValue, useSetAtom } from "jotai";
 import { HttpResponse, http } from "msw";
 import { act } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { server } from "@/app/mock/server";
 import { createInitialGlobalFilterState } from "@/entities/global-filter/model/defaults";
 import {
 	globalFilterAtom,
 	setGlobalFilterAtom,
 } from "@/entities/global-filter/model/store";
 import { seedMockDb } from "@/shared/api/mock/db";
-import { server } from "@/shared/api/mock/server";
 import { createQueryClient } from "@/shared/api/query-client";
 import { platformPerformanceMetricDefinitions } from "@/widgets/platform-performance-chart/model/platform-performance-metrics";
 import { PlatformPerformanceChartCard } from "@/widgets/platform-performance-chart/ui/platform-performance-chart-card";

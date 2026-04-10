@@ -1,7 +1,7 @@
 import type {
 	DashboardCampaign,
 	DashboardDailyStat,
-} from "@/entities/dashboard/lib/parse-dashboard-data";
+} from "@/shared/api/contracts/dashboard-data";
 
 export interface CampaignTableRow {
 	id: string;

@@ -14,14 +14,7 @@ import {
 	ChartTooltipContent,
 } from "@/shared/ui/chart";
 import type { CampaignRankingMetricDefinition } from "@/widgets/campaign-ranking-top3/model/campaign-ranking-metrics";
-
-export interface CampaignRankingTop3DisplayRow {
-	id: string;
-	rankLabel: string;
-	campaignLabel: string;
-	metricValue: number;
-	metricDisplayValue: string;
-}
+import type { CampaignRankingTop3DisplayRow } from "@/widgets/campaign-ranking-top3/model/types";
 
 interface CampaignRankingTop3BarChartProps {
 	rows: CampaignRankingTop3DisplayRow[];

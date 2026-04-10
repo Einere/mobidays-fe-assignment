@@ -5,7 +5,7 @@ import {
 	buildDailyTrendSeries,
 	type DailyTrendPoint,
 } from "@/entities/daily-stat/lib/build-daily-trend-series";
-import { getDashboardDataQueryOptions } from "@/entities/dashboard/hooks/use-dashboard-data";
+import { getDashboardDataQueryOptions } from "@/entities/dashboard";
 import { globalFilterAtom } from "@/entities/global-filter/model/store";
 import { DataDenseScrollArea } from "@/shared/ui/data-dense-scroll-area";
 import {

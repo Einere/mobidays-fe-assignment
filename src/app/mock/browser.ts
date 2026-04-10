@@ -1,4 +1,4 @@
 import { setupWorker } from "msw/browser";
-import { handlers } from "@/shared/api/mock/handlers";
+import { handlers } from "@/app/mock/handlers";
 
 export const worker = setupWorker(...handlers);

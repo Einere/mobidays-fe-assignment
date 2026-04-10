@@ -4,10 +4,10 @@ import userEvent from "@testing-library/user-event";
 import { Provider, useSetAtom } from "jotai";
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
+import { server } from "@/app/mock/server";
 import { createInitialGlobalFilterState } from "@/entities/global-filter/model/defaults";
 import { setGlobalFilterAtom } from "@/entities/global-filter/model/store";
 import { seedMockDb } from "@/shared/api/mock/db";
-import { server } from "@/shared/api/mock/server";
 import { createQueryClient } from "@/shared/api/query-client";
 import { GlobalFilterSummary } from "@/widgets/global-filter/ui/global-filter-summary";
 

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import {
 	CREATE_CAMPAIGN_ERROR_MESSAGE,
 	useCreateCampaign,
-} from "@/entities/campaign/hooks/use-create-campaign";
+} from "@/entities/campaign";
 import { buildCreateCampaignPayload } from "@/entities/campaign/lib/build-create-campaign-payload";
 import {
 	type CreateCampaignFormValues,

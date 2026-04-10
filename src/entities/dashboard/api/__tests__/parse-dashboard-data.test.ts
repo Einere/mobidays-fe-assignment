@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
 	parseCampaignResponse,
 	parseDailyStatResponse,
-} from "@/entities/dashboard/lib/parse-dashboard-data";
+} from "@/shared/api/contracts/dashboard-data";
 
 describe("parseCampaignResponse", () => {
 	it("keeps raw values and avoids coercing invalid enums into known dashboard values", () => {

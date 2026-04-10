@@ -8,8 +8,8 @@ import {
 import type {
 	DashboardCampaign,
 	DashboardDailyStat,
-} from "@/entities/dashboard/lib/parse-dashboard-data";
-import type { RawCampaign, RawDailyStat } from "@/shared/api/mock/types";
+} from "@/shared/api/contracts/dashboard-data";
+import type { RawCampaign, RawDailyStat } from "@/shared/api/contracts/mock-db";
 
 function createRawCampaign(overrides: Partial<RawCampaign> = {}): RawCampaign {
 	return {

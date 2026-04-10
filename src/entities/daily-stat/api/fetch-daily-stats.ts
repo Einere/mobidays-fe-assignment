@@ -1,7 +1,7 @@
 import {
 	type DashboardDailyStat,
 	parseDailyStatResponse,
-} from "@/entities/dashboard/lib/parse-dashboard-data";
+} from "@/shared/api/contracts/dashboard-data";
 
 async function fetchJson<T>(url: URL): Promise<T> {
 	const response = await fetch(url);
