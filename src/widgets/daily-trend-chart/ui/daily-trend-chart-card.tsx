@@ -1,58 +1,13 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useAtomValue } from "jotai";
-import { type ReactNode, useCallback, useState } from "react";
-import {
-	buildDailyTrendSeries,
-	type DailyTrendPoint,
-} from "@/entities/daily-stat/lib/build-daily-trend-series";
-import { getDashboardDataQueryOptions } from "@/entities/dashboard";
-import { globalFilterAtom } from "@/entities/global-filter/model/store";
+import type { ReactNode } from "react";
 import { DataDenseScrollArea } from "@/shared/ui/data-dense-scroll-area";
-import {
-	type DailyTrendMetricKey,
-	defaultDailyTrendMetricKeys,
-} from "@/widgets/daily-trend-chart/model/metrics";
+import type { DailyTrendChartViewState } from "@/widgets/daily-trend-chart/model/use-daily-trend-chart-view-model";
+import { useDailyTrendChartViewModel } from "@/widgets/daily-trend-chart/model/use-daily-trend-chart-view-model";
 import {
 	DailyTrendLineChart,
 	DailyTrendMetricToggleGroup,
-	toggleDailyTrendMetricSelection,
 } from "@/widgets/daily-trend-chart/ui/daily-trend-line-chart";
 
-type ResolvedChartSnapshot = {
-	campaignsCount: number;
-	chartData: DailyTrendPoint[];
-};
-
-type DailyTrendChartViewState =
-	| {
-			kind: "loading";
-	  }
-	| {
-			kind: "full-error";
-			errorMessage: string;
-	  }
-	| {
-			kind: "empty-campaigns";
-	  }
-	| {
-			kind: "empty-data";
-	  }
-	| {
-			kind: "chart";
-			chartData: DailyTrendPoint[];
-			isSyncing: boolean;
-			staleErrorMessage: string | null;
-	  };
-
-function createResolvedChartSnapshot(
-	dailyStats: Parameters<typeof buildDailyTrendSeries>[0],
-	campaignsCount: number,
-): ResolvedChartSnapshot {
-	return {
-		campaignsCount,
-		chartData: buildDailyTrendSeries(dailyStats),
-	};
-}
+export { resolveDailyTrendChartViewState } from "@/widgets/daily-trend-chart/model/use-daily-trend-chart-view-model";
 
 function DailyTrendChartCardFrame({
 	children,
@@ -84,54 +39,6 @@ function DailyTrendChartCardFrame({
 			</div>
 		</section>
 	);
-}
-
-export function resolveDailyTrendChartViewState({
-	currentDataSnapshot,
-	errorMessage,
-	isLoadingError,
-	isPending,
-	isRefetchError,
-	isRefetching,
-}: {
-	currentDataSnapshot: ResolvedChartSnapshot | null;
-	errorMessage: string | null;
-	isLoadingError: boolean;
-	isPending: boolean;
-	isRefetchError: boolean;
-	isRefetching: boolean;
-}): DailyTrendChartViewState {
-	if (currentDataSnapshot === null) {
-		if (isPending) {
-			return { kind: "loading" };
-		}
-
-		if (isLoadingError) {
-			return {
-				kind: "full-error",
-				errorMessage: errorMessage ?? "알 수 없는 오류가 발생했습니다.",
-			};
-		}
-
-		return { kind: "empty-data" };
-	}
-
-	if (currentDataSnapshot.campaignsCount === 0) {
-		return { kind: "empty-campaigns" };
-	}
-
-	if (currentDataSnapshot.chartData.length === 0) {
-		return { kind: "empty-data" };
-	}
-
-	return {
-		kind: "chart",
-		chartData: currentDataSnapshot.chartData,
-		isSyncing: isRefetching,
-		staleErrorMessage: isRefetchError
-			? (errorMessage ?? "알 수 없는 오류가 발생했습니다.")
-			: null,
-	};
 }
 
 function renderDailyTrendChartBody(viewState: DailyTrendChartViewState) {
@@ -197,35 +104,8 @@ function DailyTrendChartCardMeta({
 }
 
 export function DailyTrendChartCard() {
-	const filter = useAtomValue(globalFilterAtom);
-	const [activeMetrics, setActiveMetrics] = useState<DailyTrendMetricKey[]>([
-		...defaultDailyTrendMetricKeys,
-	]);
-	const query = useQuery({
-		...getDashboardDataQueryOptions(filter),
-		placeholderData: keepPreviousData,
-	});
-	const toggleMetric = useCallback((metricKey: DailyTrendMetricKey) => {
-		setActiveMetrics((currentMetrics) =>
-			toggleDailyTrendMetricSelection(currentMetrics, metricKey),
-		);
-	}, []);
-	const currentDataSnapshot =
-		query.data === undefined
-			? null
-			: createResolvedChartSnapshot(
-					query.data.dailyStats,
-					query.data.campaigns.length,
-				);
-
-	const viewState = resolveDailyTrendChartViewState({
-		currentDataSnapshot,
-		errorMessage: query.error?.message ?? null,
-		isLoadingError: query.isLoadingError,
-		isPending: query.isPending,
-		isRefetchError: query.isRefetchError,
-		isRefetching: query.isRefetching,
-	});
+	const { activeMetrics, toggleMetric, viewState } =
+		useDailyTrendChartViewModel();
 
 	return (
 		<DailyTrendChartCardFrame
