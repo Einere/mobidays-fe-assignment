@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { Filter, Search } from "lucide-react";
 import type { CampaignStatus } from "@/entities/global-filter/model/types";
 import { Button } from "@/shared/ui/button";
 import { TextInput } from "@/shared/ui/input";
@@ -96,13 +96,13 @@ export function CampaignTableToolbar({
 							</SelectContent>
 						</Select>
 					</div>
-					{/* TODO: CampaignTableStatusDialog 과의 통일성을 위해 warning variant로 변경하기 */}
 					<Button
 						type="button"
-						variant="secondary"
+						variant="warning"
 						disabled={isStatusControlDisabled || !canApplyStatusChange}
 						onClick={onOpenStatusDialog}
 					>
+						<Filter aria-hidden="true" className="size-4" />
 						상태 적용
 					</Button>
 					<Button

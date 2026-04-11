@@ -60,6 +60,10 @@ describe("CampaignTableToolbar", () => {
 			screen.getByRole("combobox", { name: "변경할 상태" }).className,
 		).toContain("cursor-not-allowed");
 		expect(screen.getByRole("button", { name: "상태 적용" })).toBeDisabled();
+		expect(screen.getByRole("button", { name: "상태 적용" })).toHaveAttribute(
+			"data-variant",
+			"warning",
+		);
 	});
 
 	it("disables the create button when no create handler is provided", () => {
