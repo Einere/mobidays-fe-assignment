@@ -1,5 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import type { GlobalFilterState } from "@/entities/global-filter/model/types";
+import { buildCampaignTableSelectionResetKey } from "@/widgets/campaign-table/model/build-campaign-table-selection-reset-key";
 import { useCampaignTableSelection } from "@/widgets/campaign-table/model/use-campaign-table-selection";
 
 describe("useCampaignTableSelection", () => {
@@ -33,6 +35,24 @@ describe("useCampaignTableSelection", () => {
 	});
 
 	it("clears selection when the reset key changes", () => {
+		const filter: GlobalFilterState = {
+			dateRange: {
+				startDate: "2026-04-01",
+				endDate: "2026-04-30",
+			},
+			statuses: ["active"],
+			platforms: ["Google"],
+		};
+		const baseResetKey = buildCampaignTableSelectionResetKey({
+			filter,
+			page: 1,
+			searchTerm: "brand",
+			sort: {
+				key: "cost",
+				direction: "asc",
+			},
+		});
+
 		const { result, rerender } = renderHook(
 			({
 				resetKey,
@@ -43,7 +63,7 @@ describe("useCampaignTableSelection", () => {
 			}) => useCampaignTableSelection({ resetKey, visibleRowIds }),
 			{
 				initialProps: {
-					resetKey: "page-1",
+					resetKey: baseResetKey,
 					visibleRowIds: ["campaign-1", "campaign-2"],
 				},
 			},
@@ -56,7 +76,30 @@ describe("useCampaignTableSelection", () => {
 		expect(result.current.selectedRowIds).toEqual(["campaign-1"]);
 
 		rerender({
-			resetKey: "sorted-cost-asc",
+			resetKey: buildCampaignTableSelectionResetKey({
+				filter,
+				page: 1,
+				searchTerm: "brand",
+				sort: {
+					key: "cost",
+					direction: "asc",
+				},
+			}),
+			visibleRowIds: ["campaign-2", "campaign-1"],
+		});
+
+		expect(result.current.selectedRowIds).toEqual(["campaign-1"]);
+
+		rerender({
+			resetKey: buildCampaignTableSelectionResetKey({
+				filter,
+				page: 1,
+				searchTerm: "brand",
+				sort: {
+					key: "cost",
+					direction: "desc",
+				},
+			}),
 			visibleRowIds: ["campaign-2", "campaign-1"],
 		});
 
