@@ -42,7 +42,7 @@ describe("CampaignTableTable", () => {
 					isInteractionDisabled: false,
 					isPartiallySelected: true,
 					selectedRowIds: ["campaign-1"],
-					sort: null,
+					sort: { key: "cost", direction: "asc" },
 					tableView: {
 						filteredCount: 2,
 						page: 2,
@@ -67,10 +67,16 @@ describe("CampaignTableTable", () => {
 		expect(
 			screen.getByRole("checkbox", { name: "현재 페이지 캠페인 모두 선택" }),
 		).toHaveAttribute("aria-checked", "mixed");
-		expect(screen.getByText("페이지 2 / 2")).toBeInTheDocument();
 		expect(
-			screen.getByRole("button", { name: "총 집행금액 정렬" }),
-		).toBeVisible();
+			screen
+				.getByRole("checkbox", { name: "현재 페이지 캠페인 모두 선택" })
+				.closest("label"),
+		).toHaveClass("min-h-control-touch");
+		expect(screen.getByText("페이지 2 / 2")).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: /총 집행금액/ })).toBeVisible();
+		expect(
+			screen.getByRole("columnheader", { name: /총 집행금액/ }),
+		).toHaveAttribute("aria-sort", "ascending");
 
 		await user.click(
 			screen.getByRole("checkbox", { name: "현재 페이지 캠페인 모두 선택" }),
@@ -84,11 +90,55 @@ describe("CampaignTableTable", () => {
 			screen.getByRole("checkbox", { name: "브랜드 검색 선택" }),
 		);
 		expect(onToggleRowSelection).toHaveBeenCalledWith("campaign-1");
+		expect(
+			screen
+				.getByRole("checkbox", { name: "브랜드 검색 선택" })
+				.closest("label"),
+		).toHaveClass("min-h-control-touch");
 
-		await user.click(screen.getByRole("button", { name: "총 집행금액 정렬" }));
+		await user.click(screen.getByRole("button", { name: /총 집행금액/ }));
 		expect(onToggleSort).toHaveBeenCalledWith("cost");
 
 		await user.click(screen.getByRole("button", { name: "이전" }));
 		expect(onSetPage).toHaveBeenCalledWith(1);
+	});
+
+	it("uses an accessible fallback label for unnamed campaigns", () => {
+		render(
+			<CampaignTableTable
+				actions={{
+					onSetPage: vi.fn(),
+					onTogglePageSelection: vi.fn(),
+					onToggleRowSelection: vi.fn(),
+					onToggleSort: vi.fn(),
+				}}
+				tableState={{
+					areAllVisibleRowsSelected: false,
+					isInteractionDisabled: false,
+					isPartiallySelected: false,
+					selectedRowIds: [],
+					sort: null,
+					tableView: {
+						filteredCount: 1,
+						page: 1,
+						rows: [
+							createRow({
+								id: "campaign-1",
+								name: "-",
+								platform: "Meta",
+							}),
+						],
+						totalCount: 1,
+						totalPages: 1,
+					},
+				}}
+			/>,
+		);
+
+		expect(
+			screen.getByRole("checkbox", {
+				name: "이름 없음, Meta, 진행 중, 2026-04-01 ~ 2026-04-30 선택",
+			}),
+		).toBeInTheDocument();
 	});
 });

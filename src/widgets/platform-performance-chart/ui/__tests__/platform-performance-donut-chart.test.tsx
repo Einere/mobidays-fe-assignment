@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { platformPerformanceMetricDefinitions } from "@/widgets/platform-performance-chart/model/platform-performance-metrics";
@@ -73,7 +73,10 @@ describe("PlatformPerformancePieSector", () => {
 		await user.click(sector);
 		expect(onPlatformSelect).toHaveBeenCalledWith("Google");
 
-		sector.focus();
+		fireEvent.focus(sector);
+		await waitFor(() =>
+			expect(sector).toHaveAttribute("stroke", "var(--color-focus)"),
+		);
 		await user.keyboard("{Enter}");
 		expect(onPlatformSelect).toHaveBeenCalledTimes(2);
 	});
@@ -191,6 +194,7 @@ describe("PlatformPerformancePieSector", () => {
 		const unknownLegend = screen.getByLabelText("알 수 없음");
 
 		expect(legendButton).toHaveClass("cursor-pointer");
+		expect(legendButton).toHaveClass("min-h-control-touch");
 		expect(unknownLegend).toHaveAttribute("aria-disabled", "true");
 		expect(unknownLegend).toHaveClass("cursor-not-allowed");
 	});

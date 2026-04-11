@@ -1,4 +1,4 @@
-import { type ComponentProps, useId, useMemo } from "react";
+import { type ComponentProps, useId, useMemo, useState } from "react";
 import { Cell, Pie, PieChart, Sector } from "recharts";
 import {
 	type CampaignPlatform,
@@ -71,6 +71,7 @@ export function PlatformPerformancePieSector({
 }: PlatformPerformanceSectorProps) {
 	const platform = payload?.platform;
 	const isSelected = payload?.isSelected ?? false;
+	const [isFocused, setIsFocused] = useState(false);
 
 	if (platform === undefined) {
 		return <Sector {...props} />;
@@ -94,11 +95,16 @@ export function PlatformPerformancePieSector({
 			tabIndex={0}
 			aria-label={`${platform} 선택`}
 			aria-pressed={isSelected}
+			stroke={isFocused ? "var(--color-focus)" : "transparent"}
+			strokeWidth={isFocused ? 3 : 1}
+			strokeLinejoin="round"
 			style={{ cursor: "pointer", ...(props.style ?? {}) }}
 			onClick={(event) => {
 				event.stopPropagation();
 				onPlatformSelect(platform);
 			}}
+			onFocus={() => setIsFocused(true)}
+			onBlur={() => setIsFocused(false)}
 			onKeyDown={(event) => {
 				if (event.key === "Enter" || event.key === " ") {
 					event.preventDefault();
@@ -299,7 +305,7 @@ export function PlatformPerformanceDonut({
 								{isKnownPlatform ? (
 									<button
 										type="button"
-										className="w-full cursor-pointer text-left"
+										className="w-full min-h-control-touch cursor-pointer rounded-md text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
 										onClick={() =>
 											onPlatformSelect(slice.platform as CampaignPlatform)
 										}
