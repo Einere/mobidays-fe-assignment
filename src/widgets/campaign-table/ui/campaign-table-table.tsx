@@ -92,7 +92,7 @@ interface CampaignTableTableProps {
 		onSetPage: (page: number) => void;
 	};
 }
-
+/*TODO: table 이 중복되는 네이밍이 어색하다. CampaignTable 로 바꾸자. */
 export function CampaignTableTable({
 	tableState,
 	actions,
