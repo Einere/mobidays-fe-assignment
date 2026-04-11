@@ -1,15 +1,81 @@
 import { HttpResponse, http } from "msw";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { server } from "@/app/mock/server";
-import { fetchCampaigns } from "@/entities/campaign";
-import { fetchDailyStats } from "@/entities/daily-stat/api/fetch-daily-stats";
+import * as campaignApi from "@/entities/campaign";
+import * as dailyStatApi from "@/entities/daily-stat/api/fetch-daily-stats";
 import {
 	createDashboardDataQueryKey,
 	fetchDashboardData,
+	getDashboardDataQueryOptions,
 } from "@/entities/dashboard";
 import { seedMockDb } from "@/shared/api/mock/db";
 
 describe("fetchDashboardData", () => {
+	afterEach(() => {
+		vi.restoreAllMocks();
+	});
+
+	it("forwards the same AbortSignal through dashboard query and data fetches", async () => {
+		const campaigns = [
+			{
+				id: "1",
+				name: "Google Active",
+				platform: "Google",
+				status: "active",
+				budget: 1000,
+				startDate: "2026-04-01",
+				endDate: "2026-04-30",
+			},
+		];
+
+		const dailyStats = [
+			{
+				id: "d1",
+				campaignId: "1",
+				date: "2026-04-02",
+				impressions: 10,
+				clicks: 1,
+				conversions: 0,
+				cost: 100,
+				conversionsValue: null,
+			},
+		];
+
+		const signal = new AbortController().signal;
+		const dashboardFilter = {
+			dateRange: { startDate: "2026-04-01", endDate: "2026-04-30" },
+			statuses: ["active"],
+			platforms: ["Google"],
+		};
+
+		const campaignSpy = vi
+			.spyOn(campaignApi, "fetchCampaigns")
+			.mockResolvedValue(campaigns as never);
+		const dailyStatsSpy = vi
+			.spyOn(dailyStatApi, "fetchDailyStats")
+			.mockResolvedValue(dailyStats as never);
+
+		const options = getDashboardDataQueryOptions(dashboardFilter);
+		const queryFn = options.queryFn as unknown as (context: {
+			signal: AbortSignal;
+		}) => ReturnType<typeof fetchDashboardData>;
+
+		await expect(queryFn({ signal })).resolves.toEqual({
+			campaigns,
+			dailyStats,
+		});
+
+		expect(campaignSpy).toHaveBeenCalledWith(dashboardFilter, signal);
+		expect(dailyStatsSpy).toHaveBeenCalledWith(
+			{
+				startDate: dashboardFilter.dateRange.startDate,
+				endDate: dashboardFilter.dateRange.endDate,
+				campaignIds: ["1"],
+			},
+			signal,
+		);
+	});
+
 	it("returns campaigns and daily stats filtered on the server", async () => {
 		seedMockDb({
 			campaigns: [
@@ -84,7 +150,7 @@ describe("fetchDashboardData", () => {
 			daily_stats: [],
 		});
 
-		const campaigns = await fetchCampaigns({
+		const campaigns = await campaignApi.fetchCampaigns({
 			dateRange: { startDate: "2026-04-01", endDate: "2026-04-30" },
 			statuses: ["active"],
 			platforms: ["Google"],
@@ -131,7 +197,7 @@ describe("fetchDashboardData", () => {
 			],
 		});
 
-		const dailyStats = await fetchDailyStats({
+		const dailyStats = await dailyStatApi.fetchDailyStats({
 			startDate: "2026-04-01",
 			endDate: "2026-04-30",
 			campaignIds: ["1"],
