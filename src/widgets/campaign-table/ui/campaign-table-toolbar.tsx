@@ -1,4 +1,4 @@
-import { Filter, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import type { CampaignStatus } from "@/entities/global-filter/model/types";
 import { Button } from "@/shared/ui/button";
 import { TextInput } from "@/shared/ui/input";
@@ -102,7 +102,6 @@ export function CampaignTableToolbar({
 						disabled={isStatusControlDisabled || !canApplyStatusChange}
 						onClick={onOpenStatusDialog}
 					>
-						<Filter aria-hidden="true" className="size-4" />
 						상태 적용
 					</Button>
 					<Button
