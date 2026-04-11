@@ -168,7 +168,7 @@ Toss CleanCode 스킬을 활용하여 `widgets` 하위 큰 UI 요소들에 대�
 - [x] 상태관리 & 데이터 흐름
   - 상태 분리, 데이터 간 연동
 - [x] 데이터 전처리
-- [ ] 렌더링 성능
+- [x] 렌더링 성능
 - [ ] 코드 품질
 - [ ] UX & 접근성
   - 캠페인 관리 테이블
@@ -188,3 +188,8 @@ Toss CleanCode 스킬을 활용하여 `widgets` 하위 큰 UI 요소들에 대�
 
 성능 문제를 해결하기 위해 AI를 활용해 계획 문서 작성 후 실행
 - [2026-04-11-dashboard-orchestration-refactor.md](docs/superpowers/plans/2026-04-11-dashboard-orchestration-refactor.md)
+- 위 작업 후 build 에러 발생, Claude 의 hook와 같은 도구로 해결하고 싶었으나 코덱스는 hook을 미지원..이라고 대답하였으나
+- [공식 문서](https://developers.openai.com/codex/hooks)를 찾아보니 멀쩡히 지원 중...
+- hook으로 코드 퀄리티를 보장하려다가, git 자체 pre-commit 훅을 활용하기로 결정.
+
+
