@@ -11,32 +11,42 @@ import {
 } from "@/shared/ui/select";
 
 interface CampaignTableToolbarProps {
-	searchInput: string;
-	filteredCount: number;
-	totalCount: number;
-	selectedCount: number;
-	pendingStatus: CampaignStatus | null;
-	disabled: boolean;
-	canApplyStatusChange: boolean;
-	onSearchInputChange: (nextSearchInput: string) => void;
-	onPendingStatusChange: (nextPendingStatus: CampaignStatus | null) => void;
-	onOpenStatusDialog: () => void;
-	onOpenCreateDialog?: () => void;
+	toolbarState: {
+		searchInput: string;
+		filteredCount: number;
+		totalCount: number;
+		selectedCount: number;
+		pendingStatus: CampaignStatus | null;
+		disabled: boolean;
+		canApplyStatusChange: boolean;
+	};
+	actions: {
+		onSearchInputChange: (nextSearchInput: string) => void;
+		onPendingStatusChange: (nextPendingStatus: CampaignStatus | null) => void;
+		onOpenStatusDialog: () => void;
+		onOpenCreateDialog?: () => void;
+	};
 }
 
 export function CampaignTableToolbar({
-	searchInput,
-	filteredCount,
-	totalCount,
-	selectedCount,
-	pendingStatus,
-	disabled,
-	canApplyStatusChange,
-	onSearchInputChange,
-	onPendingStatusChange,
-	onOpenStatusDialog,
-	onOpenCreateDialog,
+	toolbarState,
+	actions,
 }: CampaignTableToolbarProps) {
+	const {
+		searchInput,
+		filteredCount,
+		totalCount,
+		selectedCount,
+		pendingStatus,
+		disabled,
+		canApplyStatusChange,
+	} = toolbarState;
+	const {
+		onSearchInputChange,
+		onPendingStatusChange,
+		onOpenStatusDialog,
+		onOpenCreateDialog,
+	} = actions;
 	const isStatusControlDisabled = disabled || selectedCount === 0;
 	const isCreateButtonDisabled = disabled || onOpenCreateDialog === undefined;
 

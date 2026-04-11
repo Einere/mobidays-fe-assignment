@@ -10,26 +10,33 @@ import {
 } from "@/shared/ui/dialog";
 
 interface CampaignTableStatusDialogProps {
-	open: boolean;
-	selectedCount: number;
-	statusLabel: string;
-	errorMessage: string | null;
-	isSubmitting: boolean;
-	canConfirm: boolean;
-	onOpenChange: (open: boolean) => void;
-	onConfirm: () => void;
+	statusDialogState: {
+		open: boolean;
+		selectedCount: number;
+		statusLabel: string;
+		errorMessage: string | null;
+		isSubmitting: boolean;
+		canConfirm: boolean;
+	};
+	actions: {
+		onOpenChange: (open: boolean) => void;
+		onConfirm: () => void;
+	};
 }
 
 export function CampaignTableStatusDialog({
-	open,
-	selectedCount,
-	statusLabel,
-	errorMessage,
-	isSubmitting,
-	canConfirm,
-	onOpenChange,
-	onConfirm,
+	statusDialogState,
+	actions,
 }: CampaignTableStatusDialogProps) {
+	const {
+		open,
+		selectedCount,
+		statusLabel,
+		errorMessage,
+		isSubmitting,
+		canConfirm,
+	} = statusDialogState;
+	const { onOpenChange, onConfirm } = actions;
 	function handleOpenChange(nextOpen: boolean) {
 		if (isSubmitting && !nextOpen) {
 			return;
