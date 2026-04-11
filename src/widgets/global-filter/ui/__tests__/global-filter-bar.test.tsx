@@ -103,7 +103,7 @@ describe("GlobalFilterBar", () => {
 		).toContain("grid-cols-2");
 
 		const mobileTrigger = screen.getByRole("button", {
-			name: "매체 필터 열기",
+			name: "매체 전체 3",
 		});
 		expect(screen.getByTestId("mobile-filter-grid").className).toContain(
 			"grid-cols-2",
@@ -119,6 +119,7 @@ describe("GlobalFilterBar", () => {
 		});
 
 		expect(googleOption).toHaveAttribute("aria-pressed", "true");
+		expect(googleOption.className).toContain("min-h-control-touch");
 
 		await user.click(googleOption);
 
@@ -139,7 +140,7 @@ describe("GlobalFilterBar", () => {
 
 		renderGlobalFilterBar();
 
-		await user.click(screen.getByRole("button", { name: "매체 필터 열기" }));
+		await user.click(screen.getByRole("button", { name: "매체 전체 3" }));
 
 		const dropdown = await screen.findByRole("dialog", { name: "매체 필터" });
 		const googleOption = within(dropdown).getByRole("button", {

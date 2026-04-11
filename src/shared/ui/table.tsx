@@ -7,6 +7,7 @@ type DataTableColumn<T extends Record<string, React.ReactNode>> = {
 	key: keyof T;
 	header: React.ReactNode;
 	align?: "left" | "right";
+	ariaSort?: "ascending" | "descending" | "none";
 };
 
 type DataTableRow = Record<string, React.ReactNode> & {
@@ -66,6 +67,7 @@ function DataTable<T extends DataTableRow>({
 									headerCellClassName,
 									column.align === "right" && "text-right",
 								)}
+								aria-sort={column.ariaSort}
 								scope="col"
 							>
 								{column.header}
