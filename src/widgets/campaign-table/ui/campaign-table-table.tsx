@@ -77,30 +77,40 @@ function SortableColumnHeader({
 }
 
 interface CampaignTableTableProps {
-	tableView: CampaignTableView;
-	selectedRowIds: string[];
-	areAllVisibleRowsSelected: boolean;
-	isPartiallySelected: boolean;
-	isInteractionDisabled: boolean;
-	sort: CampaignTableSortState | null;
-	onToggleSort: (key: CampaignTableSortKey) => void;
-	onToggleRowSelection: (rowId: string) => void;
-	onTogglePageSelection: (pageRowIds: string[]) => void;
-	onSetPage: (page: number) => void;
+	tableState: {
+		tableView: CampaignTableView;
+		selectedRowIds: string[];
+		areAllVisibleRowsSelected: boolean;
+		isPartiallySelected: boolean;
+		isInteractionDisabled: boolean;
+		sort: CampaignTableSortState | null;
+	};
+	actions: {
+		onToggleSort: (key: CampaignTableSortKey) => void;
+		onToggleRowSelection: (rowId: string) => void;
+		onTogglePageSelection: (pageRowIds: string[]) => void;
+		onSetPage: (page: number) => void;
+	};
 }
-
+/*TODO: table 이 중복되는 네이밍이 어색하다. CampaignTable 로 바꾸자. */
 export function CampaignTableTable({
-	tableView,
-	selectedRowIds,
-	areAllVisibleRowsSelected,
-	isPartiallySelected,
-	isInteractionDisabled,
-	sort,
-	onToggleSort,
-	onToggleRowSelection,
-	onTogglePageSelection,
-	onSetPage,
+	tableState,
+	actions,
 }: CampaignTableTableProps) {
+	const {
+		tableView,
+		selectedRowIds,
+		areAllVisibleRowsSelected,
+		isPartiallySelected,
+		isInteractionDisabled,
+		sort,
+	} = tableState;
+	const {
+		onToggleSort,
+		onToggleRowSelection,
+		onTogglePageSelection,
+		onSetPage,
+	} = actions;
 	const selectAllCheckboxRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {

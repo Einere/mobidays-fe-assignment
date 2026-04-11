@@ -18,23 +18,35 @@ import {
 	SelectValue,
 } from "@/shared/ui/select";
 
+export interface CampaignCreateDialogFormState {
+	register: UseFormReturn<CreateCampaignFormValues>["register"];
+	control: UseFormReturn<CreateCampaignFormValues>["control"];
+	handleSubmit: UseFormReturn<CreateCampaignFormValues>["handleSubmit"];
+	formState: Pick<
+		UseFormReturn<CreateCampaignFormValues>["formState"],
+		"errors"
+	>;
+}
+
 interface CampaignCreateDialogProps {
-	open: boolean;
-	isSubmitting: boolean;
-	commonError: string | null;
-	form: UseFormReturn<CreateCampaignFormValues>;
-	onOpenChange: (open: boolean) => void;
-	onSubmit: (values: CreateCampaignFormValues) => Promise<void> | void;
+	createDialogState: {
+		open: boolean;
+		isSubmitting: boolean;
+		commonError: string | null;
+		form: CampaignCreateDialogFormState;
+	};
+	actions: {
+		onOpenChange: (open: boolean) => void;
+		onSubmit: (values: CreateCampaignFormValues) => Promise<void> | void;
+	};
 }
 
 export function CampaignCreateDialog({
-	open,
-	isSubmitting,
-	commonError,
-	form,
-	onOpenChange,
-	onSubmit,
+	createDialogState,
+	actions,
 }: CampaignCreateDialogProps) {
+	const { open, isSubmitting, commonError, form } = createDialogState;
+	const { onOpenChange, onSubmit } = actions;
 	const {
 		register,
 		control,

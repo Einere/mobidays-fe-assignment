@@ -8,16 +8,20 @@ describe("CampaignTableToolbar", () => {
 
 		render(
 			<CampaignTableToolbar
-				searchInput=""
-				filteredCount={2}
-				totalCount={2}
-				selectedCount={0}
-				pendingStatus={null}
-				disabled={false}
-				canApplyStatusChange={false}
-				onSearchInputChange={onSearchInputChange}
-				onPendingStatusChange={vi.fn()}
-				onOpenStatusDialog={vi.fn()}
+				toolbarState={{
+					searchInput: "",
+					filteredCount: 2,
+					totalCount: 2,
+					selectedCount: 0,
+					pendingStatus: null,
+					disabled: false,
+					canApplyStatusChange: false,
+				}}
+				actions={{
+					onSearchInputChange,
+					onPendingStatusChange: vi.fn(),
+					onOpenStatusDialog: vi.fn(),
+				}}
 			/>,
 		);
 
@@ -32,16 +36,20 @@ describe("CampaignTableToolbar", () => {
 	it("disables the status controls when no rows are selected", () => {
 		render(
 			<CampaignTableToolbar
-				searchInput=""
-				filteredCount={2}
-				totalCount={2}
-				selectedCount={0}
-				pendingStatus={null}
-				disabled={false}
-				canApplyStatusChange={false}
-				onSearchInputChange={vi.fn()}
-				onPendingStatusChange={vi.fn()}
-				onOpenStatusDialog={vi.fn()}
+				toolbarState={{
+					searchInput: "",
+					filteredCount: 2,
+					totalCount: 2,
+					selectedCount: 0,
+					pendingStatus: null,
+					disabled: false,
+					canApplyStatusChange: false,
+				}}
+				actions={{
+					onSearchInputChange: vi.fn(),
+					onPendingStatusChange: vi.fn(),
+					onOpenStatusDialog: vi.fn(),
+				}}
 			/>,
 		);
 
@@ -57,16 +65,20 @@ describe("CampaignTableToolbar", () => {
 	it("disables the create button when no create handler is provided", () => {
 		render(
 			<CampaignTableToolbar
-				searchInput=""
-				filteredCount={2}
-				totalCount={2}
-				selectedCount={1}
-				pendingStatus={null}
-				disabled={false}
-				canApplyStatusChange={false}
-				onSearchInputChange={vi.fn()}
-				onPendingStatusChange={vi.fn()}
-				onOpenStatusDialog={vi.fn()}
+				toolbarState={{
+					searchInput: "",
+					filteredCount: 2,
+					totalCount: 2,
+					selectedCount: 1,
+					pendingStatus: null,
+					disabled: false,
+					canApplyStatusChange: false,
+				}}
+				actions={{
+					onSearchInputChange: vi.fn(),
+					onPendingStatusChange: vi.fn(),
+					onOpenStatusDialog: vi.fn(),
+				}}
 			/>,
 		);
 

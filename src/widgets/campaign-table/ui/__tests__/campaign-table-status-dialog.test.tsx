@@ -7,14 +7,18 @@ describe("CampaignTableStatusDialog", () => {
 	it("uses warning tone for the caution copy and confirm action", () => {
 		render(
 			<CampaignTableStatusDialog
-				open
-				selectedCount={2}
-				statusLabel="종료"
-				errorMessage={null}
-				isSubmitting={false}
-				canConfirm
-				onOpenChange={vi.fn()}
-				onConfirm={vi.fn()}
+				statusDialogState={{
+					open: true,
+					selectedCount: 2,
+					statusLabel: "종료",
+					errorMessage: null,
+					isSubmitting: false,
+					canConfirm: true,
+				}}
+				actions={{
+					onOpenChange: vi.fn(),
+					onConfirm: vi.fn(),
+				}}
 			/>,
 		);
 
@@ -44,14 +48,18 @@ describe("CampaignTableStatusDialog", () => {
 
 		render(
 			<CampaignTableStatusDialog
-				open
-				selectedCount={2}
-				statusLabel="종료"
-				errorMessage={null}
-				isSubmitting
-				canConfirm={false}
-				onOpenChange={onOpenChange}
-				onConfirm={vi.fn()}
+				statusDialogState={{
+					open: true,
+					selectedCount: 2,
+					statusLabel: "종료",
+					errorMessage: null,
+					isSubmitting: true,
+					canConfirm: false,
+				}}
+				actions={{
+					onOpenChange,
+					onConfirm: vi.fn(),
+				}}
 			/>,
 		);
 
@@ -73,14 +81,18 @@ describe("CampaignTableStatusDialog", () => {
 
 		render(
 			<CampaignTableStatusDialog
-				open
-				selectedCount={2}
-				statusLabel="종료"
-				errorMessage={null}
-				isSubmitting={false}
-				canConfirm
-				onOpenChange={onOpenChange}
-				onConfirm={vi.fn()}
+				statusDialogState={{
+					open: true,
+					selectedCount: 2,
+					statusLabel: "종료",
+					errorMessage: null,
+					isSubmitting: false,
+					canConfirm: true,
+				}}
+				actions={{
+					onOpenChange,
+					onConfirm: vi.fn(),
+				}}
 			/>,
 		);
 

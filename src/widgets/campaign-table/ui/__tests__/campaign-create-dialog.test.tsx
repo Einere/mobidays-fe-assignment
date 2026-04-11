@@ -54,12 +54,16 @@ function CampaignCreateDialogHarness({
 
 	return (
 		<CampaignCreateDialog
-			open
-			commonError={commonError}
-			form={form}
-			isSubmitting={isSubmitting}
-			onOpenChange={onOpenChange}
-			onSubmit={onSubmit}
+			createDialogState={{
+				open: true,
+				commonError,
+				form,
+				isSubmitting,
+			}}
+			actions={{
+				onOpenChange,
+				onSubmit,
+			}}
 		/>
 	);
 }
@@ -73,12 +77,16 @@ function ConnectedCampaignCreateDialogHarness() {
 				등록 다이얼로그 열기
 			</button>
 			<CampaignCreateDialog
-				open={dialog.open}
-				commonError={dialog.commonError}
-				form={dialog.form}
-				isSubmitting={dialog.isSubmitting}
-				onOpenChange={dialog.setOpen}
-				onSubmit={dialog.submit}
+				createDialogState={{
+					open: dialog.open,
+					commonError: dialog.commonError,
+					form: dialog.form,
+					isSubmitting: dialog.isSubmitting,
+				}}
+				actions={{
+					onOpenChange: dialog.setOpen,
+					onSubmit: dialog.submit,
+				}}
 			/>
 		</>
 	);
