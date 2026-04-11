@@ -73,7 +73,12 @@ describe("CampaignTableTable", () => {
 				.closest("label"),
 		).toHaveClass("min-h-control-touch");
 		expect(screen.getByText("페이지 2 / 2")).toBeInTheDocument();
-		expect(screen.getByRole("button", { name: /총 집행금액/ })).toBeVisible();
+		const sortButton = screen.getByRole("button", { name: /총 집행금액/ });
+		expect(sortButton).toBeVisible();
+		expect(sortButton.querySelector("svg")).toBeInTheDocument();
+		expect(sortButton).not.toHaveTextContent("↑");
+		expect(sortButton).not.toHaveTextContent("↓");
+		expect(sortButton).not.toHaveTextContent("↕");
 		expect(
 			screen.getByRole("columnheader", { name: /총 집행금액/ }),
 		).toHaveAttribute("aria-sort", "ascending");

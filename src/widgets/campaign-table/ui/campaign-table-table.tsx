@@ -1,3 +1,4 @@
+import { ChevronDown, ChevronsUpDown, ChevronUp } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 import type { CampaignTableRow } from "@/entities/campaign/lib/build-campaign-table-rows";
 import {
@@ -70,9 +71,15 @@ function SortableColumnHeader({
 			onClick={onClick}
 		>
 			{label}
-			<span aria-hidden="true" className="typo-caption text-fg-subtle">
-				{active ? (direction === "asc" ? "↑" : "↓") : "↕"}
-			</span>
+			{active ? (
+				direction === "asc" ? (
+					<ChevronUp aria-hidden="true" className="size-4 text-fg-subtle" />
+				) : (
+					<ChevronDown aria-hidden="true" className="size-4 text-fg-subtle" />
+				)
+			) : (
+				<ChevronsUpDown aria-hidden="true" className="size-4 text-fg-subtle" />
+			)}
 		</Button>
 	);
 }
