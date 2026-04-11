@@ -13,13 +13,17 @@ export interface DashboardData {
 
 export async function fetchDashboardData(
 	filter: GlobalFilterState,
+	signal?: AbortSignal,
 ): Promise<DashboardData> {
-	const campaigns = await fetchCampaigns(filter);
-	const dailyStats = await fetchDailyStats({
-		startDate: filter.dateRange.startDate,
-		endDate: filter.dateRange.endDate,
-		campaignIds: campaigns.map((campaign) => campaign.id),
-	});
+	const campaigns = await fetchCampaigns(filter, signal);
+	const dailyStats = await fetchDailyStats(
+		{
+			startDate: filter.dateRange.startDate,
+			endDate: filter.dateRange.endDate,
+			campaignIds: campaigns.map((campaign) => campaign.id),
+		},
+		signal,
+	);
 
 	return { campaigns, dailyStats };
 }

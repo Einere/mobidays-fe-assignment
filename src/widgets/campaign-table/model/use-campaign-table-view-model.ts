@@ -135,9 +135,7 @@ export function useCampaignTableViewModel() {
 	const filter = useAtomValue(globalFilterAtom);
 	const controls = useCampaignTableControls();
 	const createDialog = useCampaignCreateDialog();
-	const tableData = normalizeCampaignTableData(
-		useCampaignTableData(filter, controls),
-	);
+	const tableData = normalizeCampaignTableData(useCampaignTableData(controls));
 	const visibleRowIds = tableData.tableView?.rows.map((row) => row.id) ?? [];
 	const selectionResetKey = buildCampaignTableSelectionResetKey({
 		filter,

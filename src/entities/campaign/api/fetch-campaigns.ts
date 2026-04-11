@@ -5,8 +5,8 @@ import {
 	parseCampaignResponse,
 } from "@/shared/api/contracts/dashboard-data";
 
-async function fetchJson<T>(url: URL): Promise<T> {
-	const response = await fetch(url);
+async function fetchJson<T>(url: URL, signal?: AbortSignal): Promise<T> {
+	const response = await fetch(url, { signal });
 
 	if (!response.ok) {
 		throw new Error(`Request failed: ${response.status}`);
@@ -17,6 +17,7 @@ async function fetchJson<T>(url: URL): Promise<T> {
 
 export async function fetchCampaigns(
 	filter: GlobalFilterState,
+	signal?: AbortSignal,
 ): Promise<DashboardCampaign[]> {
 	const campaignsUrl = new URL("/campaigns", window.location.origin);
 	campaignsUrl.searchParams.set("startDate", filter.dateRange.startDate);
@@ -30,7 +31,7 @@ export async function fetchCampaigns(
 		serializeFilterList(filter.platforms),
 	);
 
-	const campaignsResponse = await fetchJson<unknown>(campaignsUrl);
+	const campaignsResponse = await fetchJson<unknown>(campaignsUrl, signal);
 
 	return parseCampaignResponse(campaignsResponse);
 }

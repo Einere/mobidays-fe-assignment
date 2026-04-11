@@ -1,12 +1,10 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { buildCampaignTableRows } from "@/entities/campaign/lib/build-campaign-table-rows";
-import { getDashboardDataQueryOptions } from "@/entities/dashboard";
-import type { GlobalFilterState } from "@/entities/global-filter/model/types";
+import { useDashboardDataContext } from "@/entities/dashboard/model/dashboard-data-context";
+import type { DashboardDerivations } from "@/entities/dashboard/model/use-dashboard-derivations";
 import { deriveCampaignTableView } from "@/widgets/campaign-table/model/derive-campaign-table-view";
 import type { CampaignTableControls } from "@/widgets/campaign-table/model/use-campaign-table-controls";
 
-type CampaignTableRows = ReturnType<typeof buildCampaignTableRows>;
+type CampaignTableRows = DashboardDerivations["tableRows"];
 
 export type CampaignTableViewState =
 	| {
@@ -68,24 +66,12 @@ function resolveCampaignTableViewState({
 	};
 }
 
-export function useCampaignTableData(
-	filter: GlobalFilterState,
-	controls: CampaignTableControls,
-) {
-	const query = useQuery({
-		...getDashboardDataQueryOptions(filter),
-		placeholderData: keepPreviousData,
-	});
+export function useCampaignTableData(controls: CampaignTableControls) {
+	const { query, derivations } = useDashboardDataContext();
 
 	const rows = useMemo(
-		() =>
-			query.data === undefined
-				? null
-				: buildCampaignTableRows({
-						campaigns: query.data.campaigns,
-						dailyStats: query.data.dailyStats,
-					}),
-		[query.data],
+		() => (derivations === null ? null : derivations.tableRows),
+		[derivations],
 	);
 
 	const viewState = resolveCampaignTableViewState({

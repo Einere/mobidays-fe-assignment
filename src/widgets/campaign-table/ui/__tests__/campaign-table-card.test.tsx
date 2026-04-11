@@ -3,9 +3,13 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createStore, Provider, useAtomValue, useSetAtom } from "jotai";
 import { HttpResponse, http } from "msw";
+import type { PropsWithChildren } from "react";
 import { describe, expect, it } from "vitest";
 import { server } from "@/app/mock/server";
-import { createDashboardDataQueryKey } from "@/entities/dashboard";
+import {
+	createDashboardDataQueryKey,
+	DashboardDataProvider,
+} from "@/entities/dashboard";
 import { createInitialGlobalFilterState } from "@/entities/global-filter/model/defaults";
 import {
 	globalFilterAtom,
@@ -36,6 +40,14 @@ function SetMayFilterButton() {
 		<button type="button" onClick={() => setFilter(mayFilter)}>
 			5월 필터 적용
 		</button>
+	);
+}
+
+function DashboardDataTestProvider({ children }: PropsWithChildren) {
+	const filter = useAtomValue(globalFilterAtom);
+
+	return (
+		<DashboardDataProvider filter={filter}>{children}</DashboardDataProvider>
 	);
 }
 
@@ -70,9 +82,11 @@ function renderCampaignTableCard(options?: {
 	render(
 		<Provider store={store}>
 			<QueryClientProvider client={queryClient}>
-				{options?.withMayFilterButton ? <SetMayFilterButton /> : null}
-				{options?.withRefetchButton ? <RefetchCurrentFilterButton /> : null}
-				<CampaignTableCard />
+				<DashboardDataTestProvider>
+					{options?.withMayFilterButton ? <SetMayFilterButton /> : null}
+					{options?.withRefetchButton ? <RefetchCurrentFilterButton /> : null}
+					<CampaignTableCard />
+				</DashboardDataTestProvider>
 			</QueryClientProvider>
 		</Provider>,
 	);

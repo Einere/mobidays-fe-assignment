@@ -1,13 +1,7 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useAtomValue } from "jotai";
 import { useMemo, useState } from "react";
-import {
-	buildCampaignRankingTop3Candidates,
-	selectCampaignRankingTop3,
-} from "@/entities/campaign-ranking/lib/build-campaign-ranking-top3";
+import { selectCampaignRankingTop3 } from "@/entities/campaign-ranking/lib/build-campaign-ranking-top3";
 import type { CampaignRankingMetricKey } from "@/entities/campaign-ranking/model/types";
-import { getDashboardDataQueryOptions } from "@/entities/dashboard";
-import { globalFilterAtom } from "@/entities/global-filter/model/store";
+import { useDashboardDataContext } from "@/entities/dashboard/model/dashboard-data-context";
 import {
 	defaultCampaignRankingMetricKey,
 	getCampaignRankingMetricDefinition,
@@ -18,25 +12,18 @@ import {
 } from "@/widgets/campaign-ranking-top3/model/campaign-ranking-top3-card-state";
 
 export function useCampaignRankingTop3CardViewModel() {
-	const filter = useAtomValue(globalFilterAtom);
+	const { query, derivations } = useDashboardDataContext();
 	const [metricKey, setMetricKey] = useState<CampaignRankingMetricKey>(
 		defaultCampaignRankingMetricKey,
 	);
-	const query = useQuery({
-		...getDashboardDataQueryOptions(filter),
-		placeholderData: keepPreviousData,
-	});
 	const metricDefinition = getCampaignRankingMetricDefinition(metricKey);
 	const rankedCandidates = useMemo(() => {
-		if (query.data === undefined) {
+		if (derivations === null) {
 			return [];
 		}
 
-		return buildCampaignRankingTop3Candidates({
-			campaigns: query.data.campaigns,
-			dailyStats: query.data.dailyStats,
-		});
-	}, [query.data]);
+		return derivations.campaignRankingCandidates;
+	}, [derivations]);
 	const rows = useMemo(() => {
 		if (rankedCandidates.length === 0) {
 			return [];

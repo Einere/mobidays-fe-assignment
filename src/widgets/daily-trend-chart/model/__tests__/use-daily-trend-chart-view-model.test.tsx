@@ -1,7 +1,9 @@
 import { type QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { createStore, Provider } from "jotai";
+import { createStore, Provider, useAtomValue } from "jotai";
+import type { PropsWithChildren } from "react";
 import { afterEach, describe, expect, it } from "vitest";
+import { DashboardDataProvider } from "@/entities/dashboard";
 import { createInitialGlobalFilterState } from "@/entities/global-filter/model/defaults";
 import { globalFilterAtom } from "@/entities/global-filter/model/store";
 import { seedMockDb } from "@/shared/api/mock/db";
@@ -31,11 +33,19 @@ function renderDailyTrendChartViewModel() {
 		wrapper: ({ children }) => (
 			<Provider store={store}>
 				<QueryClientProvider client={queryClient}>
-					{children}
+					<DashboardDataTestProvider>{children}</DashboardDataTestProvider>
 				</QueryClientProvider>
 			</Provider>
 		),
 	});
+}
+
+function DashboardDataTestProvider({ children }: PropsWithChildren) {
+	const filter = useAtomValue(globalFilterAtom);
+
+	return (
+		<DashboardDataProvider filter={filter}>{children}</DashboardDataProvider>
+	);
 }
 
 describe("resolveDailyTrendChartViewState", () => {

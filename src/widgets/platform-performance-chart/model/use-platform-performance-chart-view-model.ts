@@ -1,13 +1,8 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { useCallback, useMemo, useState } from "react";
-import { getDashboardDataQueryOptions } from "@/entities/dashboard";
-import {
-	globalFilterAtom,
-	toggleGlobalFilterPlatformAtom,
-} from "@/entities/global-filter/model/store";
+import { useDashboardDataContext } from "@/entities/dashboard/model/dashboard-data-context";
+import { toggleGlobalFilterPlatformAtom } from "@/entities/global-filter/model/store";
 import type { CampaignPlatform } from "@/entities/global-filter/model/types";
-import { aggregatePlatformPerformance } from "@/entities/platform-performance/lib/aggregate-platform-performance";
 import type {
 	PlatformMetricKey,
 	PlatformPerformanceSlice,
@@ -97,14 +92,10 @@ export function resolvePlatformPerformanceChartState({
 }
 
 export function usePlatformPerformanceChartViewModel() {
-	const filter = useAtomValue(globalFilterAtom);
+	const { query, derivations } = useDashboardDataContext();
 	const [activeMetricKey, setActiveMetricKey] = useState<PlatformMetricKey>(
 		defaultPlatformPerformanceMetricKey,
 	);
-	const query = useQuery({
-		...getDashboardDataQueryOptions(filter),
-		placeholderData: keepPreviousData,
-	});
 	const toggleGlobalFilterPlatform = useSetAtom(toggleGlobalFilterPlatformAtom);
 
 	const toggleMetric = useCallback((metricKey: PlatformMetricKey) => {
@@ -119,17 +110,12 @@ export function usePlatformPerformanceChartViewModel() {
 	);
 
 	const slices = useMemo(() => {
-		if (query.data === undefined) {
+		if (derivations === null) {
 			return [] as PlatformPerformanceSlice[];
 		}
 
-		return aggregatePlatformPerformance({
-			campaigns: query.data.campaigns,
-			dailyStats: query.data.dailyStats,
-			metricKey: activeMetricKey,
-			selectedPlatforms: filter.platforms,
-		});
-	}, [activeMetricKey, filter.platforms, query.data]);
+		return derivations.platformPerformanceSlicesByMetricKey[activeMetricKey];
+	}, [activeMetricKey, derivations]);
 
 	const state = useMemo(
 		() =>

@@ -1,12 +1,6 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useAtomValue } from "jotai";
 import { useCallback, useMemo, useState } from "react";
-import {
-	buildDailyTrendSeries,
-	type DailyTrendPoint,
-} from "@/entities/daily-stat/lib/build-daily-trend-series";
-import { getDashboardDataQueryOptions } from "@/entities/dashboard";
-import { globalFilterAtom } from "@/entities/global-filter/model/store";
+import type { DailyTrendPoint } from "@/entities/daily-stat/lib/build-daily-trend-series";
+import { useDashboardDataContext } from "@/entities/dashboard/model/dashboard-data-context";
 import { toggleDailyTrendMetricSelection } from "@/widgets/daily-trend-chart/model/daily-trend-metric-selection";
 import type { DailyTrendMetricKey } from "@/widgets/daily-trend-chart/model/metrics";
 import { defaultDailyTrendMetricKeys } from "@/widgets/daily-trend-chart/model/metrics";
@@ -41,16 +35,6 @@ export interface DailyTrendChartViewModel {
 	activeMetrics: DailyTrendMetricKey[];
 	toggleMetric: (metricKey: DailyTrendMetricKey) => void;
 	viewState: DailyTrendChartViewState;
-}
-
-function createResolvedChartSnapshot(
-	dailyStats: Parameters<typeof buildDailyTrendSeries>[0],
-	campaignsCount: number,
-): ResolvedChartSnapshot {
-	return {
-		campaignsCount,
-		chartData: buildDailyTrendSeries(dailyStats),
-	};
 }
 
 export function resolveDailyTrendChartViewState({
@@ -102,29 +86,25 @@ export function resolveDailyTrendChartViewState({
 }
 
 export function useDailyTrendChartViewModel() {
-	const filter = useAtomValue(globalFilterAtom);
+	const { query, derivations } = useDashboardDataContext();
 	const [activeMetrics, setActiveMetrics] = useState<DailyTrendMetricKey[]>([
 		...defaultDailyTrendMetricKeys,
 	]);
-	const query = useQuery({
-		...getDashboardDataQueryOptions(filter),
-		placeholderData: keepPreviousData,
-	});
 	const toggleMetric = useCallback((metricKey: DailyTrendMetricKey) => {
 		setActiveMetrics((currentMetrics) =>
 			toggleDailyTrendMetricSelection(currentMetrics, metricKey),
 		);
 	}, []);
-	const currentDataSnapshot = useMemo(
-		() =>
-			query.data === undefined
-				? null
-				: createResolvedChartSnapshot(
-						query.data.dailyStats,
-						query.data.campaigns.length,
-					),
-		[query.data],
-	);
+	const currentDataSnapshot = useMemo(() => {
+		if (query.data === undefined || derivations === null) {
+			return null;
+		}
+
+		return {
+			campaignsCount: query.data.campaigns.length,
+			chartData: derivations.dailyTrendSeries,
+		};
+	}, [derivations, query.data]);
 	const viewState = useMemo(
 		() =>
 			resolveDailyTrendChartViewState({
