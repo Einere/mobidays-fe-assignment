@@ -44,7 +44,6 @@ const nonEmptyStringSchema = z
 
 const nullableFiniteNumberSchema = z.union([z.number().finite(), z.null()]);
 
-/*TODO: 캠페인도 다른 필드들에 대해 검증을 해야 하지 않나? */
 const campaignRowSchema = z
 	.object({
 		id: nonEmptyStringSchema,
