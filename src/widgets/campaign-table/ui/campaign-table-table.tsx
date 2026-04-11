@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import type { CampaignTableRow } from "@/entities/campaign/lib/build-campaign-table-rows";
 import {
 	formatCampaignMetric,
@@ -112,6 +112,10 @@ export function CampaignTableTable({
 		onSetPage,
 	} = actions;
 	const selectAllCheckboxRef = useRef<HTMLInputElement>(null);
+	const selectedRowIdSet = useMemo(
+		() => new Set(selectedRowIds),
+		[selectedRowIds],
+	);
 
 	useEffect(() => {
 		if (selectAllCheckboxRef.current) {
@@ -125,7 +129,7 @@ export function CampaignTableTable({
 		select: (
 			<input
 				aria-label={`${row.name} 선택`}
-				checked={selectedRowIds.includes(row.id)}
+				checked={selectedRowIdSet.has(row.id)}
 				className="size-4 rounded border border-outline accent-primary"
 				disabled={isInteractionDisabled}
 				type="checkbox"

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 interface UseCampaignTableSelectionParams {
 	resetKey: string;
@@ -11,6 +11,10 @@ export function useCampaignTableSelection({
 }: UseCampaignTableSelectionParams) {
 	const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
 	const previousResetKeyRef = useRef(resetKey);
+	const selectedRowIdSet = useMemo(
+		() => new Set(selectedRowIds),
+		[selectedRowIds],
+	);
 
 	useEffect(() => {
 		if (previousResetKeyRef.current === resetKey) {
@@ -23,7 +27,9 @@ export function useCampaignTableSelection({
 
 	const toggleRowSelection = useCallback((rowId: string) => {
 		setSelectedRowIds((currentSelectedRowIds) => {
-			if (currentSelectedRowIds.includes(rowId)) {
+			const currentSelectedRowIdSet = new Set(currentSelectedRowIds);
+
+			if (currentSelectedRowIdSet.has(rowId)) {
 				return currentSelectedRowIds.filter(
 					(selectedRowId) => selectedRowId !== rowId,
 				);
@@ -35,13 +41,15 @@ export function useCampaignTableSelection({
 
 	const togglePageSelection = useCallback((pageRowIds: string[]) => {
 		setSelectedRowIds((currentSelectedRowIds) => {
+			const currentSelectedRowIdSet = new Set(currentSelectedRowIds);
+			const pageRowIdSet = new Set(pageRowIds);
 			const areAllPageRowsSelected =
 				pageRowIds.length > 0 &&
-				pageRowIds.every((rowId) => currentSelectedRowIds.includes(rowId));
+				pageRowIds.every((rowId) => currentSelectedRowIdSet.has(rowId));
 
 			if (areAllPageRowsSelected) {
 				return currentSelectedRowIds.filter(
-					(selectedRowId) => !pageRowIds.includes(selectedRowId),
+					(selectedRowId) => !pageRowIdSet.has(selectedRowId),
 				);
 			}
 
@@ -53,14 +61,15 @@ export function useCampaignTableSelection({
 		setSelectedRowIds([]);
 	}, []);
 
-	const selectedVisibleRowIds = visibleRowIds.filter((rowId) =>
-		selectedRowIds.includes(rowId),
+	const selectedVisibleRowCount = visibleRowIds.reduce(
+		(count, rowId) => count + (selectedRowIdSet.has(rowId) ? 1 : 0),
+		0,
 	);
 	const areAllVisibleRowsSelected =
 		visibleRowIds.length > 0 &&
-		selectedVisibleRowIds.length === visibleRowIds.length;
+		selectedVisibleRowCount === visibleRowIds.length;
 	const isPartiallySelected =
-		selectedVisibleRowIds.length > 0 && !areAllVisibleRowsSelected;
+		selectedVisibleRowCount > 0 && !areAllVisibleRowsSelected;
 
 	return {
 		selectedRowIds,
