@@ -2,6 +2,7 @@ import type {
 	DashboardCampaign,
 	DashboardDailyStat,
 } from "@/shared/api/contracts/dashboard-data";
+import { parseKstDateString } from "@/shared/lib/date/kst";
 
 export interface CampaignTableRow {
 	id: string;
@@ -109,7 +110,9 @@ export function buildCampaignTableRows({
 			startDate: campaign.startDate,
 			endDate: campaign.endDate,
 			periodSortValue:
-				campaign.startDate === null ? null : Date.parse(campaign.startDate),
+				campaign.startDate === null
+					? null
+					: (parseKstDateString(campaign.startDate)?.getTime() ?? null),
 			cost,
 			ctr: calculateRate(clicks, impressions),
 			cpc:

@@ -244,7 +244,7 @@ describe("fetchDashboardData", () => {
 				rawPlatform: "Facebook",
 				status: null,
 				budget: null,
-				startDate: "2026/04/12",
+				startDate: null,
 				raw: expect.objectContaining({
 					platform: "Facebook",
 					status: "running",

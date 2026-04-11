@@ -25,7 +25,7 @@ describe("parseCampaignResponse", () => {
 				platform: null,
 				rawPlatform: "Facebook",
 				budget: null,
-				startDate: "2026/04/12",
+				startDate: null,
 				endDate: null,
 				raw: expect.objectContaining({
 					status: "running",

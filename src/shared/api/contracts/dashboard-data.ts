@@ -4,20 +4,13 @@ import type {
 	CampaignStatus,
 } from "@/entities/global-filter/model/types";
 import type { RawCampaign, RawDailyStat } from "@/shared/api/contracts/mock-db";
+import { isKstDateString } from "@/shared/lib/date/kst";
 
 const campaignStatuses = ["active", "paused", "ended"] as const;
 const campaignPlatforms = ["Google", "Meta", "Naver"] as const;
 
-function isNonEmptyString(value: unknown): value is string {
-	return typeof value === "string" && value.trim().length > 0;
-}
-
 function isFiniteNumber(value: unknown): value is number {
 	return typeof value === "number" && Number.isFinite(value);
-}
-
-function isDateLikeString(value: unknown): value is string {
-	return isNonEmptyString(value) && Number.isFinite(Date.parse(value));
 }
 
 function parseEnumValue<Value extends string>(
@@ -38,7 +31,7 @@ function parseNullableDateLikeString(value: unknown): string | null {
 		return null;
 	}
 
-	return isDateLikeString(value) ? value : null;
+	return isKstDateString(value) ? value : null;
 }
 
 function parseNullableNumber(value: unknown): number | null {

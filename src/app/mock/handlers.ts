@@ -12,6 +12,7 @@ import {
 	getMemoryDb,
 	updateCampaignStatusesByIds,
 } from "@/shared/api/mock/memory-db";
+import { parseKstDateString } from "@/shared/lib/date/kst";
 
 function parseListParam<Value extends string>(value: string | null): Value[] {
 	return (value ?? "").split(",").filter(Boolean) as Value[];
@@ -31,9 +32,11 @@ function createFilterState(request: Request): GlobalFilterState {
 }
 
 function parseDateValue(value: unknown): number | null {
-	return typeof value === "string" && Number.isFinite(Date.parse(value))
-		? Date.parse(value)
-		: null;
+	if (typeof value !== "string") {
+		return null;
+	}
+
+	return parseKstDateString(value)?.getTime() ?? null;
 }
 
 function isCampaignStatus(value: unknown): value is CampaignStatus {

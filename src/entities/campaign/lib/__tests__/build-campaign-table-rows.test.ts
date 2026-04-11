@@ -10,6 +10,7 @@ import type {
 	DashboardDailyStat,
 } from "@/shared/api/contracts/dashboard-data";
 import type { RawCampaign, RawDailyStat } from "@/shared/api/contracts/mock-db";
+import { parseKstDateString } from "@/shared/lib/date/kst";
 
 function createRawCampaign(overrides: Partial<RawCampaign> = {}): RawCampaign {
 	return {
@@ -129,7 +130,7 @@ describe("buildCampaignTableRows", () => {
 				platform: "Google",
 				startDate: "2026-04-01",
 				endDate: "2026-04-30",
-				periodSortValue: Date.parse("2026-04-01"),
+				periodSortValue: parseKstDateString("2026-04-01")?.getTime(),
 				cost: 40,
 				ctr: 10,
 				cpc: 4,
@@ -201,7 +202,7 @@ describe("buildCampaignTableRows", () => {
 			platform: "Google",
 			startDate: "2026-04-01",
 			endDate: "2026-04-30",
-			periodSortValue: Date.parse("2026-04-01"),
+			periodSortValue: parseKstDateString("2026-04-01")?.getTime(),
 			cost: 0,
 			ctr: null,
 			cpc: null,

@@ -3,6 +3,7 @@ import {
 	dailyTrendMetricKeys,
 } from "@/entities/daily-stat/model/daily-trend-metrics";
 import type { DashboardDailyStat } from "@/shared/api/contracts/dashboard-data";
+import { parseKstDateString } from "@/shared/lib/date/kst";
 
 export interface DailyTrendPoint {
 	date: string;
@@ -23,28 +24,6 @@ type DailyTrendPointAccumulator = {
 	metrics: Record<DailyTrendMetricKey, DailyTrendMetricAccumulator>;
 };
 
-function isValidDateString(value: string | null): value is string {
-	if (value === null) {
-		return false;
-	}
-
-	const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
-	if (match === null) {
-		return false;
-	}
-
-	const year = Number(match[1]);
-	const month = Number(match[2]);
-	const day = Number(match[3]);
-	const date = new Date(Date.UTC(year, month - 1, day));
-
-	return (
-		date.getUTCFullYear() === year &&
-		date.getUTCMonth() === month - 1 &&
-		date.getUTCDate() === day
-	);
-}
-
 function createMetricAccumulator(): DailyTrendMetricAccumulator {
 	return {
 		sum: 0,
@@ -64,11 +43,7 @@ function createPointAccumulator(date: string): DailyTrendPointAccumulator {
 
 	return {
 		date,
-		timestamp: Date.UTC(
-			Number(date.slice(0, 4)),
-			Number(date.slice(5, 7)) - 1,
-			Number(date.slice(8, 10)),
-		),
+		timestamp: parseKstDateString(date)?.getTime() ?? Number.NaN,
 		metrics,
 	};
 }
@@ -91,7 +66,11 @@ export function buildDailyTrendSeries(
 	const seriesMap = new Map<string, DailyTrendPointAccumulator>();
 
 	for (const dailyStat of dailyStats) {
-		if (!isValidDateString(dailyStat.date)) {
+		if (typeof dailyStat.date !== "string") {
+			continue;
+		}
+
+		if (parseKstDateString(dailyStat.date) === null) {
 			continue;
 		}
 
