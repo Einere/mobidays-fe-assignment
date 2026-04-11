@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
@@ -11,11 +10,10 @@ import {
 	type CreateCampaignFormValues,
 	createCampaignSchema,
 } from "@/entities/campaign/lib/create-campaign-schema";
-
-const DATE_FORMAT = "yyyy-MM-dd";
+import { formatKstDate } from "@/shared/lib/date/kst";
 
 export function createCampaignDefaultValues(): CreateCampaignFormValues {
-	const today = format(new Date(), DATE_FORMAT);
+	const today = formatKstDate(Date.now());
 
 	return {
 		name: "",

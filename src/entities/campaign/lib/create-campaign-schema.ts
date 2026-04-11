@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isKstDateString, parseKstDateString } from "@/shared/lib/date/kst";
 
 const campaignPlatforms = ["Google", "Meta", "Naver"] as const;
 type KnownCampaignPlatform = (typeof campaignPlatforms)[number];
@@ -6,40 +7,12 @@ const currencyLimitMessage = "10억 원 이하의 정수여야 합니다.";
 const budgetValidationMessage = `예산은 100원 이상 ${currencyLimitMessage}`;
 const spendValidationMessage = `집행 금액은 0원 이상 ${currencyLimitMessage}`;
 
-function parseIsoDateToUtcMs(value: string): number | null {
-	const trimmedValue = value.trim();
-
-	if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmedValue)) {
-		return null;
-	}
-
-	const [yearValue, monthValue, dayValue] = trimmedValue
-		.split("-")
-		.map((part) => Number(part));
-
-	if (
-		!Number.isInteger(yearValue) ||
-		!Number.isInteger(monthValue) ||
-		!Number.isInteger(dayValue)
-	) {
-		return null;
-	}
-
-	const date = new Date(Date.UTC(yearValue, monthValue - 1, dayValue));
-
-	if (
-		date.getUTCFullYear() !== yearValue ||
-		date.getUTCMonth() !== monthValue - 1 ||
-		date.getUTCDate() !== dayValue
-	) {
-		return null;
-	}
-
-	return date.getTime();
+function parseKstDateToMs(value: string) {
+	return parseKstDateString(value)?.getTime() ?? null;
 }
 
-function isValidIsoCalendarDate(value: string) {
-	return parseIsoDateToUtcMs(value) !== null;
+function isValidKstCalendarDate(value: string) {
+	return isKstDateString(value) && parseKstDateToMs(value) !== null;
 }
 
 function parseIntegerInRange({
@@ -92,7 +65,7 @@ const dateSchema = (requiredMessage: string) =>
 		.string()
 		.trim()
 		.min(1, requiredMessage)
-		.refine((value) => value.length === 0 || isValidIsoCalendarDate(value), {
+		.refine((value) => value.length === 0 || isValidKstCalendarDate(value), {
 			message: requiredMessage,
 		});
 
@@ -100,8 +73,8 @@ function applyCreateCampaignCrossFieldValidation(
 	values: { budget: number; spend: number; startDate: string; endDate: string },
 	ctx: z.RefinementCtx,
 ) {
-	const startDate = parseIsoDateToUtcMs(values.startDate);
-	const endDate = parseIsoDateToUtcMs(values.endDate);
+	const startDate = parseKstDateToMs(values.startDate);
+	const endDate = parseKstDateToMs(values.endDate);
 
 	if (startDate !== null && endDate !== null && endDate < startDate) {
 		ctx.addIssue({
