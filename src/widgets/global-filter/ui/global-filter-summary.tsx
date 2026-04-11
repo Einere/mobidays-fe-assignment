@@ -1,26 +1,9 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useAtomValue } from "jotai";
-import { useEffect, useRef } from "react";
-import type { DashboardData } from "@/entities/dashboard";
-import { getDashboardDataQueryOptions } from "@/entities/dashboard";
-import { globalFilterAtom } from "@/entities/global-filter/model/store";
+import { useDashboardDataContext } from "@/entities/dashboard/model/dashboard-data-context";
+import { useDashboardVisibleData } from "@/entities/dashboard/model/use-dashboard-derivations";
 
 export function GlobalFilterSummary() {
-	const filter = useAtomValue(globalFilterAtom);
-	const query = useQuery({
-		...getDashboardDataQueryOptions(filter),
-		placeholderData: keepPreviousData,
-	});
-
-	const lastSuccessfulDataRef = useRef<DashboardData | null>(null);
-
-	useEffect(() => {
-		if (query.data !== undefined && !query.isError) {
-			lastSuccessfulDataRef.current = query.data;
-		}
-	}, [query.data, query.isError]);
-
-	const visibleData = query.data ?? lastSuccessfulDataRef.current;
+	const { query } = useDashboardDataContext();
+	const visibleData = useDashboardVisibleData(query);
 	const campaignsCount = visibleData?.campaigns.length ?? 0;
 	const dailyStatsCount = visibleData?.dailyStats.length ?? 0;
 	const hasVisibleData = visibleData !== null;
@@ -30,7 +13,7 @@ export function GlobalFilterSummary() {
 	const staleStatusMessage =
 		hasVisibleData && hasError
 			? "최신 필터 결과를 불러오지 못했습니다."
-			: hasVisibleData && query.isPlaceholderData
+			: hasVisibleData && (query.isPlaceholderData || query.isPending)
 				? "최신 필터 결과를 불러오는 중입니다."
 				: null;
 

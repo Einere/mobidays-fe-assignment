@@ -2,7 +2,9 @@ import type { QueryClient } from "@tanstack/react-query";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook, screen, waitFor } from "@testing-library/react";
 import { createStore, Provider, useAtomValue } from "jotai";
+import type { PropsWithChildren } from "react";
 import { afterEach, describe, expect, it } from "vitest";
+import { DashboardDataProvider } from "@/entities/dashboard";
 import { createInitialGlobalFilterState } from "@/entities/global-filter/model/defaults";
 import { globalFilterAtom } from "@/entities/global-filter/model/store";
 import { seedMockDb } from "@/shared/api/mock/db";
@@ -32,12 +34,22 @@ function renderPlatformPerformanceViewModel() {
 		wrapper: ({ children }) => (
 			<Provider store={store}>
 				<QueryClientProvider client={queryClient}>
-					<FilterStateIndicator />
-					{children}
+					<DashboardDataTestProvider>
+						<FilterStateIndicator />
+						{children}
+					</DashboardDataTestProvider>
 				</QueryClientProvider>
 			</Provider>
 		),
 	});
+}
+
+function DashboardDataTestProvider({ children }: PropsWithChildren) {
+	const filter = useAtomValue(globalFilterAtom);
+
+	return (
+		<DashboardDataProvider filter={filter}>{children}</DashboardDataProvider>
+	);
 }
 
 function FilterStateIndicator() {

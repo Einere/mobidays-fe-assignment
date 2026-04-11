@@ -1,3 +1,6 @@
+import { useAtomValue } from "jotai";
+import { DashboardDataProvider } from "@/entities/dashboard";
+import { globalFilterAtom } from "@/entities/global-filter/model/store";
 import { MobileSidebarNav, SidebarNav } from "@/shared/ui/sidebar.tsx";
 import { CampaignRankingTop3Card } from "@/widgets/campaign-ranking-top3/ui/campaign-ranking-top3-card";
 import { CampaignTableCard } from "@/widgets/campaign-table/ui/campaign-table-card";
@@ -9,46 +12,50 @@ import { PlatformPerformanceChartCard } from "@/widgets/platform-performance-cha
 const sidebarItems = [{ id: "overview", label: "개요", active: true }];
 
 function App() {
+	const filter = useAtomValue(globalFilterAtom);
+
 	return (
-		<main className="min-h-screen overflow-x-hidden bg-canvas text-fg">
-			<section className="mx-auto grid min-h-screen w-full max-w-page-max gap-panel-gap px-page-gutter py-8 xl:grid-cols-[260px_minmax(0,1fr)]">
-				<SidebarNav
-					className="hidden min-w-0 xl:block"
-					title="Mobidays Dashboard"
-					items={sidebarItems}
-				/>
+		<DashboardDataProvider filter={filter}>
+			<main className="min-h-screen overflow-x-hidden bg-canvas text-fg">
+				<section className="mx-auto grid min-h-screen w-full max-w-page-max gap-panel-gap px-page-gutter py-8 xl:grid-cols-[260px_minmax(0,1fr)]">
+					<SidebarNav
+						className="hidden min-w-0 xl:block"
+						title="Mobidays Dashboard"
+						items={sidebarItems}
+					/>
 
-				<div className="min-w-0 flex flex-col gap-panel-gap">
-					<header className="flex flex-col gap-3">
-						<div className="xl:hidden">
-							<MobileSidebarNav
-								title="Mobidays Dashboard"
-								items={sidebarItems}
-							/>
-						</div>
-						<p className="typo-caption tracking-[0.08em] text-fg-subtle uppercase">
-							Mobidays Dashboard
-						</p>
-						<div className="flex flex-col gap-2">
-							<h1>캠페인 운영 현황</h1>
-						</div>
-					</header>
+					<div className="min-w-0 flex flex-col gap-panel-gap">
+						<header className="flex flex-col gap-3">
+							<div className="xl:hidden">
+								<MobileSidebarNav
+									title="Mobidays Dashboard"
+									items={sidebarItems}
+								/>
+							</div>
+							<p className="typo-caption tracking-[0.08em] text-fg-subtle uppercase">
+								Mobidays Dashboard
+							</p>
+							<div className="flex flex-col gap-2">
+								<h1>캠페인 운영 현황</h1>
+							</div>
+						</header>
 
-					<section className="grid min-w-0 gap-panel-gap xl:grid-cols-[minmax(0,1.3fr)_minmax(320px,0.9fr)]">
-						<GlobalFilterBar />
-						<GlobalFilterSummary />
-					</section>
+						<section className="grid min-w-0 gap-panel-gap xl:grid-cols-[minmax(0,1.3fr)_minmax(320px,0.9fr)]">
+							<GlobalFilterBar />
+							<GlobalFilterSummary />
+						</section>
 
-					<DailyTrendChartCard />
-					<section className="grid min-w-0 gap-panel-gap lg:grid-cols-2">
-						<PlatformPerformanceChartCard />
-						<CampaignRankingTop3Card />
-					</section>
+						<DailyTrendChartCard />
+						<section className="grid min-w-0 gap-panel-gap lg:grid-cols-2">
+							<PlatformPerformanceChartCard />
+							<CampaignRankingTop3Card />
+						</section>
 
-					<CampaignTableCard />
-				</div>
-			</section>
-		</main>
+						<CampaignTableCard />
+					</div>
+				</section>
+			</main>
+		</DashboardDataProvider>
 	);
 }
 
