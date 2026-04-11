@@ -185,3 +185,6 @@ Toss CleanCode 스킬을 활용하여 `widgets` 하위 큰 UI 요소들에 대�
 
 타임존 문제를 해결하기 위해 AI를 활용해 계획 문서 작성 후 실행
 - [2026-04-11-kst-date-policy-date-fns-migration.md](docs/superpowers/plans/2026-04-11-kst-date-policy-date-fns-migration.md) 
+
+성능 문제를 해결하기 위해 AI를 활용해 계획 문서 작성 후 실행
+- [2026-04-11-dashboard-orchestration-refactor.md](docs/superpowers/plans/2026-04-11-dashboard-orchestration-refactor.md)
