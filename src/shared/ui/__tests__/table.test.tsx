@@ -27,4 +27,22 @@ describe("DataTable", () => {
 			"h-table-row-compact",
 		);
 	});
+
+	it("exposes aria-sort on headers that opt into sort state", () => {
+		render(
+			<DataTable
+				caption="정렬 예시 표"
+				columns={[
+					{ key: "name", header: "이름", ariaSort: "ascending" },
+					{ key: "metric", header: "지표" },
+				]}
+				rows={[{ id: "row-1", name: "캠페인 A", metric: "10" }]}
+			/>,
+		);
+
+		expect(screen.getByRole("columnheader", { name: "이름" })).toHaveAttribute(
+			"aria-sort",
+			"ascending",
+		);
+	});
 });

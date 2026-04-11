@@ -40,6 +40,39 @@ export function formatCampaignPeriod(
 	return `${startDate} ~ ${endDate}`;
 }
 
+type CampaignSelectionLabelInput = {
+	name: string | null;
+	platform: string | null;
+	startDate: string | null;
+	endDate: string | null;
+	status: CampaignStatus | null;
+};
+
+export function formatCampaignSelectionLabel({
+	name,
+	platform,
+	startDate,
+	endDate,
+	status,
+}: CampaignSelectionLabelInput) {
+	const trimmedName = name?.trim();
+
+	if (trimmedName && trimmedName !== "-") {
+		return `${trimmedName} 선택`;
+	}
+
+	const statusLabel = formatCampaignStatusLabel(status);
+	const periodLabel = formatCampaignPeriod(startDate, endDate);
+	const selectionParts = [
+		"이름 없음",
+		platform ?? "매체 없음",
+		statusLabel === "-" ? "상태 없음" : statusLabel,
+		periodLabel === "-" ? "집행 기간 없음" : periodLabel,
+	];
+
+	return `${selectionParts.join(", ")} 선택`;
+}
+
 export function formatCampaignMetric(
 	value: number | null,
 	kind: CampaignMetricKind,

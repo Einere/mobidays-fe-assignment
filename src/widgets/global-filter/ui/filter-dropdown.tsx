@@ -55,7 +55,7 @@ export function FilterDropdown<T extends string>({
 					type="button"
 					variant="outline"
 					className="w-full justify-between"
-					aria-label={`${groupLabel} 필터 열기`}
+					aria-label={`${groupLabel} ${selectedSummary}`}
 				>
 					<span>{groupLabel}</span>
 					<span className="flex items-center gap-2 text-fg-muted">
@@ -78,7 +78,7 @@ export function FilterDropdown<T extends string>({
 							type="button"
 							aria-pressed={isAllSelected}
 							className={cn(
-								"flex items-center justify-between rounded-md px-3 py-2 text-left typo-body-sm text-fg outline-none transition-colors hover:bg-hover-surface focus-visible:ring-2 focus-visible:ring-focus",
+								"flex min-h-control-touch items-center justify-between rounded-md px-3 py-2 text-left typo-body-sm text-fg outline-none transition-colors hover:bg-hover-surface focus-visible:ring-2 focus-visible:ring-focus",
 								isAllSelected && "bg-selected text-selected-fg",
 							)}
 							onClick={onSelectAll}
@@ -96,7 +96,7 @@ export function FilterDropdown<T extends string>({
 									type="button"
 									aria-pressed={isSelected}
 									className={cn(
-										"flex items-center justify-between rounded-md px-3 py-2 typo-body-sm text-fg outline-none transition-colors hover:bg-hover-surface focus-visible:ring-2 focus-visible:ring-focus",
+										"flex min-h-control-touch items-center justify-between rounded-md px-3 py-2 typo-body-sm text-fg outline-none transition-colors hover:bg-hover-surface focus-visible:ring-2 focus-visible:ring-focus",
 										isSelected && "bg-selected text-selected-fg",
 									)}
 									onClick={() => onToggleValue(option.value)}

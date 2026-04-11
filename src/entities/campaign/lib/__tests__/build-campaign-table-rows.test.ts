@@ -3,6 +3,7 @@ import { buildCampaignTableRows } from "@/entities/campaign/lib/build-campaign-t
 import {
 	formatCampaignMetric,
 	formatCampaignPeriod,
+	formatCampaignSelectionLabel,
 	formatCampaignStatusLabel,
 } from "@/entities/campaign/lib/format-campaign-table";
 import type {
@@ -234,5 +235,17 @@ describe("formatCampaignTable helpers", () => {
 		expect(formatCampaignMetric(1000, "currency")).toBe("₩1,000");
 		expect(formatCampaignMetric(10, "percent")).toBe("10%");
 		expect(formatCampaignMetric(12.345, "percent")).toBe("12.35%");
+	});
+
+	it("builds an accessible campaign selection label for missing names", () => {
+		expect(
+			formatCampaignSelectionLabel({
+				name: "-",
+				platform: "Meta",
+				startDate: "2026-04-01",
+				endDate: "2026-04-30",
+				status: "paused",
+			}),
+		).toBe("이름 없음, Meta, 일시중지, 2026-04-01 ~ 2026-04-30 선택");
 	});
 });

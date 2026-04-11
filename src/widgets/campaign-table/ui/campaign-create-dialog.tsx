@@ -41,6 +41,24 @@ interface CampaignCreateDialogProps {
 	};
 }
 
+function formatIntegerInputValue(value: string) {
+	if (!value) {
+		return "";
+	}
+
+	const normalizedValue = value.replace(/\D/g, "");
+
+	if (!normalizedValue) {
+		return "";
+	}
+
+	return new Intl.NumberFormat("ko-KR").format(Number(normalizedValue));
+}
+
+function normalizeIntegerInputValue(value: string) {
+	return value.replace(/\D/g, "");
+}
+
 export function CampaignCreateDialog({
 	createDialogState,
 	actions,
@@ -190,15 +208,29 @@ export function CampaignCreateDialog({
 						htmlFor="campaign-create-budget"
 					>
 						<span className="typo-caption text-fg-muted">예산</span>
-						<TextInput
-							id="campaign-create-budget"
-							aria-describedby={
-								errors.budget ? "campaign-create-budget-error" : undefined
-							}
-							aria-invalid={errors.budget ? "true" : "false"}
-							disabled={isSubmitting}
-							type="number"
-							{...register("budget")}
+						<Controller
+							control={control}
+							name="budget"
+							render={({ field }) => (
+								<TextInput
+									id="campaign-create-budget"
+									aria-describedby={
+										errors.budget ? "campaign-create-budget-error" : undefined
+									}
+									aria-invalid={errors.budget ? "true" : "false"}
+									disabled={isSubmitting}
+									inputMode="numeric"
+									type="text"
+									value={formatIntegerInputValue(field.value)}
+									onBlur={field.onBlur}
+									onChange={(event) =>
+										field.onChange(
+											normalizeIntegerInputValue(event.target.value),
+										)
+									}
+									ref={field.ref}
+								/>
+							)}
 						/>
 						<div className="min-h-5">
 							{errors.budget ? (
@@ -219,15 +251,29 @@ export function CampaignCreateDialog({
 						htmlFor="campaign-create-spend"
 					>
 						<span className="typo-caption text-fg-muted">집행 금액</span>
-						<TextInput
-							id="campaign-create-spend"
-							aria-describedby={
-								errors.spend ? "campaign-create-spend-error" : undefined
-							}
-							aria-invalid={errors.spend ? "true" : "false"}
-							disabled={isSubmitting}
-							type="number"
-							{...register("spend")}
+						<Controller
+							control={control}
+							name="spend"
+							render={({ field }) => (
+								<TextInput
+									id="campaign-create-spend"
+									aria-describedby={
+										errors.spend ? "campaign-create-spend-error" : undefined
+									}
+									aria-invalid={errors.spend ? "true" : "false"}
+									disabled={isSubmitting}
+									inputMode="numeric"
+									type="text"
+									value={formatIntegerInputValue(field.value)}
+									onBlur={field.onBlur}
+									onChange={(event) =>
+										field.onChange(
+											normalizeIntegerInputValue(event.target.value),
+										)
+									}
+									ref={field.ref}
+								/>
+							)}
 						/>
 						<div className="min-h-5">
 							{errors.spend ? (

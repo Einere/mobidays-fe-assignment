@@ -1,8 +1,10 @@
+import { ChevronDown, ChevronsUpDown, ChevronUp } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 import type { CampaignTableRow } from "@/entities/campaign/lib/build-campaign-table-rows";
 import {
 	formatCampaignMetric,
 	formatCampaignPeriod,
+	formatCampaignSelectionLabel,
 	formatCampaignStatusLabel,
 } from "@/entities/campaign/lib/format-campaign-table";
 import { cn } from "@/shared/lib/utils";
@@ -69,10 +71,47 @@ function SortableColumnHeader({
 			onClick={onClick}
 		>
 			{label}
-			<span aria-hidden="true" className="typo-caption text-fg-subtle">
-				{active ? (direction === "asc" ? "↑" : "↓") : "↕"}
-			</span>
+			{active ? (
+				direction === "asc" ? (
+					<ChevronUp aria-hidden="true" className="size-4 text-fg-subtle" />
+				) : (
+					<ChevronDown aria-hidden="true" className="size-4 text-fg-subtle" />
+				)
+			) : (
+				<ChevronsUpDown aria-hidden="true" className="size-4 text-fg-subtle" />
+			)}
 		</Button>
+	);
+}
+
+function SelectableCheckbox({
+	id,
+	label,
+	checked,
+	disabled,
+	onChange,
+}: {
+	id: string;
+	label: string;
+	checked: boolean;
+	disabled: boolean;
+	onChange: () => void;
+}) {
+	return (
+		<label
+			htmlFor={id}
+			className="inline-flex min-h-control-touch min-w-control-touch cursor-pointer items-center justify-center rounded-sm"
+		>
+			<input
+				id={id}
+				aria-label={label}
+				checked={checked}
+				className="size-4 rounded border border-outline accent-primary"
+				disabled={disabled}
+				type="checkbox"
+				onChange={onChange}
+			/>
+		</label>
 	);
 }
 
@@ -124,15 +163,27 @@ export function CampaignTableTable({
 	}, [isPartiallySelected]);
 
 	const selectableRowIds = tableView.rows.map((row) => row.id);
+	const getAriaSort = (key: CampaignTableSortKey) =>
+		sort?.key === key
+			? sort.direction === "asc"
+				? "ascending"
+				: "descending"
+			: undefined;
+
 	const tableRows = tableView.rows.map((row) => ({
 		id: row.id,
 		select: (
-			<input
-				aria-label={`${row.name} 선택`}
+			<SelectableCheckbox
+				id={`campaign-table-row-select-${row.id}`}
+				label={formatCampaignSelectionLabel({
+					name: row.name,
+					platform: row.platform,
+					startDate: row.startDate,
+					endDate: row.endDate,
+					status: row.status,
+				})}
 				checked={selectedRowIdSet.has(row.id)}
-				className="size-4 rounded border border-outline accent-primary"
 				disabled={isInteractionDisabled}
-				type="checkbox"
 				onChange={() => onToggleRowSelection(row.id)}
 			/>
 		),
@@ -167,18 +218,24 @@ export function CampaignTableTable({
 					{
 						key: "select",
 						header: (
-							<input
-								ref={selectAllCheckboxRef}
-								aria-checked={
-									isPartiallySelected ? "mixed" : areAllVisibleRowsSelected
-								}
-								aria-label="현재 페이지 캠페인 모두 선택"
-								checked={areAllVisibleRowsSelected}
-								className="size-4 rounded border border-outline accent-primary"
-								disabled={isInteractionDisabled}
-								type="checkbox"
-								onChange={() => onTogglePageSelection(selectableRowIds)}
-							/>
+							<label
+								htmlFor="campaign-table-select-all"
+								className="inline-flex min-h-control-touch min-w-control-touch cursor-pointer items-center justify-center rounded-sm"
+							>
+								<input
+									id="campaign-table-select-all"
+									ref={selectAllCheckboxRef}
+									aria-checked={
+										isPartiallySelected ? "mixed" : areAllVisibleRowsSelected
+									}
+									aria-label="현재 페이지 캠페인 모두 선택"
+									checked={areAllVisibleRowsSelected}
+									className="size-4 rounded border border-outline accent-primary"
+									disabled={isInteractionDisabled}
+									type="checkbox"
+									onChange={() => onTogglePageSelection(selectableRowIds)}
+								/>
+							</label>
 						),
 					},
 					{ key: "name", header: "캠페인명" },
@@ -195,6 +252,7 @@ export function CampaignTableTable({
 								onClick={() => onToggleSort("period")}
 							/>
 						),
+						ariaSort: getAriaSort("period"),
 					},
 					{
 						key: "cost",
@@ -208,6 +266,7 @@ export function CampaignTableTable({
 							/>
 						),
 						align: "right",
+						ariaSort: getAriaSort("cost"),
 					},
 					{
 						key: "ctr",
@@ -221,6 +280,7 @@ export function CampaignTableTable({
 							/>
 						),
 						align: "right",
+						ariaSort: getAriaSort("ctr"),
 					},
 					{
 						key: "cpc",
@@ -234,6 +294,7 @@ export function CampaignTableTable({
 							/>
 						),
 						align: "right",
+						ariaSort: getAriaSort("cpc"),
 					},
 					{
 						key: "roas",
@@ -247,6 +308,7 @@ export function CampaignTableTable({
 							/>
 						),
 						align: "right",
+						ariaSort: getAriaSort("roas"),
 					},
 				]}
 				rows={tableRows}

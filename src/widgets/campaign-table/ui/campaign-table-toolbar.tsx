@@ -96,10 +96,9 @@ export function CampaignTableToolbar({
 							</SelectContent>
 						</Select>
 					</div>
-					{/* TODO: CampaignTableStatusDialog 과의 통일성을 위해 warning variant로 변경하기 */}
 					<Button
 						type="button"
-						variant="secondary"
+						variant="warning"
 						disabled={isStatusControlDisabled || !canApplyStatusChange}
 						onClick={onOpenStatusDialog}
 					>
