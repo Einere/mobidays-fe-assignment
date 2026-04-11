@@ -18,7 +18,7 @@
 | 차트 | Recharts | v3 |
 | 테이블 | TanStack Table | v8 |
 | 폼 | react-hook-form + Zod | - |
-| 날짜 | date-fns | - |
+| 날짜 | date-fns + `@date-fns/tz` | - |
 | 테스트 | Vitest + React Testing Library | - |
 | 폴더 구조 | FSD (4레이어 간소화) | - |
 
@@ -189,19 +189,21 @@ type CampaignFormValues = z.infer<typeof campaignFormSchema>
 
 ---
 
-### 날짜 처리 — date-fns
+### 날짜 처리 — KST + date-fns
 
-**검토 대상**: date-fns vs dayjs
+**검토 대상**: native `Date` vs `date-fns` + `@date-fns/tz`
 
-| | date-fns | dayjs |
+| | native `Date` | `date-fns` + `@date-fns/tz` |
 |---|---|---|
-| API 스타일 | 함수형 (immutability 자연스러움) | 체이닝 (moment.js 스타일) |
-| 번들 크기 | tree-shaking으로 사용 함수만 포함 | 초경량 (~2KB) |
+| API 스타일 | 저수준, 런타임 해석 의존 | 함수형, timezone-aware |
+| 타임존 정책 | 암시적 로컬/UTC 혼재 | `Asia/Seoul` 고정 가능 |
+| 날짜-only 처리 | `Date.parse`/`Date.UTC`에 의존 | `parse`, `format`, `startOfMonth`, `endOfMonth`를 KST 기준으로 통제 |
 
-- 함수형 API가 immutability 원칙에 부합
-- 당월 1일~말일 초기값 계산, 날짜 비교, YYYY-MM-DD 파싱 모두 지원
+- 대시보드는 `db.json`의 날짜 값을 KST 업무 날짜로 간주한다.
+- 모든 비교/정렬/초기값 계산은 `Asia/Seoul` 기준으로 수행한다.
+- 원본 payload는 보존하되, UI용 날짜는 shared KST helper를 통해 정규화한다.
 
-**결정**: date-fns
+**결정**: `date-fns` + `@date-fns/tz`
 
 ---
 
