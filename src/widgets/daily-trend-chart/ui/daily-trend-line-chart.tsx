@@ -60,31 +60,6 @@ function tooltipFormatter(value: unknown, metricKey?: string) {
 
 const tooltipContent = <ChartTooltipContent formatter={tooltipFormatter} />;
 
-export function toggleDailyTrendMetricSelection(
-	currentMetrics: DailyTrendMetricKey[],
-	metricKey: DailyTrendMetricKey,
-) {
-	const isActive = currentMetrics.includes(metricKey);
-
-	if (isActive && currentMetrics.length === 1) {
-		return currentMetrics;
-	}
-
-	if (isActive) {
-		return currentMetrics.filter(
-			(currentMetric) => currentMetric !== metricKey,
-		);
-	}
-
-	return toggleMetricDefinitions
-		.map((metric) => metric.key)
-		.filter(
-			(candidateMetric) =>
-				candidateMetric === metricKey ||
-				currentMetrics.includes(candidateMetric),
-		);
-}
-
 export function DailyTrendMetricToggleGroup({
 	activeMetrics,
 	metricGroupLabel = "일별 추이 메트릭",

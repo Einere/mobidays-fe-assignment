@@ -1,4 +1,5 @@
-import { type QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import type { QueryClient } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createStore, Provider, useSetAtom } from "jotai";
@@ -13,11 +14,11 @@ import {
 } from "@/entities/global-filter/model/store";
 import { seedMockDb } from "@/shared/api/mock/db";
 import { createQueryClient } from "@/shared/api/query-client";
+import { toggleDailyTrendMetricSelection } from "@/widgets/daily-trend-chart/model/daily-trend-metric-selection";
 import {
 	DailyTrendChartCard,
 	resolveDailyTrendChartViewState,
 } from "@/widgets/daily-trend-chart/ui/daily-trend-chart-card";
-import { toggleDailyTrendMetricSelection } from "@/widgets/daily-trend-chart/ui/daily-trend-line-chart";
 
 const aprilFilter = createInitialGlobalFilterState(new Date("2026-04-15"));
 const queryClients: QueryClient[] = [];
