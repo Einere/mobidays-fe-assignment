@@ -48,14 +48,14 @@ describe("dashboard shell components", () => {
 			<SidebarNav
 				title="Mobidays Dashboard"
 				items={[
-					{ id: "overview", label: "개요", active: true },
+					{ id: "overview", label: "마케팅 캠페인 성과", active: true },
 					{ id: "campaigns", label: "캠페인" },
 				]}
 			/>,
 		);
 
 		expect(screen.getByText("Mobidays Dashboard")).toBeInTheDocument();
-		const activeItem = screen.getByRole("link", { name: "개요" });
+		const activeItem = screen.getByRole("link", { name: "마케팅 캠페인 성과" });
 
 		expect(activeItem.className).toContain("bg-selected");
 		expect(activeItem.className).toContain("text-selected-fg");
@@ -69,7 +69,7 @@ describe("dashboard shell components", () => {
 			<MobileSidebarNav
 				title="Mobidays Dashboard"
 				items={[
-					{ id: "overview", label: "개요", active: true },
+					{ id: "overview", label: "마케팅 캠페인 성과", active: true },
 					{ id: "campaigns", label: "캠페인" },
 				]}
 			/>,
@@ -86,7 +86,9 @@ describe("dashboard shell components", () => {
 			document.querySelector('[data-slot="mobile-sidebar-content"]')
 				?.className ?? "",
 		).toContain("overflow-y-auto");
-		expect(screen.getByRole("link", { name: "개요" })).toBeInTheDocument();
+		expect(
+			screen.getByRole("link", { name: "마케팅 캠페인 성과" }),
+		).toBeInTheDocument();
 		expect(screen.getByRole("link", { name: "캠페인" })).toBeInTheDocument();
 
 		await user.click(screen.getByRole("button", { name: "메뉴 닫기" }));

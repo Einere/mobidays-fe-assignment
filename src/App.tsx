@@ -9,7 +9,9 @@ import { GlobalFilterBar } from "@/widgets/global-filter/ui/global-filter-bar";
 import { GlobalFilterSummary } from "@/widgets/global-filter/ui/global-filter-summary";
 import { PlatformPerformanceChartCard } from "@/widgets/platform-performance-chart/ui/platform-performance-chart-card";
 
-const sidebarItems = [{ id: "overview", label: "개요", active: true }];
+const sidebarItems = [
+	{ id: "overview", label: "마케팅 캠페인 성과", active: true },
+];
 
 function App() {
 	const filter = useAtomValue(globalFilterAtom);
@@ -36,7 +38,7 @@ function App() {
 								Mobidays Dashboard
 							</p>
 							<div className="flex flex-col gap-2">
-								<h1>캠페인 운영 현황</h1>
+								<h1>마케팅 캠페인 성과</h1>
 							</div>
 						</header>
 

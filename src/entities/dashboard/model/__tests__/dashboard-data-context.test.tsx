@@ -122,7 +122,7 @@ describe("DashboardDataProvider", () => {
 		);
 
 		expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-			"캠페인 운영 현황",
+			"마케팅 캠페인 성과",
 		);
 	});
 });
