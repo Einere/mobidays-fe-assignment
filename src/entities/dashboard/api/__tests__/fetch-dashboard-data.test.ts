@@ -8,6 +8,7 @@ import {
 	fetchDashboardData,
 	getDashboardDataQueryOptions,
 } from "@/entities/dashboard";
+import type { GlobalFilterState } from "@/entities/global-filter/model/types";
 import { seedMockDb } from "@/shared/api/mock/db";
 
 describe("fetchDashboardData", () => {
@@ -42,7 +43,7 @@ describe("fetchDashboardData", () => {
 		];
 
 		const signal = new AbortController().signal;
-		const dashboardFilter = {
+		const dashboardFilter: GlobalFilterState = {
 			dateRange: { startDate: "2026-04-01", endDate: "2026-04-30" },
 			statuses: ["active"],
 			platforms: ["Google"],
