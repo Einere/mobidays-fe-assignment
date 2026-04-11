@@ -6,10 +6,37 @@ import type { DashboardData } from "@/entities/dashboard/api/fetch-dashboard-dat
 import { buildDashboardDerivations } from "@/entities/dashboard/model/use-dashboard-derivations";
 import type { GlobalFilterState } from "@/entities/global-filter/model/types";
 import { aggregatePlatformPerformance } from "@/entities/platform-performance/lib/aggregate-platform-performance";
+import type { RawCampaign, RawDailyStat } from "@/shared/api/contracts/mock-db";
+
+function createRawCampaign(): RawCampaign {
+	return {
+		id: "raw-campaign-1",
+		name: "Campaign A",
+		platform: "Google",
+		status: "active",
+		budget: 1000,
+		startDate: "2026-04-01",
+		endDate: "2026-04-30",
+	};
+}
+
+function createRawDailyStat(): RawDailyStat {
+	return {
+		id: "raw-daily-1",
+		campaignId: "campaign-1",
+		date: "2026-04-01",
+		impressions: 100,
+		clicks: 10,
+		conversions: 2,
+		cost: 1000,
+		conversionsValue: 2000,
+	};
+}
 
 const sampleData: DashboardData = {
 	campaigns: [
 		{
+			raw: createRawCampaign(),
 			id: "campaign-1",
 			name: "Campaign A",
 			platform: "Google",
@@ -22,6 +49,7 @@ const sampleData: DashboardData = {
 	],
 	dailyStats: [
 		{
+			raw: createRawDailyStat(),
 			id: "daily-1",
 			campaignId: "campaign-1",
 			date: "2026-04-01",

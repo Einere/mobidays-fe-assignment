@@ -17,15 +17,12 @@ export interface FetchDailyStatsParams {
 	startDate: string;
 	endDate: string;
 	campaignIds: string[];
-	signal?: AbortSignal;
 }
 
-export async function fetchDailyStats({
-	campaignIds,
-	endDate,
-	startDate,
-	signal,
-}: FetchDailyStatsParams): Promise<DashboardDailyStat[]> {
+export async function fetchDailyStats(
+	{ campaignIds, endDate, startDate }: FetchDailyStatsParams,
+	signal?: AbortSignal,
+): Promise<DashboardDailyStat[]> {
 	const dailyStatsUrl = new URL("/daily_stats", window.location.origin);
 	dailyStatsUrl.searchParams.set("startDate", startDate);
 	dailyStatsUrl.searchParams.set("endDate", endDate);
