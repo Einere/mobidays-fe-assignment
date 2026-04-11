@@ -105,10 +105,15 @@ describe("CampaignCreateDialog", () => {
 
 		render(<CampaignCreateDialogHarness onSubmit={onSubmit} />);
 
-		expect(screen.getByLabelText("예산")).toHaveAttribute("type", "number");
+		expect(screen.getByLabelText("예산")).toHaveAttribute("type", "text");
+		expect(screen.getByLabelText("예산")).toHaveAttribute(
+			"inputmode",
+			"numeric",
+		);
+		expect(screen.getByLabelText("집행 금액")).toHaveAttribute("type", "text");
 		expect(screen.getByLabelText("집행 금액")).toHaveAttribute(
-			"type",
-			"number",
+			"inputmode",
+			"numeric",
 		);
 		expect(screen.getByLabelText("시작일")).toHaveValue(
 			defaultValues.startDate,
@@ -142,8 +147,10 @@ describe("CampaignCreateDialog", () => {
 		await user.type(screen.getByLabelText("캠페인명"), "브랜드 검색 캠페인");
 		await user.click(screen.getByRole("combobox", { name: "광고 매체" }));
 		await user.click(await screen.findByRole("option", { name: "Google" }));
-		await user.type(screen.getByLabelText("예산"), "100000");
+		await user.type(screen.getByLabelText("예산"), "1000000");
+		expect(screen.getByLabelText("예산")).toHaveDisplayValue("1,000,000");
 		await user.type(screen.getByLabelText("집행 금액"), "30000");
+		expect(screen.getByLabelText("집행 금액")).toHaveDisplayValue("30,000");
 		await user.clear(screen.getByLabelText("시작일"));
 		await user.type(screen.getByLabelText("시작일"), "2026-04-10");
 		await user.clear(screen.getByLabelText("종료일"));
@@ -154,7 +161,7 @@ describe("CampaignCreateDialog", () => {
 			expect(mutateAsyncMock).toHaveBeenCalledWith({
 				name: "브랜드 검색 캠페인",
 				platform: "Google",
-				budget: 100000,
+				budget: 1000000,
 				spend: 30000,
 				startDate: "2026-04-10",
 				endDate: "2026-04-15",
@@ -226,8 +233,10 @@ describe("CampaignCreateDialog", () => {
 		await user.type(screen.getByLabelText("캠페인명"), "브랜드 검색 캠페인");
 		await user.click(screen.getByRole("combobox", { name: "광고 매체" }));
 		await user.click(await screen.findByRole("option", { name: "Google" }));
-		await user.type(screen.getByLabelText("예산"), "100000");
+		await user.type(screen.getByLabelText("예산"), "1000000");
+		expect(screen.getByLabelText("예산")).toHaveDisplayValue("1,000,000");
 		await user.type(screen.getByLabelText("집행 금액"), "30000");
+		expect(screen.getByLabelText("집행 금액")).toHaveDisplayValue("30,000");
 		await user.clear(screen.getByLabelText("시작일"));
 		await user.type(screen.getByLabelText("시작일"), "2026-04-10");
 		await user.clear(screen.getByLabelText("종료일"));
@@ -238,7 +247,7 @@ describe("CampaignCreateDialog", () => {
 			expect(mutateAsyncMock).toHaveBeenCalledWith({
 				name: "브랜드 검색 캠페인",
 				platform: "Google",
-				budget: 100000,
+				budget: 1000000,
 				spend: 30000,
 				startDate: "2026-04-10",
 				endDate: "2026-04-15",
@@ -254,8 +263,8 @@ describe("CampaignCreateDialog", () => {
 		expect(
 			screen.getByRole("combobox", { name: "광고 매체" }),
 		).toHaveTextContent("Google");
-		expect(screen.getByLabelText("예산")).toHaveValue(100000);
-		expect(screen.getByLabelText("집행 금액")).toHaveValue(30000);
+		expect(screen.getByLabelText("예산")).toHaveDisplayValue("1,000,000");
+		expect(screen.getByLabelText("집행 금액")).toHaveDisplayValue("30,000");
 		expect(screen.getByLabelText("시작일")).toHaveValue("2026-04-10");
 		expect(screen.getByLabelText("종료일")).toHaveValue("2026-04-15");
 	});
