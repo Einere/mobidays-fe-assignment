@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import { useUpdateCampaignStatuses } from "@/entities/campaign";
 import { formatCampaignStatusLabel } from "@/entities/campaign/lib/format-campaign-table";
 import type { CampaignStatus } from "@/entities/global-filter/model/types";
+import {
+	resolveCampaignStatusBulkActionAvailability,
+	shouldResetPendingStatus,
+} from "@/widgets/campaign-table/model/campaign-status-bulk-action";
 
 interface UseCampaignStatusBulkActionParams {
 	selectedRowIds: string[];
@@ -20,26 +24,26 @@ export function useCampaignStatusBulkAction({
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const mutation = useUpdateCampaignStatuses();
-
-	const canOpenDialog =
-		!isInteractionBlocked &&
-		selectedRowIds.length > 0 &&
-		pendingStatus !== null &&
-		!mutation.isPending;
-	const canConfirm =
-		!isInteractionBlocked &&
-		selectedRowIds.length > 0 &&
-		pendingStatus !== null &&
-		!mutation.isPending;
+	const availability = resolveCampaignStatusBulkActionAvailability({
+		selectedRowCount: selectedRowIds.length,
+		isInteractionBlocked,
+		isSubmitting: mutation.isPending,
+		pendingStatus,
+	});
 
 	useEffect(() => {
-		if (pendingStatus !== null && selectedRowIds.length === 0) {
+		if (
+			shouldResetPendingStatus({
+				selectedRowCount: selectedRowIds.length,
+				pendingStatus,
+			})
+		) {
 			setPendingStatus(null);
 		}
 	}, [pendingStatus, selectedRowIds.length]);
 
 	async function confirm() {
-		if (pendingStatus === null || selectedRowIds.length === 0 || !canConfirm) {
+		if (!availability.canConfirm || pendingStatus === null) {
 			return;
 		}
 
@@ -68,14 +72,14 @@ export function useCampaignStatusBulkAction({
 		isDialogOpen,
 		errorMessage,
 		isSubmitting: mutation.isPending,
-		canOpenDialog,
-		canConfirm,
+		canOpenDialog: availability.canOpenDialog,
+		canConfirm: availability.canConfirm,
 		setPendingStatus(nextPendingStatus: CampaignStatus | null) {
 			setErrorMessage(null);
 			setPendingStatus(nextPendingStatus);
 		},
 		openDialog() {
-			if (!canOpenDialog) {
+			if (!availability.canOpenDialog) {
 				return;
 			}
 
