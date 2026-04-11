@@ -1,7 +1,4 @@
 import { useAtomValue, useSetAtom } from "jotai";
-import { useEffect, useState } from "react";
-import { isValidDateRange } from "@/entities/global-filter/lib/date-range";
-import { getCampaignPlatformOptions } from "@/entities/global-filter/model/platforms";
 import {
 	globalFilterAtom,
 	resetGlobalFilterAtom,
@@ -11,26 +8,10 @@ import {
 	toggleGlobalFilterPlatformAtom,
 	toggleGlobalFilterStatusAtom,
 } from "@/entities/global-filter/model/store";
-import type {
-	CampaignPlatform,
-	CampaignStatus,
-	GlobalDateRange,
-} from "@/entities/global-filter/model/types";
 import { Button } from "@/shared/ui/button";
+import { useGlobalFilterDateRangeDraft } from "@/widgets/global-filter/model/use-global-filter-date-range-draft";
 import { DateRangeFields } from "@/widgets/global-filter/ui/date-range-fields";
-import {
-	FilterChipGroup,
-	type FilterOption,
-} from "@/widgets/global-filter/ui/filter-chip-group";
-import { FilterDropdown } from "@/widgets/global-filter/ui/filter-dropdown";
-
-const statusOptions: FilterOption<CampaignStatus>[] = [
-	{ value: "active", label: "운영 중" },
-	{ value: "paused", label: "일시중지" },
-	{ value: "ended", label: "종료" },
-];
-
-const invalidDateRangeMessage = "시작일은 종료일보다 늦을 수 없습니다.";
+import { GlobalFilterSelectionControls } from "@/widgets/global-filter/ui/global-filter-selection-controls";
 
 export function GlobalFilterBar() {
 	const filter = useAtomValue(globalFilterAtom);
@@ -41,34 +22,15 @@ export function GlobalFilterBar() {
 	const selectAllPlatforms = useSetAtom(selectAllGlobalFilterPlatformsAtom);
 	const resetFilter = useSetAtom(resetGlobalFilterAtom);
 
-	const [draftDateRange, setDraftDateRange] = useState(filter.dateRange);
-	const [validationMessage, setValidationMessage] = useState<string | null>(
-		null,
-	);
-	const platformOptions: FilterOption<CampaignPlatform>[] =
-		getCampaignPlatformOptions();
-
-	useEffect(() => {
-		setDraftDateRange(filter.dateRange);
-		setValidationMessage(null);
-	}, [filter.dateRange]);
-
-	function updateDateRangeDraft(nextDateRange: GlobalDateRange) {
-		setDraftDateRange(nextDateRange);
-
-		if (!nextDateRange.startDate || !nextDateRange.endDate) {
-			setValidationMessage(null);
-			return;
-		}
-
-		if (!isValidDateRange(nextDateRange)) {
-			setValidationMessage(invalidDateRangeMessage);
-			return;
-		}
-
-		setValidationMessage(null);
-		setDateRange(nextDateRange);
-	}
+	const {
+		draftDateRange,
+		validationMessage,
+		onStartDateChange,
+		onEndDateChange,
+	} = useGlobalFilterDateRangeDraft({
+		dateRange: filter.dateRange,
+		onCommitDateRange: setDateRange,
+	});
 
 	return (
 		<section className="rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel">
@@ -92,56 +54,18 @@ export function GlobalFilterBar() {
 						startDate={draftDateRange.startDate}
 						endDate={draftDateRange.endDate}
 						validationMessage={validationMessage}
-						onStartDateChange={(startDate) =>
-							updateDateRangeDraft({
-								...draftDateRange,
-								startDate,
-							})
-						}
-						onEndDateChange={(endDate) =>
-							updateDateRangeDraft({
-								...draftDateRange,
-								endDate,
-							})
-						}
+						onStartDateChange={onStartDateChange}
+						onEndDateChange={onEndDateChange}
 					/>
 
-					<div className="hidden gap-4 md:grid md:grid-cols-2">
-						<FilterChipGroup
-							groupLabel="상태"
-							options={statusOptions}
-							selectedValues={filter.statuses}
-							onSelectAll={() => selectAllStatuses()}
-							onToggleValue={(value) => toggleStatus(value)}
-						/>
-						<FilterChipGroup
-							groupLabel="매체"
-							options={platformOptions}
-							selectedValues={filter.platforms}
-							onSelectAll={() => selectAllPlatforms()}
-							onToggleValue={(value) => togglePlatform(value)}
-						/>
-					</div>
-
-					<div
-						className="grid grid-cols-2 gap-3 md:hidden"
-						data-testid="mobile-filter-grid"
-					>
-						<FilterDropdown
-							groupLabel="상태"
-							options={statusOptions}
-							selectedValues={filter.statuses}
-							onSelectAll={() => selectAllStatuses()}
-							onToggleValue={(value) => toggleStatus(value)}
-						/>
-						<FilterDropdown
-							groupLabel="매체"
-							options={platformOptions}
-							selectedValues={filter.platforms}
-							onSelectAll={() => selectAllPlatforms()}
-							onToggleValue={(value) => togglePlatform(value)}
-						/>
-					</div>
+					<GlobalFilterSelectionControls
+						selectedStatuses={filter.statuses}
+						selectedPlatforms={filter.platforms}
+						onSelectAllStatuses={selectAllStatuses}
+						onSelectAllPlatforms={selectAllPlatforms}
+						onToggleStatus={toggleStatus}
+						onTogglePlatform={togglePlatform}
+					/>
 				</div>
 			</div>
 		</section>
