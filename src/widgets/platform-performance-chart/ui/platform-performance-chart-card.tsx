@@ -1,97 +1,9 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useAtomValue, useSetAtom } from "jotai";
-import { useCallback, useMemo, useState } from "react";
-import { getDashboardDataQueryOptions } from "@/entities/dashboard";
-import {
-	globalFilterAtom,
-	toggleGlobalFilterPlatformAtom,
-} from "@/entities/global-filter/model/store";
-import type { CampaignPlatform } from "@/entities/global-filter/model/types";
-import { aggregatePlatformPerformance } from "@/entities/platform-performance/lib/aggregate-platform-performance";
-import type {
-	PlatformMetricKey,
-	PlatformPerformanceSlice,
-} from "@/entities/platform-performance/model/types";
-import {
-	defaultPlatformPerformanceMetricKey,
-	getPlatformPerformanceMetric,
-	platformPerformanceMetricDefinitions,
-} from "@/widgets/platform-performance-chart/model/platform-performance-metrics";
+import type { ReactNode } from "react";
+import { usePlatformPerformanceChartViewModel } from "@/widgets/platform-performance-chart/model/use-platform-performance-chart-view-model";
 import {
 	PlatformPerformanceDonut,
 	PlatformPerformanceMetricToggleGroup,
 } from "@/widgets/platform-performance-chart/ui/platform-performance-donut-chart";
-
-type PlatformPerformanceChartState =
-	| {
-			kind: "loading";
-	  }
-	| {
-			kind: "full-error";
-			errorMessage: string;
-	  }
-	| {
-			kind: "empty-campaigns";
-	  }
-	| {
-			kind: "empty-data";
-	  }
-	| {
-			kind: "chart";
-			isSyncing: boolean;
-			staleErrorMessage: string | null;
-			slices: PlatformPerformanceSlice[];
-	  };
-
-function resolvePlatformPerformanceChartState({
-	campaigns,
-	isLoadingError,
-	isPending,
-	isRefetching,
-	isRefetchError,
-	err,
-	slices,
-}: {
-	campaigns: unknown[] | null;
-	isLoadingError: boolean;
-	isPending: boolean;
-	isRefetchError: boolean;
-	isRefetching: boolean;
-	err: Error | null;
-	slices: PlatformPerformanceSlice[];
-}) {
-	if (isLoadingError) {
-		return {
-			kind: "full-error",
-			errorMessage: err?.message ?? "알 수 없는 오류가 발생했습니다.",
-		} satisfies PlatformPerformanceChartState;
-	}
-
-	if (campaigns === null && isPending) {
-		return { kind: "loading" } satisfies PlatformPerformanceChartState;
-	}
-
-	if (campaigns === null) {
-		return { kind: "empty-data" } satisfies PlatformPerformanceChartState;
-	}
-
-	if (campaigns.length === 0) {
-		return { kind: "empty-campaigns" } satisfies PlatformPerformanceChartState;
-	}
-
-	if (slices.length === 0) {
-		return { kind: "empty-data" } satisfies PlatformPerformanceChartState;
-	}
-
-	return {
-		kind: "chart",
-		isSyncing: isRefetching,
-		staleErrorMessage: isRefetchError
-			? (err?.message ?? "알 수 없는 오류가 발생했습니다.")
-			: null,
-		slices,
-	} satisfies PlatformPerformanceChartState;
-}
 
 function PlatformPerformanceLoadingState() {
 	return (
@@ -135,7 +47,33 @@ function PlatformPerformanceErrorState({
 	);
 }
 
-function renderBody(state: PlatformPerformanceChartState) {
+function PlatformPerformanceChartCardFrame({
+	children,
+	status,
+}: {
+	children: ReactNode;
+	status?: ReactNode;
+}) {
+	return (
+		<section className="rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel">
+			<div className="flex flex-col gap-5">
+				<div className="flex flex-col gap-2">
+					<h2>플랫폼별 성과</h2>
+					<p className="typo-body-sm text-fg-muted">
+						전역 필터 기준으로 플랫폼별 성과를 집계한 도넛 차트입니다.
+					</p>
+				</div>
+
+				{status ? <div className="min-h-5">{status}</div> : null}
+				{children}
+			</div>
+		</section>
+	);
+}
+
+function renderBody(
+	state: ReturnType<typeof usePlatformPerformanceChartViewModel>["state"],
+) {
 	switch (state.kind) {
 		case "loading":
 			return <PlatformPerformanceLoadingState />;
@@ -157,63 +95,18 @@ function renderBody(state: PlatformPerformanceChartState) {
 }
 
 export function PlatformPerformanceChartCard() {
-	const filter = useAtomValue(globalFilterAtom);
-	const [activeMetricKey, setActiveMetricKey] = useState<PlatformMetricKey>(
-		defaultPlatformPerformanceMetricKey,
-	);
-	const query = useQuery({
-		...getDashboardDataQueryOptions(filter),
-		placeholderData: keepPreviousData,
-	});
-	const toggleGlobalFilterPlatform = useSetAtom(toggleGlobalFilterPlatformAtom);
-
-	const handleMetricChange = useCallback((metricKey: PlatformMetricKey) => {
-		setActiveMetricKey(metricKey);
-	}, []);
-
-	const handlePlatformSelection = useCallback(
-		(platform: CampaignPlatform) => {
-			toggleGlobalFilterPlatform(platform);
-		},
-		[toggleGlobalFilterPlatform],
-	);
-
-	const slices = useMemo(() => {
-		if (query.data === undefined) {
-			return [] as PlatformPerformanceSlice[];
-		}
-
-		return aggregatePlatformPerformance({
-			campaigns: query.data.campaigns,
-			dailyStats: query.data.dailyStats,
-			metricKey: activeMetricKey,
-			selectedPlatforms: filter.platforms,
-		});
-	}, [activeMetricKey, filter.platforms, query.data]);
-
-	const state = resolvePlatformPerformanceChartState({
-		campaigns: query.data?.campaigns ?? null,
-		isLoadingError: query.isLoadingError,
-		isPending: query.isPending,
-		isRefetchError: query.isRefetchError,
-		isRefetching: query.isRefetching,
-		err: query.error as Error | null,
-		slices,
-	});
-
-	const metricDefinition = getPlatformPerformanceMetric(activeMetricKey);
+	const {
+		activeMetricKey,
+		handlePlatformSelection,
+		metricDefinition,
+		state,
+		toggleMetric,
+	} = usePlatformPerformanceChartViewModel();
 
 	return (
-		<section className="rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel">
-			<div className="flex flex-col gap-5">
-				<div className="flex flex-col gap-2">
-					<h2>플랫폼별 성과</h2>
-					<p className="typo-body-sm text-fg-muted">
-						전역 필터 기준으로 플랫폼별 성과를 집계한 도넛 차트입니다.
-					</p>
-				</div>
-
-				{state.kind === "chart" ? (
+		<PlatformPerformanceChartCardFrame
+			status={
+				state.kind === "chart" ? (
 					<>
 						{state.staleErrorMessage ? (
 							<div
@@ -227,35 +120,36 @@ export function PlatformPerformanceChartCard() {
 							</div>
 						) : null}
 
-						<div className="min-h-5">
-							{state.isSyncing ? (
-								<p
-									className="typo-body-sm text-fg-muted"
-									role="status"
-									aria-live="polite"
-								>
-									동기화 중
-								</p>
-							) : null}
-						</div>
-
-						<div className="-mx-1 overflow-x-auto px-1 lg:mx-0 lg:self-start lg:px-0">
-							<PlatformPerformanceMetricToggleGroup
-								activeMetricKey={activeMetricKey}
-								onMetricChange={handleMetricChange}
-								metricDefinitionLookup={platformPerformanceMetricDefinitions}
-							/>
-						</div>
-						<PlatformPerformanceDonut
-							data={state.slices}
-							metric={metricDefinition}
-							onPlatformSelect={handlePlatformSelection}
-						/>
+						{state.isSyncing ? (
+							<p
+								className="typo-body-sm text-fg-muted"
+								role="status"
+								aria-live="polite"
+							>
+								동기화 중
+							</p>
+						) : null}
 					</>
-				) : null}
-
-				{state.kind !== "chart" ? renderBody(state) : null}
-			</div>
-		</section>
+				) : null
+			}
+		>
+			{state.kind === "chart" ? (
+				<>
+					<div className="-mx-1 overflow-x-auto px-1 lg:mx-0 lg:self-start lg:px-0">
+						<PlatformPerformanceMetricToggleGroup
+							activeMetricKey={activeMetricKey}
+							onMetricChange={toggleMetric}
+						/>
+					</div>
+					<PlatformPerformanceDonut
+						data={state.slices}
+						metric={metricDefinition}
+						onPlatformSelect={handlePlatformSelection}
+					/>
+				</>
+			) : (
+				renderBody(state)
+			)}
+		</PlatformPerformanceChartCardFrame>
 	);
 }
