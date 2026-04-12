@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 import {
 	buildCampaignTableRows,
 	type CampaignTableRow,
@@ -25,11 +25,6 @@ export type DashboardDerivations = {
 		PlatformMetricKey,
 		PlatformPerformanceSlice[]
 	>;
-};
-
-export type DashboardQuerySnapshot = {
-	data: DashboardData | undefined;
-	isError: boolean;
 };
 
 const platformMetricKeys: PlatformMetricKey[] = [
@@ -101,18 +96,6 @@ export function buildDashboardDerivations(
 		platformPerformanceSlicesByMetricKey:
 			buildPlatformPerformanceSlicesByMetricKey(data, filter),
 	};
-}
-
-export function useDashboardVisibleData(query: DashboardQuerySnapshot) {
-	const lastSuccessfulDataRef = useRef<DashboardData | null>(null);
-
-	useEffect(() => {
-		if (query.data !== undefined && !query.isError) {
-			lastSuccessfulDataRef.current = query.data;
-		}
-	}, [query.data, query.isError]);
-
-	return query.data ?? lastSuccessfulDataRef.current;
 }
 
 export function useDashboardDerivations(
