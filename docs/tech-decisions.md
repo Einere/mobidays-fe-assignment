@@ -20,7 +20,6 @@
 | 폼 | react-hook-form + Zod | - |
 | 날짜 | date-fns + `@date-fns/tz` | - |
 | 테스트 | Vitest + React Testing Library | - |
-| 폴더 구조 | FSD (4레이어 간소화) | - |
 
 ---
 
@@ -50,9 +49,6 @@
 | oxlint + Prettier | ✅ 안정 | 린트만 빠름 |
 | Biome | ✅ 안정 | 린트+포맷 일체형, 빠름 |
 | oxlint + oxfmt | ⚠️ Beta | oxfmt가 Beta 단계로 마감 리스크 존재 |
-
-- oxc.rs를 검토했으나 oxfmt가 Beta 단계 → 7일 과제에서 예상치 못한 이슈 리스크
-- Biome은 린트+포맷을 단일 도구로 통합, 설정 간소화
 
 **결정**: Biome
 
@@ -216,25 +212,3 @@ type CampaignFormValues = z.infer<typeof campaignFormSchema>
 **결정**: Vitest + React Testing Library
 
 ---
-
-### 폴더 구조 — FSD 4레이어 간소화
-
-**검토 대상**:
-- FSD 전체 레이어 (app/pages/widgets/features/entities/shared)
-- FSD 4레이어 간소화 (app/widgets/entities/shared)
-- 도메인 기반 단순 구조 (components/features/hooks/lib)
-
-- 단일 페이지 대시보드에서 pages/features 레이어는 불필요한 복잡도
-- FSD 전체 레이어는 단일 페이지 규모에 오버 엔지니어링
-- 도메인 기반 단순 구조는 설계 어필에 불리 (평가 항목 "아키텍처 & 설계 20점")
-- FSD 핵심 원칙(레이어별 단방향 의존성)을 유지하면서 현실적 규모에 맞게 조정
-
-```
-src/
-├── app/        # Provider, 전역 설정
-├── widgets/    # 차트, 테이블, 필터 등 독립 UI 블록
-├── entities/   # 도메인 모델, API, 파생 지표 계산
-└── shared/     # shadcn 컴포넌트, utils, hooks, types, MSW handlers, Jotai atoms
-```
-
-**결정**: FSD 4레이어 간소화 (app / widgets / entities / shared)

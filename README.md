@@ -1,73 +1,60 @@
-# React + TypeScript + Vite
+# 실행 방법
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+1. 의존성을 설치합니다.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. 개발 서버를 실행합니다.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+# 기술 스택 선정 과정
+
+[tech-decisions.md](./docs/tech-decisions.md)
+
+# 아키텍처
+
+## 폴더 구조 — FSD 4레이어 간소화
+
+**검토 대상**:
+- FSD 전체 레이어 (app/pages/widgets/features/entities/shared)
+- FSD 4레이어 간소화 (app/widgets/entities/shared)
+- 도메인 기반 단순 구조 (components/features/hooks/lib)
+
+- 단일 페이지 대시보드에서 pages/features 레이어는 불필요한 복잡도
+- FSD 전체 레이어는 단일 페이지 규모에 오버 엔지니어링
+- 도메인 기반 단순 구조는 설계 어필에 불리 (평가 항목 "아키텍처 & 설계 20점")
+- FSD 핵심 원칙(레이어별 단방향 의존성)을 유지하면서 현실적 규모에 맞게 조정
+
+```
+src/
+├── app/        # Provider, 전역 설정
+├── widgets/    # 차트, 테이블, 필터 등 독립 UI 블록
+├── entities/   # 도메인 모델, API, 파생 지표 계산
+└── shared/     # shadcn 컴포넌트, utils, hooks, types, MSW handlers, Jotai atoms
+```
+
+**결정**: FSD 4레이어 간소화 (app / widgets / entities / shared)
+
+## 데이터 흐름
+
+1. `db.json` 
+2. MSW 인메모리 DB
+3. `useDashboardData` 쿼리 + 전역 필터 `globalFilterAtom`
+4. 루트 컨텍스트 `DashboardDataContext`
+5. 각 컴포넌트에서 컨텍스트 상태 구독
+
+특히, flux 구조를 의식하여
+- 플랫폼별 성과 차트는 액션 아톰을 통해 `globalFilterAtom`만 변경하도록 했습니다.
+- 캠페인 생성 기능은 API를 통해 서버 상태를 변경하도록 했습니다.
+
+# 컴포넌트 설계
+
+FSD에 의거하여 크게 UI와9 model로 구분했습니다.
+- UI 컴포넌트는 책임 단위로 분리했습니다.
+- 특히 오케스트레이션용 컨테이너 컴포넌트와 순수한 프레젠테이션 컴포넌트로 분리했습니다.
+- 구성 컴포넌트도 더 작게 쪼갰습니다.

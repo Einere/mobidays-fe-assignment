@@ -1,0 +1,141 @@
+# 의사결정 과정
+
+## 04.08.
+
+과제 안내를 읽고 의사결정이 필요한 요소들을 정리, Claude Code를 이용해 비교분석 후 기술스택 결정.
+
+`tech-decisions.md`와 `implementation-notes.md`를 정리한 뒤, 기본적인 환경을 설정함.
+
+shadcn/ui 을 처음 써보다 보니, 사용법을 새롭게 알게 됨.
+- cli 를 통해 컴포넌트를 통째로 복사하는 방식.
+
+Google Stitch를 이용해 디자인 시스템을 가볍게 정의하고, Impeccable로 디자인 시스템을 구체화했습니다.
+- [design-context.md](./design-context.md)
+- [design-system.md](./design-system.md)
+
+SuperPower를 이용해 글로벌 필터 스펙/계획 정리 후 구현
+- 집행기간 필터: 시작일 / 종료일 입력 2개
+- 상태와 매체의 다중 선택 UI: 데스크톱은 칩, 모바일은 드롭다운
+- 필터 책임: 기본적으로 서버 책임. 단, 캠페인 관리 테이블 관련 제어 변수는 클라이언트 책임.
+- 전체 선택의 의미: AI는 빈 배열도 전체 선택으로 취급하자고 제안했지만, 사용자가 인지 부하를 줄이기 위해 명시적으로 배열에 값이 모두 있는 경우로 판단하자고 정정.
+
+`db.json`을 도입하는 과정에서 다음 문제가 발견됨.
+- 캠페인 데이터에서 `platform`, `status`, `budget`, `date` 값이 타입과 어긋난 데이터 발견.
+
+대시보드 특성 상, 암시적으로 성공시키는 것은 데이터 오염이 있을 것으로 예상함.
+AI 도구에게 의견을 뭃어보니, 명확하지 않은 데이터는 "원본 보존 + 표시용 해석 분리 + 이상값 명시가 일반적"이라고 대답함.
+따라서 다음 방향으로 진행.
+- MSW는 `db.json` 값을 그대로 응답
+- API 계층에서 raw 데이터를 파싱
+- 유효하지 않은 데이터는 강제 변환하지 않고 unknown 상태로 보관
+    - 데이터 보존, UI 복원력, 이상치 관찰 가능성을 위함.
+- 예산/날짜도 파싱 성공 여부를 별도 관리
+- unknown 데이터를 집계 대상에 포함
+    - e.g. `종료` AND `Naver` 필터에 매체 정보가 없는 "이벤트 프로모션 24" 캠페인이 집계됨.
+        - 미분류 데이터를 집계 대상에서 제외한다면, 대시보드에서 해당 데이터의 존재를 확인할 수 없음.
+        - 미분류 데이터를 집계 대상에 포함한다면, 적어도 미분류 데이터의 존재를 확인할 수 있음.
+    - 각 테이블과 차트는 글로벌 필터 결과를 입력으로 받으므로, 자연스럽게 미분류 데이터도 표현.
+
+글로벌 필터 기능 구현 후, Impeccable을 이용해 디자인 리뷰 진행
+- 날짜 오류의 시인성이 낮음
+- 모바일 화면에서 현재 선택된 필터를 한 눈에 보기 어려움
+- 필터 결과 요약의 "조회 상태"(준비됨/동기화 중/오류)가 다 같은 느낌을 주고 있음
+- 인터렉션 가능한 요소에 `cursor` 스타일이 빠져있음
+- `selectd` 상태의 칩 요소(`Button`)는 `hover` 시 변화를 인지하기 힘듦
+- 스타일 변수를 직접 참조하던 방식에서 tailwind 생태계에 맞춰 테마 변수를 정의 후 활용
+
+"일별 추이 차트" 기능 스펙 정의 중, 다음 의사결정을 함.
+- 범례는 확장성을 고려하되, "노출수"와 "클릭수"만 노출.
+- shadcn chart 래퍼를 `shared/ui`에 도입, 차트 데이터 집계는 `entities/` 에 순수 함수로 분리, UI는 `widgets/`에서 담당.
+- 혼동을 방지하기 위해 `null` 과 `0`을 구분 => `null` 인 경우에는 선이 끊어지도록 설계함.
+
+## 04.09
+
+"일별 추이 차트" 기능 구현 후, 실제 렌더링 테스트, 클린코드 리뷰 진행
+- [Toss CleanCode](https://frontend-fundamentals.com/code-quality/) 를 스킬화하여 개인적으로 사용함.
+- 구현된 `DailyTrendChartCard`는 전역 상태를 직접 받아와 해석 후 렌더링까지 담당함.
+    - "상태 패칭 및 해석" 책임은 부모로 위임, `DailyTrendChartCard`는 데이터를 렌더링하는 책임만 갖도록 리팩토링함.
+- 끊어진 시계열 데이터도 명확히 인지할 수 있게 `dot={false}` 옵션을 제거
+- 과도한 불리언 변수들을 이용한 렌더링 제어
+    - Tagged Union(`DailyTrendChartViewState`)을 이용해 의도치않은 상태로의 전이를 방지
+- cross-key fetch 실패 시, 최근 성공 UI 보존 기능을 위한 로직을 명확히 함.
+    - 이런 저런 시도들을 해 보다가, 결국 “현재 필터와 무관한 stale 데이터 노출”이라는 위험이 정확도와 신뢰도를 중요시하는 대시보드 철학을 위배하는 것으로 판단, 기능을 제거함.
+
+"캠페인 관리 테이블" 설계 시, 데이터 관리 주체를 클라이언트측으로 설정함.
+- 보통의 경우 서버측에 책임이 있으나, 글로벌 필터 결과물에 영향을 받는 제약사항 특성 상 클라이언트측이 관리 책임을 갖도록 설정함.
+- 단, 일괄 변경 기능은 서버 상태를 변경해야 하므로 MSW 인메모리를 수정하는 방향으로 설계.
+
+`CampaignTableRow` 의 책임을 조금 더 명확화
+- AI 도구는 상태에 표현을 위한 `display*` 필드들을 제안했으나, 실제 렌더링을 하는 셀에서 순수함수로 포메팅을 하면 될 것으로 판단, 표현용 상태를 제거.
+
+캠페인 관리 테이블 구현 후, 다음 사항을 발견 후 보완
+- 검색 필드에 디바운싱이 빠져 있어, 추가함.
+- 선택된 항목이 없어도 일괄 변경 상태 선택 select 요소가 인터렉션 가능해서, 선택된 항목이 없다면 비활성화 처리함.
+- 공용 컴포넌트(`Select`, `Button`)에 disabled 스타일 처리가 미비해 보완함.
+
+## 04.10.
+
+캠페인 등록 모달 구현 후, Select 요소의 드롭다운이 보이지 않는 문제가 발생
+- AI 도구와 대화를 통해, 모달 내 팝오버용 z-index를 고려하지 않은 것이 원인임을 밝힘.
+- `z-modal-popover` 라는 별도의 디자인 토큰 추가로 문제를 해결함.
+
+추가로, `Select` 요소의 드롭다운을 열거나 `Dialog` 를 열면 레이아웃이 깨지는 현상을 발견함.
+구체적인 해결 과정은 [safari-scrollbar-gutter-breakpoint-debugging.md](../safari-scrollbar-gutter-breakpoint-debugging.md) 참고.
+
+플랫폼 별 성과 차트 스펙 정의 시, 다음 사항을 보완.
+- 현재 UI는 Google / Meta / Naver 3종을 기본으로 유지하되, 추후 플랫폼 추가를 고려하여 유연하게 설계하도록 지시.
+
+플랫폼 별 성과 차트 구현 후, 다음 사항을 보완.
+1. 네이밍 컨벤션에 따라 새로 구현한 컴포넌트의 이름을 변경 (`platform-performance-donut` -> `platform-performance-donut-chart`)
+2. 차트 내 좌상단의 불필요한 레이블 제거
+3. 차트 내 툴팁 내용이 제대로 보여지지 않는 현상 해결
+4. 도넛 차트와 fieldset 을 2행 구조로 변경, 범례 카드 크기 조절
+
+추후 플랫폼 추가를 위해 유연함을 지시했더니 일부 타입을 너무 넓히는 반작용이 발생.
+- `CampaignPlatform` -> `string`
+- 그 결과, 코드 내에서 타입 호환성을 위해 타입 강제 변환하는 코드가 생성됨.
+- 타입 안정성을 보장하기 위해 타입을 기존대로 복원함.
+- 추후 플랫폼 추가 시, `CampaignPlatform` 에 유니온 값을 추가하는 것으로 방향을 설정.
+
+플랫폼 별 성과 차트 구현 후 4종의 서브에이전트 리뷰 후, 다음 사항을 보완.
+- 차트 내에서 지정된 플랫폼(Google, Meta, Naver)외의 데이터는 "알 수 없음" 범례로 보여주도록 함.
+    - 이는 대시보드 특성 상, 데이터를 최대한 투명하게 볼 수 있는 것이 중요하기 때문.
+    - 단, 글로벌 필터는 수정하지 않음.
+- 상호작용 가능한 UI에 대해 스타일 및 접근성 보완
+    - 알려진 플랫폼 도넛 섹션, 하단 범례 카드
+
+랭킹 차트 계획 구현 후, 구현 문서 리뷰 중 다음 사항을 보완.
+- 일부 컴포넌트가 기존 패턴과 다른 책임을 갖도록 구현해서 수정을 지시함.
+    - 카드 컴포넌트가 데이터 해석과 렌더링 제어 등을 담당하고, 차트 컴포넌트는 순수한 프레젠테이션을 담당하는 패턴.
+
+일반 Select 요소의 overlay가 레이아웃 시프트를 일으켜 수정을 지시함.
+
+크롬에서 오버레이의 스크롤락에 의한 레이아웃 깨짐 현상이 발견되어 해결을 지시함.
+- 사파리는 `stalbe`, 크롬은 `auto` 로 설정하는 것으로 해결함.
+
+## 04.11.
+
+Toss CleanCode 스킬을 활용하여 `widgets` 하위 큰 UI 요소들에 대해 리팩토링을 진행.
+- [2026-04-11-src-widgets-clean-code-analysis.md](./reviews/2026-04-11-src-widgets-clean-code-analysis.md)
+
+평가 지표를 검증하기 위해 다음 문서를 AI를 활용해 작성
+- [mobidays_data_flow_analysis.md](./mobidays_data_flow_analysis.md)
+
+타임존 문제를 해결하기 위해 AI를 활용해 계획 문서 작성 후 실행
+- [2026-04-11-kst-date-policy-date-fns-migration.md](./superpowers/plans/2026-04-11-kst-date-policy-date-fns-migration.md)
+
+성능 문제를 해결하기 위해 AI를 활용해 계획 문서 작성 후 실행
+- [2026-04-11-dashboard-orchestration-refactor.md](./superpowers/plans/2026-04-11-dashboard-orchestration-refactor.md)
+- 위 작업 후 build 에러 발생, Claude 의 hook와 같은 도구로 해결하고 싶었으나 코덱스는 hook을 미지원..이라고 대답하였으나
+- [공식 문서](https://developers.openai.com/codex/hooks)를 찾아보니 멀쩡히 지원 중...
+- hook으로 코드 퀄리티를 보장하려다가, git 자체 pre-commit 훅을 활용하기로 결정.
+
+
+## 04.12.
+
+글로벌 필터 영역에서 아직 stale 데이터를 보여주고 있음을 발견하여, 보여주지 않도록 수정했습니다.
+
+각 위젯 컴포넌트의 책임을 더 명확히 분리했습니다.
+- [2026-04-12-daily-trend-chart-refactor.md](./superpowers/plans/2026-04-12-daily-trend-chart-refactor.md)
+- [2026-04-12-platform-performance-chart-card-and-donut-refactor.md](./superpowers/plans/2026-04-12-platform-performance-chart-card-and-donut-refactor.md)
+- [2026-04-12-platform-performance-donut-refactor.md](./superpowers/plans/2026-04-12-platform-performance-donut-refactor.md)
