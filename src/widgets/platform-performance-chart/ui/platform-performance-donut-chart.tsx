@@ -1,165 +1,23 @@
-import { type ComponentProps, useId, useMemo, useState } from "react";
-import { Cell, Pie, PieChart, Sector } from "recharts";
-import {
-	type CampaignPlatform,
-	campaignPlatformValues,
-} from "@/entities/global-filter/model/platforms";
-import type {
-	PlatformMetricKey,
-	PlatformPerformanceSlice,
-} from "@/entities/platform-performance/model/types";
-import { unknownPlatformLabel } from "@/entities/platform-performance/model/types";
+import { useId, useMemo } from "react";
+import { Cell, Pie, PieChart } from "recharts";
+import type { CampaignPlatform } from "@/entities/global-filter/model/types";
+import type { PlatformPerformanceSlice } from "@/entities/platform-performance/model/types";
 import {
 	ChartContainer,
 	ChartTooltip,
 	ChartTooltipContent,
 } from "@/shared/ui/chart";
-import { ToggleButton } from "@/shared/ui/toggle-button";
 import {
-	type PlatformPerformanceMetricDefinition,
-	platformPerformanceMetricDefinitions,
-} from "@/widgets/platform-performance-chart/model/platform-performance-metrics";
-
-type MetricSelectionProps = {
-	activeMetricKey: PlatformMetricKey;
-	onMetricChange: (metricKey: PlatformMetricKey) => void;
-	metricDefinitionLookup?: readonly PlatformPerformanceMetricDefinition[];
-};
-
-const percentageFormatter = new Intl.NumberFormat("ko-KR", {
-	maximumFractionDigits: 1,
-	minimumFractionDigits: 0,
-});
-
-const platformColorMap: Record<string, string> = {
-	Google: "var(--chart-danger)",
-	Meta: "var(--chart-positive)",
-	Naver: "var(--chart-warning)",
-	[unknownPlatformLabel]: "var(--chart-series-4)",
-};
-
-const fallbackPlatformColors = [
-	"var(--chart-series-4)",
-	"var(--chart-series-5)",
-	"var(--chart-series-1)",
-	"var(--chart-series-2)",
-	"var(--chart-series-3)",
-];
-
-function getPlatformColor(platform: string, index: number) {
-	return (
-		platformColorMap[platform] ??
-		fallbackPlatformColors[index % fallbackPlatformColors.length]
-	);
-}
-
-function isKnownCampaignPlatform(
-	platform: string,
-): platform is CampaignPlatform {
-	return campaignPlatformValues.includes(platform as CampaignPlatform);
-}
-
-type PlatformPerformanceSectorProps = ComponentProps<typeof Sector> & {
-	payload?: PlatformPerformanceSlice;
-	onPlatformSelect: (platform: CampaignPlatform) => void;
-};
-
-export function PlatformPerformancePieSector({
-	payload,
-	onPlatformSelect,
-	...props
-}: PlatformPerformanceSectorProps) {
-	const platform = payload?.platform;
-	const isSelected = payload?.isSelected ?? false;
-	const [isFocused, setIsFocused] = useState(false);
-
-	if (platform === undefined) {
-		return <Sector {...props} />;
-	}
-
-	if (!isKnownCampaignPlatform(platform)) {
-		return (
-			<Sector
-				{...props}
-				aria-label={platform}
-				aria-disabled="true"
-				style={{ cursor: "not-allowed", ...(props.style ?? {}) }}
-			/>
-		);
-	}
-
-	return (
-		<Sector
-			{...props}
-			role="button"
-			tabIndex={0}
-			aria-label={`${platform} 선택`}
-			aria-pressed={isSelected}
-			stroke={isFocused ? "var(--color-focus)" : "transparent"}
-			strokeWidth={isFocused ? 3 : 1}
-			strokeLinejoin="round"
-			style={{ cursor: "pointer", ...(props.style ?? {}) }}
-			onClick={(event) => {
-				event.stopPropagation();
-				onPlatformSelect(platform);
-			}}
-			onFocus={() => setIsFocused(true)}
-			onBlur={() => setIsFocused(false)}
-			onKeyDown={(event) => {
-				if (event.key === "Enter" || event.key === " ") {
-					event.preventDefault();
-					onPlatformSelect(platform);
-				}
-			}}
-		/>
-	);
-}
-
-type PieClickPayload = {
-	platform?: string;
-	payload?: {
-		platform?: string;
-	};
-};
-
-function extractPlatformFromPiePayload(payload: PieClickPayload | unknown) {
-	if (typeof payload !== "object" || payload === null) {
-		return null;
-	}
-
-	const maybe = payload as PieClickPayload;
-	const platform = maybe.platform ?? maybe.payload?.platform;
-
-	return platform &&
-		campaignPlatformValues.includes(platform as CampaignPlatform)
-		? (platform as CampaignPlatform)
-		: null;
-}
-
-export function PlatformPerformanceMetricToggleGroup({
-	activeMetricKey,
-	onMetricChange,
-	metricDefinitionLookup = platformPerformanceMetricDefinitions,
-}: MetricSelectionProps) {
-	return (
-		<fieldset
-			className="flex w-max flex-nowrap justify-end gap-2"
-			aria-label="플랫폼별 성과 메트릭"
-		>
-			<legend className="sr-only">플랫폼별 성과 메트릭</legend>
-			{metricDefinitionLookup.map((metric) => (
-				<ToggleButton
-					key={metric.key}
-					type="button"
-					pressed={metric.key === activeMetricKey}
-					onClick={() => onMetricChange(metric.key)}
-				>
-					{metric.label}
-				</ToggleButton>
-			))}
-		</fieldset>
-	);
-}
+	buildPlatformPerformanceChartConfig,
+	extractPlatformFromPiePayload,
+	getPlatformPerformanceDonutColor,
+	isKnownCampaignPlatformForDonut,
+	percentageFormatter,
+} from "@/widgets/platform-performance-chart/model/platform-performance-donut";
+import type { PlatformPerformanceMetricDefinition } from "@/widgets/platform-performance-chart/model/platform-performance-metrics";
+import { PlatformPerformanceDonutLegend } from "@/widgets/platform-performance-chart/ui/platform-performance-donut-legend";
+import { PlatformPerformanceDonutSummaryTable } from "@/widgets/platform-performance-chart/ui/platform-performance-donut-summary-table";
+import { PlatformPerformancePieSector } from "@/widgets/platform-performance-chart/ui/platform-performance-pie-sector";
 
 type DonutData = {
 	data: PlatformPerformanceSlice[];
@@ -174,16 +32,7 @@ export function PlatformPerformanceDonut({
 }: DonutData) {
 	const summaryId = useId();
 	const chartConfig = useMemo(
-		() =>
-			Object.fromEntries(
-				data.map((slice, index) => [
-					slice.platform,
-					{
-						label: slice.platform,
-						color: getPlatformColor(slice.platform, index),
-					},
-				]),
-			),
+		() => buildPlatformPerformanceChartConfig(data),
 		[data],
 	);
 	const sliceByPlatform = useMemo(
@@ -210,27 +59,12 @@ export function PlatformPerformanceDonut({
 
 	return (
 		<div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-[minmax(0,1.1fr)_220px] lg:gap-5">
-			<table id={summaryId} className="sr-only" aria-label="플랫폼별 성과 요약">
-				<caption className="sr-only">
-					선택한 메트릭 기준 플랫폼별 성과 및 점유율 요약
-				</caption>
-				<thead>
-					<tr>
-						<th scope="col">플랫폼</th>
-						<th scope="col">점유율</th>
-						<th scope="col">{metric.label}</th>
-					</tr>
-				</thead>
-				<tbody>
-					{data.map((slice) => (
-						<tr key={slice.platform}>
-							<td>{slice.platform}</td>
-							<td>{percentageFormatter.format(slice.sharePercent)}%</td>
-							<td>{metric.formatValue(slice.value)}</td>
-						</tr>
-					))}
-				</tbody>
-			</table>
+			<PlatformPerformanceDonutSummaryTable
+				id={summaryId}
+				data={data}
+				metricLabel={metric.label}
+				formatValue={metric.formatValue}
+			/>
 			<div className="relative flex min-w-0 flex-col rounded-card border border-outline-subtle bg-panel p-3 sm:p-4">
 				<div
 					className="relative h-64 sm:h-72"
@@ -264,9 +98,12 @@ export function PlatformPerformanceDonut({
 									<Cell
 										key={slice.platform}
 										name={slice.platform}
-										fill={getPlatformColor(slice.platform, index)}
+										fill={getPlatformPerformanceDonutColor(
+											slice.platform,
+											index,
+										)}
 										opacity={
-											isKnownCampaignPlatform(slice.platform)
+											isKnownCampaignPlatformForDonut(slice.platform)
 												? slice.isSelected
 													? 1
 													: 0.35
@@ -286,79 +123,15 @@ export function PlatformPerformanceDonut({
 					</div>
 				</div>
 			</div>
-
-			<fieldset
-				className="min-w-0 border-0 p-0 lg:grid lg:gap-2"
-				aria-label="플랫폼별 성과 도넛 범례"
-			>
-				<legend className="sr-only">플랫폼별 성과 도넛 범례</legend>
-				<div className="flex gap-2 overflow-x-auto pb-1 lg:grid lg:gap-2 lg:pb-0">
-					{data.map((slice, index) => {
-						const platformColor = getPlatformColor(slice.platform, index);
-						const isKnownPlatform = isKnownCampaignPlatform(slice.platform);
-
-						return (
-							<div
-								key={slice.platform}
-								className="min-w-[12rem] shrink-0 rounded-card border border-outline-subtle bg-panel-muted p-3 lg:min-w-0 lg:w-full lg:shrink"
-							>
-								{isKnownPlatform ? (
-									<button
-										type="button"
-										className="w-full min-h-control-touch cursor-pointer rounded-md text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
-										onClick={() =>
-											onPlatformSelect(slice.platform as CampaignPlatform)
-										}
-										aria-pressed={slice.isSelected}
-									>
-										<div className="mb-1 flex items-center gap-2">
-											<span
-												className="size-2 rounded-full"
-												style={{ backgroundColor: platformColor }}
-												aria-hidden
-											/>
-											<span className="typo-body-md">{slice.platform}</span>
-											<span className="ml-auto typo-caption text-fg-subtle">
-												{percentageFormatter.format(slice.sharePercent)}%
-											</span>
-										</div>
-										<div className="typo-body-sm font-medium">
-											{metric.label}&nbsp;
-											{Number.isFinite(slice.value)
-												? metric.formatValue(slice.value)
-												: "-"}
-										</div>
-									</button>
-								) : (
-									<section
-										className="w-full cursor-not-allowed text-left"
-										aria-label="알 수 없음"
-										aria-disabled="true"
-									>
-										<div className="mb-1 flex items-center gap-2">
-											<span
-												className="size-2 rounded-full"
-												style={{ backgroundColor: platformColor }}
-												aria-hidden
-											/>
-											<span className="typo-body-md">{slice.platform}</span>
-											<span className="ml-auto typo-caption text-fg-subtle">
-												{percentageFormatter.format(slice.sharePercent)}%
-											</span>
-										</div>
-										<div className="typo-body-sm font-medium">
-											{metric.label}&nbsp;
-											{Number.isFinite(slice.value)
-												? metric.formatValue(slice.value)
-												: "-"}
-										</div>
-									</section>
-								)}
-							</div>
-						);
-					})}
-				</div>
-			</fieldset>
+			<PlatformPerformanceDonutLegend
+				data={data}
+				metricLabel={metric.label}
+				formatValue={metric.formatValue}
+				onPlatformSelect={onPlatformSelect}
+			/>
 		</div>
 	);
 }
+
+export { PlatformPerformanceMetricToggleGroup } from "@/widgets/platform-performance-chart/ui/platform-performance-metric-toggle-group";
+export { PlatformPerformancePieSector } from "@/widgets/platform-performance-chart/ui/platform-performance-pie-sector";
