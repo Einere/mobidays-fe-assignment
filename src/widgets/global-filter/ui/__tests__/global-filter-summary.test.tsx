@@ -264,17 +264,16 @@ describe("GlobalFilterSummary", () => {
 				screen.getByText("필터 결과 요약을 불러오지 못했습니다."),
 			).toBeInTheDocument();
 		});
-
+		expect(screen.getByText("Request failed: 500")).toBeInTheDocument();
 		expect(
 			screen.queryByText("마지막 성공 결과입니다."),
 		).not.toBeInTheDocument();
-		expect(screen.queryByText("Request failed: 500")).not.toBeInTheDocument();
 		expect(screen.queryByText("조회 상태")).not.toBeInTheDocument();
 		expect(screen.queryByText("캠페인 결과")).not.toBeInTheDocument();
 		expect(screen.queryByText("일별 데이터 결과")).not.toBeInTheDocument();
 	});
 
-	it("keeps the last successful summary visible when a refetch fails", async () => {
+	it("shows an error state instead of stale summary data when a refetch fails", async () => {
 		const user = userEvent.setup();
 
 		seedMockDb({
@@ -364,24 +363,22 @@ describe("GlobalFilterSummary", () => {
 
 		await waitFor(() => {
 			expect(
-				screen.getByText("최신 필터 결과를 불러오지 못했습니다."),
+				screen.getByText("필터 결과 요약을 불러오지 못했습니다."),
 			).toBeInTheDocument();
 		});
+		expect(screen.getByText("Request failed: 500")).toBeInTheDocument();
 		expect(
-			screen.getByText("최신 필터 결과를 불러오지 못했습니다."),
+			screen.getByText("필터 결과 요약을 불러오지 못했습니다."),
 		).toHaveClass("text-status-danger-fg");
 		expect(
-			screen.getByText("현재 값은 마지막 성공 결과입니다."),
-		).toBeInTheDocument();
-		expect(screen.getByText("현재 값은 마지막 성공 결과입니다.")).toHaveClass(
-			"text-status-danger-fg",
-		);
-		expect(screen.queryByText("Request failed: 500")).not.toBeInTheDocument();
+			screen.queryByText("현재 값은 마지막 성공 결과입니다."),
+		).not.toBeInTheDocument();
 		expect(
-			within(getCampaignResultCard() as HTMLElement).getByText("2건"),
-		).toBeInTheDocument();
-		expect(
-			within(getDateResultCard() as HTMLElement).getByText("2건"),
-		).toBeInTheDocument();
+			screen.queryByText("최신 필터 결과를 불러오는 중입니다."),
+		).not.toBeInTheDocument();
+		expect(screen.queryByText("캠페인 결과")).not.toBeInTheDocument();
+		expect(screen.queryByText("일별 데이터 결과")).not.toBeInTheDocument();
+		expect(screen.queryByText("2건")).not.toBeInTheDocument();
+		expect(screen.queryByText("1건")).not.toBeInTheDocument();
 	});
 });
