@@ -6,92 +6,20 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from "@/shared/ui/chart";
-import { ToggleButton } from "@/shared/ui/toggle-button";
 import {
-	type DailyTrendMetricKey,
-	dailyTrendMetricDefinitions,
-	formatDailyTrendMetricValue,
-	getDailyTrendMetric,
-	visibleDailyTrendMetricKeys,
-} from "@/widgets/daily-trend-chart/model/metrics";
+	buildDailyTrendChartConfig,
+	createDailyTrendTooltipFormatter,
+	dailyTrendVisibleMetricDefinitions,
+	formatDailyTrendDateLabel,
+	formatDailyTrendYAxisTick,
+} from "@/widgets/daily-trend-chart/model/daily-trend-chart";
+import type { DailyTrendMetricKey } from "@/widgets/daily-trend-chart/model/metrics";
 
-const toggleMetricDefinitions = visibleDailyTrendMetricKeys.map((metricKey) =>
-	getDailyTrendMetric(metricKey),
+const toggleMetricDefinitions = dailyTrendVisibleMetricDefinitions;
+const chartConfig = buildDailyTrendChartConfig(toggleMetricDefinitions);
+const tooltipContent = (
+	<ChartTooltipContent formatter={createDailyTrendTooltipFormatter()} />
 );
-
-const chartConfig = Object.fromEntries(
-	toggleMetricDefinitions.map((metric) => [
-		metric.key,
-		{
-			label: metric.label,
-			color: metric.chartColor,
-		},
-	]),
-);
-
-const numberFormatter = new Intl.NumberFormat("ko-KR");
-
-function formatDateLabel(value: string) {
-	return value.slice(5);
-}
-
-function formatYAxisTick(value: number) {
-	return numberFormatter.format(value);
-}
-
-function tooltipFormatter(value: unknown, metricKey?: string) {
-	if (metricKey === undefined) {
-		return "-";
-	}
-
-	const resolvedMetricKey = dailyTrendMetricDefinitions.find(
-		(metric) => metric.key === metricKey || metric.label === metricKey,
-	)?.key;
-
-	if (resolvedMetricKey === undefined) {
-		return "-";
-	}
-
-	return formatDailyTrendMetricValue(
-		resolvedMetricKey as DailyTrendMetricKey,
-		typeof value === "number" ? value : null,
-	);
-}
-
-const tooltipContent = <ChartTooltipContent formatter={tooltipFormatter} />;
-
-export function DailyTrendMetricToggleGroup({
-	activeMetrics,
-	metricGroupLabel = "일별 추이 메트릭",
-	onToggleMetric,
-}: {
-	activeMetrics: DailyTrendMetricKey[];
-	metricGroupLabel?: string;
-	onToggleMetric: (metricKey: DailyTrendMetricKey) => void;
-}) {
-	return (
-		<fieldset
-			className="flex w-max flex-nowrap justify-end gap-2"
-			aria-label={metricGroupLabel}
-		>
-			<legend className="sr-only">{metricGroupLabel}</legend>
-			{toggleMetricDefinitions.map((metric) => {
-				const isActive = activeMetrics.includes(metric.key);
-
-				return (
-					<ToggleButton
-						key={metric.key}
-						type="button"
-						pressed={isActive}
-						onClick={() => onToggleMetric(metric.key)}
-					>
-						{metric.label}
-					</ToggleButton>
-				);
-			})}
-		</fieldset>
-	);
-}
 
 export function DailyTrendLineChart({
 	data,
@@ -105,18 +33,18 @@ export function DailyTrendLineChart({
 			className="h-80 min-w-[720px] sm:min-w-0"
 			config={chartConfig}
 		>
-			<LineChart data={data}>
+			<LineChart data={data} aria-label="일별 추이 차트" role="img">
 				<CartesianGrid vertical={false} stroke="var(--color-outline-subtle)" />
 				<XAxis
 					axisLine={false}
 					dataKey="date"
 					minTickGap={24}
-					tickFormatter={formatDateLabel}
+					tickFormatter={formatDailyTrendDateLabel}
 					tickLine={false}
 				/>
 				<YAxis
 					axisLine={false}
-					tickFormatter={formatYAxisTick}
+					tickFormatter={formatDailyTrendYAxisTick}
 					tickLine={false}
 					width={56}
 				/>
@@ -140,3 +68,5 @@ export function DailyTrendLineChart({
 		</ChartContainer>
 	);
 }
+
+export { DailyTrendMetricToggleGroup } from "./daily-trend-metric-toggle-group";
