@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { DailyTrendChartViewState } from "@/widgets/daily-trend-chart/model/use-daily-trend-chart-view-model";
 import { useDailyTrendChartViewModel } from "@/widgets/daily-trend-chart/model/use-daily-trend-chart-view-model";
 import { DailyTrendChartContent } from "@/widgets/daily-trend-chart/ui/daily-trend-chart-content";
@@ -5,9 +6,9 @@ import { DailyTrendChartFrame } from "@/widgets/daily-trend-chart/ui/daily-trend
 import { DailyTrendChartStatus } from "@/widgets/daily-trend-chart/ui/daily-trend-chart-status";
 import { DailyTrendMetricToggleGroup } from "@/widgets/daily-trend-chart/ui/daily-trend-metric-toggle-group";
 
-export { resolveDailyTrendChartViewState } from "@/widgets/daily-trend-chart/model/use-daily-trend-chart-view-model";
-
-function resolveDailyTrendChartStatus(viewState: DailyTrendChartViewState) {
+function resolveDailyTrendChartStatus(
+	viewState: DailyTrendChartViewState,
+): ReactNode {
 	switch (viewState.kind) {
 		case "loading":
 			return <DailyTrendChartStatus kind="loading" />;
@@ -28,47 +29,47 @@ function resolveDailyTrendChartStatus(viewState: DailyTrendChartViewState) {
 				/>
 			);
 		case "chart":
-			return null;
+			return (
+				<>
+					{viewState.staleErrorMessage ? (
+						<DailyTrendChartStatus
+							kind="stale"
+							message="최신 성과 데이터를 불러오지 못해 마지막 성공 결과를 표시 중입니다."
+						/>
+					) : null}
+					{viewState.isSyncing ? (
+						<DailyTrendChartStatus kind="syncing" />
+					) : null}
+				</>
+			);
 	}
 }
 
 export function DailyTrendChartCard() {
 	const { activeMetrics, toggleMetric, viewState } =
 		useDailyTrendChartViewModel();
+	const isChartState = viewState.kind === "chart";
+	const status = resolveDailyTrendChartStatus(viewState);
 
-	if (viewState.kind === "chart") {
-		return (
-			<DailyTrendChartFrame
-				actions={
+	return (
+		<DailyTrendChartFrame
+			actions={
+				isChartState ? (
 					<DailyTrendMetricToggleGroup
 						activeMetrics={activeMetrics}
 						metricGroupLabel="일별 추이 메트릭"
 						onToggleMetric={toggleMetric}
 					/>
-				}
-				status={
-					<>
-						{viewState.staleErrorMessage ? (
-							<DailyTrendChartStatus
-								kind="stale"
-								message="최신 성과 데이터를 불러오지 못해 마지막 성공 결과를 표시 중입니다."
-							/>
-						) : null}
-						{viewState.isSyncing ? (
-							<DailyTrendChartStatus kind="syncing" />
-						) : null}
-					</>
-				}
-			>
+				) : null
+			}
+			status={status}
+		>
+			{isChartState ? (
 				<DailyTrendChartContent
 					activeMetrics={activeMetrics}
 					data={viewState.chartData}
 				/>
-			</DailyTrendChartFrame>
-		);
-	}
-
-	return (
-		<DailyTrendChartFrame status={resolveDailyTrendChartStatus(viewState)} />
+			) : null}
+		</DailyTrendChartFrame>
 	);
 }
