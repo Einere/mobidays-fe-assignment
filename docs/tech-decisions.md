@@ -6,20 +6,20 @@
 
 ## 최종 기술 스택
 
-| 역할 | 도구 | 버전 |
-|---|---|---|
-| UI 프레임워크 | React + TypeScript + Vite | React 19 |
-| 스타일링 | Tailwind CSS + shadcn/ui | - |
-| 린트/포맷 | Biome | - |
-| API mocking | MSW | - |
-| 서버 상태 | TanStack Query | v5 |
-| 전역 상태 | Jotai | - |
-| Suspense/ErrorBoundary | Suspensive | - |
-| 차트 | Recharts | v3 |
-| 테이블 | TanStack Table | v8 |
-| 폼 | react-hook-form + Zod | - |
-| 날짜 | date-fns + `@date-fns/tz` | - |
-| 테스트 | Vitest + React Testing Library | - |
+| 역할                         | 도구                             | 버전 |
+|----------------------------|--------------------------------|---|
+| UI 프레임워크                   | React + TypeScript + Vite      | React 19 |
+| 스타일링                       | Tailwind CSS + shadcn/ui       | - |
+| 린트/포맷                      | Biome                          | - |
+| API mocking                | MSW                            | - |
+| 서버 상태                      | TanStack Query                 | v5 |
+| 전역 상태                      | Jotai                          | - |
+| ~~Suspense/ErrorBoundary~~ | ~~Suspensive~~                 | - |
+| 차트                         | Recharts                       | v3 |
+| 테이블                        | TanStack Table                 | v8 |
+| 폼                          | react-hook-form + Zod          | - |
+| 날짜                         | date-fns + `@date-fns/tz`      | - |
+| 테스트                        | Vitest + React Testing Library | - |
 
 ---
 
@@ -86,19 +86,23 @@
 - Jotai: atom 단위 구독으로 필요한 컴포넌트만 리렌더링, React 19와 잘 맞는 bottom-up 방식
 - `@suspensive/jotai` 패키지로 Suspensive와도 통합 가능
 
+[상태 관리 라이브러리에 대한 간단한 생각 정리](https://www.linkedin.com/posts/hyungjun-choi-760737258_%EC%83%81%ED%83%9C-%EA%B4%80%EB%A6%AC-%EB%9D%BC%EC%9D%B4%EB%B8%8C%EB%9F%AC%EB%A6%AC%EC%97%90-%EB%8C%80%ED%95%B4-%EC%83%9D%EA%B0%81%EC%9D%84-%ED%95%98%EB%8B%A4%EA%B0%80-zustand%EB%8A%94-redux%EC%9D%98-%ED%9B%84%EC%86%8D%EC%9E%91%EC%9D%B4%EB%A9%B0-activity-7406596809252429824-9BRi?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAD93-ngBLqoa_eV82H9PrwMGcYvioFSzppE)
+
 **결정**: Jotai
 
 ---
 
-### Suspense/ErrorBoundary — Suspensive
+### ~~Suspense/ErrorBoundary — Suspensive~~
 
-- Toss(비바리퍼블리카)에서 만든 라이브러리, 국내 대형 서비스에서 검증
-- `@suspensive/react-query`: `<SuspenseQuery />` 컴포넌트로 선언적 데이터 패칭 → wrapper 컴포넌트 불필요
-- `@suspensive/jotai`: Jotai atom의 Suspense 지원
-- `<ErrorBoundaryGroup />`: 여러 ErrorBoundary 일괄 reset
-- TanStack Query + Jotai를 모두 사용하는 현재 스택과 시너지 최대
+- ~~Toss(비바리퍼블리카)에서 만든 라이브러리, 국내 대형 서비스에서 검증~~
+- ~~`@suspensive/react-query`: `<SuspenseQuery />` 컴포넌트로 선언적 데이터 패칭 → wrapper 컴포넌트 불필요~~
+- ~~`@suspensive/jotai`: Jotai atom의 Suspense 지원~~
+- ~~`<ErrorBoundaryGroup />`: 여러 ErrorBoundary 일괄 reset~~
+- ~~TanStack Query + Jotai를 모두 사용하는 현재 스택과 시너지 최대~~
 
-**결정**: Suspensive (`@suspensive/react`, `@suspensive/react-query`, `@suspensive/jotai`)
+~~**결정**: Suspensive (`@suspensive/react`, `@suspensive/react-query`, `@suspensive/jotai`)~~
+
+도메인 특성상 Suspense 를 도입할 근거가 부족해 실제로 도입하지 않음.
 
 ---
 
@@ -106,12 +110,12 @@
 
 **검토 대상**: Recharts / Nivo / Chart.js / ECharts
 
-| 라이브러리 | 장점 | 단점 |
-|---|---|---|
-| Recharts | React 전용 선언적 API, 가벼움 | 고급 커스텀 한계 |
-| Nivo | 차트 종류 다양, 접근성 우수 | 번들 크기 큰 편 |
-| Chart.js | 성숙한 생태계 | imperative API |
-| ECharts | 기능 방대 | 공식 React wrapper 없음 |
+| 라이브러리 | 장점                                                   | 단점                    |
+|---|------------------------------------------------------|-----------------------|
+| Recharts | React 전용 선언적 API, 가벼움, Shadn/cn `Chart` 컴포넌트의 기반 라이브러리 | 고급 커스텀 한계             |
+| Nivo | 차트 종류 다양, 접근성 우수                                     | 번들 크기 큰 편             |
+| Chart.js | 성숙한 생태계                                              | imperative API        |
+| ECharts | 기능 방대                                                | 공식 React wrapper 없음   |
 
 - 필요한 차트: Line(일별 추이), Donut(플랫폼별), Bar(랭킹 Top3)
 - Recharts v3로 모두 커버 가능
