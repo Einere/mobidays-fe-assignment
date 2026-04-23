@@ -19,11 +19,11 @@ import { GlobalFilterSummary } from "@/widgets/global-filter/ui/global-filter-su
 const aprilFilter = createInitialGlobalFilterState(new Date("2026-04-15"));
 
 function getCampaignResultCard() {
-	return screen.getByText("캠페인 결과").closest("div");
+	return screen.getByText("캠페인 결과").closest(".rounded-card");
 }
 
 function getDateResultCard() {
-	return screen.getByText("일별 데이터 결과").closest("div");
+	return screen.getByText("일별 데이터 결과").closest(".rounded-card");
 }
 
 function SetMetaOnlyFilterButton() {
@@ -215,12 +215,9 @@ describe("GlobalFilterSummary", () => {
 
 		await user.click(screen.getByRole("button", { name: "메타만 보기" }));
 
-		expect(
-			screen.getByText("최신 필터 결과를 불러오는 중입니다."),
-		).toBeInTheDocument();
-		expect(
-			screen.getByText("현재 값은 마지막 성공 결과입니다."),
-		).toBeInTheDocument();
+		expect(screen.getAllByTestId("global-filter-summary-spinner")).toHaveLength(
+			2,
+		);
 		expect(screen.queryByText("조회 상태")).not.toBeInTheDocument();
 		expect(
 			within(getCampaignResultCard() as HTMLElement).getByText("2건"),
@@ -248,6 +245,9 @@ describe("GlobalFilterSummary", () => {
 		expect(
 			within(getDateResultCard() as HTMLElement).getByText("1건"),
 		).toBeInTheDocument();
+		expect(
+			screen.queryByTestId("global-filter-summary-spinner"),
+		).not.toBeInTheDocument();
 	});
 
 	it("shows the initial error state when the first request fails", async () => {
@@ -266,7 +266,7 @@ describe("GlobalFilterSummary", () => {
 		});
 		expect(screen.getByText("Request failed: 500")).toBeInTheDocument();
 		expect(
-			screen.queryByText("마지막 성공 결과입니다."),
+			screen.queryByTestId("global-filter-summary-spinner"),
 		).not.toBeInTheDocument();
 		expect(screen.queryByText("조회 상태")).not.toBeInTheDocument();
 		expect(screen.queryByText("캠페인 결과")).not.toBeInTheDocument();

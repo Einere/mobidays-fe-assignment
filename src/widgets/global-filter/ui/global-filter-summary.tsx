@@ -19,7 +19,7 @@ export function GlobalFilterSummary() {
 				<GlobalFilterSummarySummaryContent
 					campaignsCount={state.campaignsCount}
 					dailyStatsCount={state.dailyStatsCount}
-					staleStatusMessage={state.staleStatusMessage}
+					isSyncing={state.isSyncing}
 				/>
 			)}
 		</GlobalFilterSummaryCardFrame>

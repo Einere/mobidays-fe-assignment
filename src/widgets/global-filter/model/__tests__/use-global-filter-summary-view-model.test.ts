@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { resolveGlobalFilterSummaryViewState } from "@/widgets/global-filter/model/use-global-filter-summary-view-model";
 
 describe("resolveGlobalFilterSummaryViewState", () => {
-	it("returns a full error state and ignores stale data when the query fails", () => {
+	it("returns a full error state when the query fails", () => {
 		expect(
 			resolveGlobalFilterSummaryViewState({
 				data: {
@@ -12,7 +12,7 @@ describe("resolveGlobalFilterSummaryViewState", () => {
 				error: new Error("Request failed: 500"),
 				isError: true,
 				isPending: false,
-				isPlaceholderData: false,
+				isRefetching: false,
 			}),
 		).toEqual({
 			kind: "full-error",
@@ -20,7 +20,7 @@ describe("resolveGlobalFilterSummaryViewState", () => {
 		});
 	});
 
-	it("returns summary counts and stale status while a refetch is in flight", () => {
+	it("returns summary counts and syncing state while a refetch is in flight", () => {
 		expect(
 			resolveGlobalFilterSummaryViewState({
 				data: {
@@ -30,13 +30,13 @@ describe("resolveGlobalFilterSummaryViewState", () => {
 				error: null,
 				isError: false,
 				isPending: true,
-				isPlaceholderData: false,
+				isRefetching: true,
 			}),
 		).toEqual({
 			kind: "summary",
 			campaignsCount: 2,
 			dailyStatsCount: 2,
-			staleStatusMessage: "최신 필터 결과를 불러오는 중입니다.",
+			isSyncing: true,
 		});
 	});
 });

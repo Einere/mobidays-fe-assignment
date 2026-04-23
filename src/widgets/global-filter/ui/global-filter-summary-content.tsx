@@ -34,14 +34,46 @@ function GlobalFilterSummaryHeader() {
 	);
 }
 
+function GlobalFilterSummarySpinner() {
+	return (
+		<span
+			className="inline-flex size-4 shrink-0 items-center justify-center"
+			aria-hidden="true"
+			data-testid="global-filter-summary-spinner"
+		>
+			<span className="size-4 animate-spin rounded-full border-2 border-fg-muted/20 border-t-fg-muted" />
+		</span>
+	);
+}
+
+function GlobalFilterSummaryMetricCard({
+	label,
+	value,
+	isSyncing,
+}: {
+	label: string;
+	value: string;
+	isSyncing: boolean;
+}) {
+	return (
+		<div className="rounded-card bg-panel-muted p-4">
+			<div className="mb-2 flex min-h-5 items-center gap-2">
+				<p className="typo-caption text-fg-subtle">{label}</p>
+				{isSyncing ? <GlobalFilterSummarySpinner /> : null}
+			</div>
+			<p className="typo-metric-lg">{value}</p>
+		</div>
+	);
+}
+
 function GlobalFilterSummarySummaryContent({
 	campaignsCount,
 	dailyStatsCount,
-	staleStatusMessage,
+	isSyncing,
 }: {
 	campaignsCount: number;
 	dailyStatsCount: number;
-	staleStatusMessage: string | null;
+	isSyncing: boolean;
 }) {
 	return (
 		<>
@@ -54,27 +86,18 @@ function GlobalFilterSummarySummaryContent({
 				캠페인 결과 {campaignsCount}건, 일별 데이터 결과 {dailyStatsCount}건
 			</p>
 
-			{staleStatusMessage ? (
-				<div className="rounded-card border border-status-danger-border bg-status-danger/30 px-4 py-3">
-					<p className="typo-body-sm text-status-danger-fg">
-						{staleStatusMessage}
-					</p>
-					<p className="mt-1 typo-caption text-status-danger-fg">
-						현재 값은 마지막 성공 결과입니다.
-					</p>
-				</div>
-			) : null}
-
 			<div className="grid grid-cols-2 gap-4">
-				<div className="rounded-card bg-panel-muted p-4">
-					<p className="mb-2 typo-caption text-fg-subtle">캠페인 결과</p>
-					<p className="typo-metric-lg">{campaignsCount}건</p>
-				</div>
+				<GlobalFilterSummaryMetricCard
+					isSyncing={isSyncing}
+					label="캠페인 결과"
+					value={`${campaignsCount}건`}
+				/>
 
-				<div className="rounded-card bg-panel-muted p-4">
-					<p className="mb-2 typo-caption text-fg-subtle">일별 데이터 결과</p>
-					<p className="typo-metric-lg">{dailyStatsCount}건</p>
-				</div>
+				<GlobalFilterSummaryMetricCard
+					isSyncing={isSyncing}
+					label="일별 데이터 결과"
+					value={`${dailyStatsCount}건`}
+				/>
 			</div>
 		</>
 	);
