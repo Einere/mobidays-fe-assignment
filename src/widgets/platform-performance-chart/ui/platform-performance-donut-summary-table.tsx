@@ -30,7 +30,7 @@ export function PlatformPerformanceDonutSummaryTable({
 				{data.map((slice) => (
 					<tr key={slice.platform}>
 						<td>{slice.platform}</td>
-						<td>{percentageFormatter.format(slice.sharePercent)}%</td>
+						<td>{percentageFormatter.format(slice.sharePercent)}</td>
 						<td>{formatValue(slice.value)}</td>
 					</tr>
 				))}

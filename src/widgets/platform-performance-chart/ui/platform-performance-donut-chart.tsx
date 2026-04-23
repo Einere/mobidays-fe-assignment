@@ -49,7 +49,7 @@ export function PlatformPerformanceDonut({
 				? `${metric.label} ${metric.formatValue(matchedSlice.value)}`
 				: "-";
 			const share = matchedSlice
-				? ` (${percentageFormatter.format(matchedSlice.sharePercent)}%)`
+				? ` (${percentageFormatter.format(matchedSlice.sharePercent)})`
 				: "";
 
 			return `${metricLabel}${share}`;

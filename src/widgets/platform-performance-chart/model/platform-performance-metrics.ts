@@ -1,4 +1,8 @@
 import type { PlatformMetricKey } from "@/entities/platform-performance/model/types";
+import {
+	formatCurrencyWithLocale,
+	formatNumberWithLocale,
+} from "@/shared/lib/intl/number";
 
 export type PlatformPerformanceMetricDefinition = {
 	key: PlatformMetricKey;
@@ -7,37 +11,30 @@ export type PlatformPerformanceMetricDefinition = {
 	formatValue: (value: number) => string;
 };
 
-const numberFormatter = new Intl.NumberFormat("ko-KR");
-const costFormatter = new Intl.NumberFormat("ko-KR", {
-	style: "currency",
-	currency: "KRW",
-	maximumFractionDigits: 0,
-});
-
 const platformPerformanceMetricRegistry = {
 	cost: {
 		key: "cost",
 		label: "비용",
 		chartColor: "var(--chart-danger)",
-		formatValue: costFormatter.format,
+		formatValue: formatCurrencyWithLocale,
 	},
 	impressions: {
 		key: "impressions",
 		label: "노출수",
 		chartColor: "var(--chart-positive)",
-		formatValue: numberFormatter.format,
+		formatValue: formatNumberWithLocale,
 	},
 	clicks: {
 		key: "clicks",
 		label: "클릭수",
 		chartColor: "var(--chart-info)",
-		formatValue: numberFormatter.format,
+		formatValue: formatNumberWithLocale,
 	},
 	conversions: {
 		key: "conversions",
 		label: "전환수",
 		chartColor: "var(--chart-warning)",
-		formatValue: numberFormatter.format,
+		formatValue: formatNumberWithLocale,
 	},
 } satisfies Record<PlatformMetricKey, PlatformPerformanceMetricDefinition>;
 

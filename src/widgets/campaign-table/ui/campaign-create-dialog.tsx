@@ -1,5 +1,6 @@
 import { Controller, type UseFormReturn } from "react-hook-form";
 import type { CreateCampaignFormValues } from "@/entities/campaign/lib/create-campaign-schema";
+import { formatNumberWithLocale } from "@/shared/lib/intl/number";
 import { Button } from "@/shared/ui/button";
 import {
 	Dialog,
@@ -52,7 +53,7 @@ function formatIntegerInputValue(value: string) {
 		return "";
 	}
 
-	return new Intl.NumberFormat("ko-KR").format(Number(normalizedValue));
+	return formatNumberWithLocale(Number(normalizedValue));
 }
 
 function normalizeIntegerInputValue(value: string) {

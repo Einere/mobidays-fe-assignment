@@ -1,3 +1,4 @@
+import { formatNumberWithLocale } from "@/shared/lib/intl/number";
 import type {
 	DailyTrendMetricDefinition,
 	DailyTrendMetricKey,
@@ -8,8 +9,6 @@ import {
 	getDailyTrendMetric,
 	visibleDailyTrendMetricKeys,
 } from "@/widgets/daily-trend-chart/model/metrics";
-
-const numberFormatter = new Intl.NumberFormat("ko-KR");
 
 export const dailyTrendVisibleMetricDefinitions =
 	visibleDailyTrendMetricKeys.map((metricKey) =>
@@ -35,7 +34,7 @@ export function formatDailyTrendDateLabel(value: string) {
 }
 
 export function formatDailyTrendYAxisTick(value: number) {
-	return numberFormatter.format(value);
+	return formatNumberWithLocale(value);
 }
 
 export function createDailyTrendTooltipFormatter(

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Legend, ResponsiveContainer, Tooltip } from "recharts";
 
+import { formatNumberWithLocale } from "@/shared/lib/intl/number";
 import { cn } from "@/shared/lib/utils";
 
 type ChartSeriesConfig = {
@@ -63,7 +64,7 @@ function ChartContainer({
 
 function formatChartValue(value: unknown) {
 	if (typeof value === "number") {
-		return new Intl.NumberFormat("ko-KR").format(value);
+		return formatNumberWithLocale(value);
 	}
 
 	return String(value ?? "");

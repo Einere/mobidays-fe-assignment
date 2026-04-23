@@ -4,11 +4,15 @@ import {
 } from "@/entities/global-filter/model/platforms";
 import type { PlatformPerformanceSlice } from "@/entities/platform-performance/model/types";
 import { unknownPlatformLabel } from "@/entities/platform-performance/model/types";
+import { formatPercentWithLocale } from "@/shared/lib/intl/number";
 
-export const percentageFormatter = new Intl.NumberFormat("ko-KR", {
-	maximumFractionDigits: 1,
-	minimumFractionDigits: 0,
-});
+export const percentageFormatter = {
+	format: (value: number) =>
+		formatPercentWithLocale(value, {
+			maximumFractionDigits: 1,
+			minimumFractionDigits: 0,
+		}),
+};
 
 export const platformPerformanceDonutFallbackColors = [
 	"var(--chart-series-4)",
