@@ -6,7 +6,7 @@ type GlobalFilterSummaryQuerySnapshot = {
 	error: Error | null;
 	isError: boolean;
 	isPending: boolean;
-	isPlaceholderData: boolean;
+	isRefetching: boolean;
 };
 
 export type GlobalFilterSummaryViewState =
@@ -18,7 +18,7 @@ export type GlobalFilterSummaryViewState =
 			kind: "summary";
 			campaignsCount: number;
 			dailyStatsCount: number;
-			staleStatusMessage: string | null;
+			isSyncing: boolean;
 	  };
 
 export function resolveGlobalFilterSummaryViewState(
@@ -38,10 +38,7 @@ export function resolveGlobalFilterSummaryViewState(
 		kind: "summary",
 		campaignsCount,
 		dailyStatsCount,
-		staleStatusMessage:
-			query.data !== undefined && (query.isPlaceholderData || query.isPending)
-				? "최신 필터 결과를 불러오는 중입니다."
-				: null,
+		isSyncing: query.isRefetching,
 	};
 }
 

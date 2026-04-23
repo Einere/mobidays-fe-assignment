@@ -9,6 +9,10 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/shared/ui/select";
+import {
+	SyncingIndicator,
+	SyncingStatusMessage,
+} from "@/shared/ui/syncing-indicator";
 
 interface CampaignTableToolbarProps {
 	toolbarState: {
@@ -26,11 +30,13 @@ interface CampaignTableToolbarProps {
 		onOpenStatusDialog: () => void;
 		onOpenCreateDialog?: () => void;
 	};
+	isSyncing?: boolean;
 }
 
 export function CampaignTableToolbar({
 	toolbarState,
 	actions,
+	isSyncing = false,
 }: CampaignTableToolbarProps) {
 	const {
 		searchInput,
@@ -54,7 +60,11 @@ export function CampaignTableToolbar({
 		<div className="flex flex-col gap-4 border-b border-outline-subtle pb-4">
 			<div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
 				<div className="flex flex-col gap-1">
-					<h2>캠페인 현황</h2>
+					<div className="flex items-center gap-2">
+						<h2>캠페인 현황</h2>
+						<SyncingIndicator visible={isSyncing} />
+						{isSyncing ? <SyncingStatusMessage message="동기화 중" /> : null}
+					</div>
 					<p className="typo-body-sm text-fg-muted">
 						전역 필터 기준으로 집계한 캠페인별 운영 성과입니다.
 					</p>

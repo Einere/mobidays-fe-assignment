@@ -40,9 +40,6 @@ function resolvePlatformPerformanceChartStatus(
 							message="최신 성과 데이터를 불러오지 못해 마지막 성공 결과를 표시 중입니다."
 						/>
 					) : null}
-					{state.isSyncing ? (
-						<PlatformPerformanceChartStatus kind="syncing" />
-					) : null}
 				</>
 			);
 	}
@@ -57,10 +54,11 @@ export function PlatformPerformanceChartCard() {
 		toggleMetric,
 	} = usePlatformPerformanceChartViewModel();
 
+	const isSyncing = state.kind === "chart" && state.isSyncing;
 	const status = resolvePlatformPerformanceChartStatus(state);
 
 	return (
-		<PlatformPerformanceChartFrame status={status}>
+		<PlatformPerformanceChartFrame status={status} isSyncing={isSyncing}>
 			{state.kind === "chart" ? (
 				<PlatformPerformanceChartContent
 					activeMetricKey={activeMetricKey}

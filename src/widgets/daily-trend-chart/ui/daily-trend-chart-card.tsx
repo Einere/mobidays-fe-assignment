@@ -37,9 +37,6 @@ function resolveDailyTrendChartStatus(
 							message="최신 성과 데이터를 불러오지 못해 마지막 성공 결과를 표시 중입니다."
 						/>
 					) : null}
-					{viewState.isSyncing ? (
-						<DailyTrendChartStatus kind="syncing" />
-					) : null}
 				</>
 			);
 	}
@@ -49,6 +46,7 @@ export function DailyTrendChartCard() {
 	const { activeMetrics, toggleMetric, viewState } =
 		useDailyTrendChartViewModel();
 	const isChartState = viewState.kind === "chart";
+	const isSyncing = isChartState && viewState.isSyncing;
 	const status = resolveDailyTrendChartStatus(viewState);
 
 	return (
@@ -62,6 +60,7 @@ export function DailyTrendChartCard() {
 					/>
 				) : null
 			}
+			isSyncing={isSyncing}
 			status={status}
 		>
 			{isChartState ? (
