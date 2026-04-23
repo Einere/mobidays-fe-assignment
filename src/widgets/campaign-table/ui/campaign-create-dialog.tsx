@@ -1,6 +1,9 @@
 import { Controller, type UseFormReturn } from "react-hook-form";
 import type { CreateCampaignFormValues } from "@/entities/campaign/lib/create-campaign-schema";
-import { formatNumberWithLocale } from "@/shared/lib/intl/number";
+import {
+	formatIntegerInputValue,
+	normalizeIntegerInputValue,
+} from "@/shared/lib/number-input";
 import { Button } from "@/shared/ui/button";
 import {
 	Dialog,
@@ -40,24 +43,6 @@ interface CampaignCreateDialogProps {
 		onOpenChange: (open: boolean) => void;
 		onSubmit: (values: CreateCampaignFormValues) => Promise<void> | void;
 	};
-}
-
-function formatIntegerInputValue(value: string) {
-	if (!value) {
-		return "";
-	}
-
-	const normalizedValue = value.replace(/\D/g, "");
-
-	if (!normalizedValue) {
-		return "";
-	}
-
-	return formatNumberWithLocale(Number(normalizedValue));
-}
-
-function normalizeIntegerInputValue(value: string) {
-	return value.replace(/\D/g, "");
 }
 
 export function CampaignCreateDialog({
