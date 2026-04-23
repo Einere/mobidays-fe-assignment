@@ -215,7 +215,7 @@ describe("GlobalFilterSummary", () => {
 
 		await user.click(screen.getByRole("button", { name: "메타만 보기" }));
 
-		expect(screen.getAllByTestId("global-filter-summary-spinner")).toHaveLength(
+		expect(screen.getAllByRole("status", { name: "동기화 중" })).toHaveLength(
 			2,
 		);
 		expect(screen.queryByText("조회 상태")).not.toBeInTheDocument();
@@ -246,7 +246,7 @@ describe("GlobalFilterSummary", () => {
 			within(getDateResultCard() as HTMLElement).getByText("1건"),
 		).toBeInTheDocument();
 		expect(
-			screen.queryByTestId("global-filter-summary-spinner"),
+			screen.queryByRole("status", { name: "동기화 중" }),
 		).not.toBeInTheDocument();
 	});
 
@@ -266,7 +266,7 @@ describe("GlobalFilterSummary", () => {
 		});
 		expect(screen.getByText("Request failed: 500")).toBeInTheDocument();
 		expect(
-			screen.queryByTestId("global-filter-summary-spinner"),
+			screen.queryByRole("status", { name: "동기화 중" }),
 		).not.toBeInTheDocument();
 		expect(screen.queryByText("조회 상태")).not.toBeInTheDocument();
 		expect(screen.queryByText("캠페인 결과")).not.toBeInTheDocument();

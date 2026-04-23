@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { SyncingIndicator } from "@/shared/ui/syncing-indicator";
 import { usePlatformPerformanceChartViewModel } from "@/widgets/platform-performance-chart/model/use-platform-performance-chart-view-model";
 import { PlatformPerformanceChartContent } from "@/widgets/platform-performance-chart/ui/platform-performance-chart-content";
 import { PlatformPerformanceChartFrame } from "@/widgets/platform-performance-chart/ui/platform-performance-chart-frame";
@@ -40,9 +41,6 @@ function resolvePlatformPerformanceChartStatus(
 							message="최신 성과 데이터를 불러오지 못해 마지막 성공 결과를 표시 중입니다."
 						/>
 					) : null}
-					{state.isSyncing ? (
-						<PlatformPerformanceChartStatus kind="syncing" />
-					) : null}
 				</>
 			);
 	}
@@ -57,10 +55,14 @@ export function PlatformPerformanceChartCard() {
 		toggleMetric,
 	} = usePlatformPerformanceChartViewModel();
 
+	const isSyncing = state.kind === "chart" && state.isSyncing;
 	const status = resolvePlatformPerformanceChartStatus(state);
 
 	return (
-		<PlatformPerformanceChartFrame status={status}>
+		<PlatformPerformanceChartFrame
+			status={status}
+			titleTrailing={isSyncing ? <SyncingIndicator /> : null}
+		>
 			{state.kind === "chart" ? (
 				<PlatformPerformanceChartContent
 					activeMetricKey={activeMetricKey}

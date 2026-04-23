@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { SyncingIndicator } from "@/shared/ui/syncing-indicator";
 import type { DailyTrendChartViewState } from "@/widgets/daily-trend-chart/model/use-daily-trend-chart-view-model";
 import { useDailyTrendChartViewModel } from "@/widgets/daily-trend-chart/model/use-daily-trend-chart-view-model";
 import { DailyTrendChartContent } from "@/widgets/daily-trend-chart/ui/daily-trend-chart-content";
@@ -37,9 +38,6 @@ function resolveDailyTrendChartStatus(
 							message="최신 성과 데이터를 불러오지 못해 마지막 성공 결과를 표시 중입니다."
 						/>
 					) : null}
-					{viewState.isSyncing ? (
-						<DailyTrendChartStatus kind="syncing" />
-					) : null}
 				</>
 			);
 	}
@@ -49,6 +47,7 @@ export function DailyTrendChartCard() {
 	const { activeMetrics, toggleMetric, viewState } =
 		useDailyTrendChartViewModel();
 	const isChartState = viewState.kind === "chart";
+	const isSyncing = isChartState && viewState.isSyncing;
 	const status = resolveDailyTrendChartStatus(viewState);
 
 	return (
@@ -62,6 +61,7 @@ export function DailyTrendChartCard() {
 					/>
 				) : null
 			}
+			titleTrailing={isSyncing ? <SyncingIndicator /> : null}
 			status={status}
 		>
 			{isChartState ? (

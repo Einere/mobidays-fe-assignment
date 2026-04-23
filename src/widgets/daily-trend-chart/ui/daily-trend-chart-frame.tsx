@@ -4,19 +4,24 @@ type DailyTrendChartFrameProps = {
 	children?: ReactNode;
 	actions?: ReactNode;
 	status?: ReactNode;
+	titleTrailing?: ReactNode;
 };
 
 export function DailyTrendChartFrame({
 	children,
 	actions,
 	status,
+	titleTrailing,
 }: DailyTrendChartFrameProps) {
 	return (
 		<section className="rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel">
 			<div className="flex flex-col gap-5">
 				<div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
 					<div className="flex flex-col gap-2">
-						<h2>성과 개요</h2>
+						<div className="flex items-center gap-2">
+							<h2>성과 개요</h2>
+							{titleTrailing ?? null}
+						</div>
 						<p className="typo-body-sm text-fg-muted">
 							전역 필터 기준으로 집계한 일별 추이 꺾은선 그래프입니다.
 						</p>

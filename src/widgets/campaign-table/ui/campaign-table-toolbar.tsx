@@ -1,4 +1,5 @@
 import { Search } from "lucide-react";
+import type { ReactNode } from "react";
 import type { CampaignStatus } from "@/entities/global-filter/model/types";
 import { Button } from "@/shared/ui/button";
 import { TextInput } from "@/shared/ui/input";
@@ -11,6 +12,7 @@ import {
 } from "@/shared/ui/select";
 
 interface CampaignTableToolbarProps {
+	titleTrailing?: ReactNode;
 	toolbarState: {
 		searchInput: string;
 		filteredCount: number;
@@ -29,6 +31,7 @@ interface CampaignTableToolbarProps {
 }
 
 export function CampaignTableToolbar({
+	titleTrailing,
 	toolbarState,
 	actions,
 }: CampaignTableToolbarProps) {
@@ -54,7 +57,10 @@ export function CampaignTableToolbar({
 		<div className="flex flex-col gap-4 border-b border-outline-subtle pb-4">
 			<div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
 				<div className="flex flex-col gap-1">
-					<h2>캠페인 현황</h2>
+					<div className="flex items-center gap-2">
+						<h2>캠페인 현황</h2>
+						{titleTrailing ?? null}
+					</div>
 					<p className="typo-body-sm text-fg-muted">
 						전역 필터 기준으로 집계한 캠페인별 운영 성과입니다.
 					</p>

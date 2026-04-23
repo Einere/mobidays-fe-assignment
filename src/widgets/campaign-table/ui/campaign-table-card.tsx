@@ -1,3 +1,4 @@
+import { SyncingIndicator } from "@/shared/ui/syncing-indicator";
 import { useCampaignTableViewModel } from "@/widgets/campaign-table/model/use-campaign-table-view-model";
 import { CampaignCreateDialog } from "@/widgets/campaign-table/ui/campaign-create-dialog";
 import { CampaignTableStatusDialog } from "@/widgets/campaign-table/ui/campaign-table-status-dialog";
@@ -47,6 +48,8 @@ export function CampaignTableCard() {
 	const bulkAction = viewModel.bulkAction;
 	const isInteractionDisabled =
 		tableData.isShowingPlaceholderData || bulkAction.isSubmitting;
+	const isSyncing =
+		tableData.viewState.kind === "table" && tableData.viewState.isSyncing;
 
 	if (tableData.kind === "loading") {
 		return <CampaignTableLoadingState />;
@@ -117,6 +120,7 @@ export function CampaignTableCard() {
 		<section className="rounded-panel border border-outline-subtle bg-panel p-panel shadow-panel">
 			<div className="flex flex-col gap-5">
 				<CampaignTableToolbar
+					titleTrailing={isSyncing ? <SyncingIndicator /> : null}
 					toolbarState={toolbarState}
 					actions={toolbarActions}
 				/>
@@ -129,18 +133,6 @@ export function CampaignTableCard() {
 						</p>
 					</div>
 				) : null}
-
-				<div className="min-h-5">
-					{tableData.viewState.isSyncing ? (
-						<p
-							className="typo-body-sm text-fg-muted"
-							role="status"
-							aria-live="polite"
-						>
-							동기화 중
-						</p>
-					) : null}
-				</div>
 
 				{tableView.rows.length > 0 ? (
 					<CampaignTableTable tableState={tableState} actions={tableActions} />

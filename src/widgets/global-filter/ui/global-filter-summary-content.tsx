@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { SyncingIndicator } from "@/shared/ui/syncing-indicator";
 
 function GlobalFilterSummaryCardFrame({ children }: { children: ReactNode }) {
 	return (
@@ -34,18 +35,6 @@ function GlobalFilterSummaryHeader() {
 	);
 }
 
-function GlobalFilterSummarySpinner() {
-	return (
-		<span
-			className="inline-flex size-4 shrink-0 items-center justify-center"
-			aria-hidden="true"
-			data-testid="global-filter-summary-spinner"
-		>
-			<span className="size-4 animate-spin rounded-full border-2 border-fg-muted/20 border-t-fg-muted" />
-		</span>
-	);
-}
-
 function GlobalFilterSummaryMetricCard({
 	label,
 	value,
@@ -59,7 +48,7 @@ function GlobalFilterSummaryMetricCard({
 		<div className="rounded-card bg-panel-muted p-4">
 			<div className="mb-2 flex min-h-5 items-center gap-2">
 				<p className="typo-caption text-fg-subtle">{label}</p>
-				{isSyncing ? <GlobalFilterSummarySpinner /> : null}
+				{isSyncing ? <SyncingIndicator /> : null}
 			</div>
 			<p className="typo-metric-lg">{value}</p>
 		</div>
