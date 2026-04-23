@@ -38,7 +38,7 @@ function SidebarNavList({
 							<a
 								href={item.href ?? "#"}
 								className={cn(
-									"flex min-h-control-touch sm:min-h-control-md min-w-0 items-center justify-between rounded-md px-3 typo-label-md transition-colors duration-[var(--duration-fast)] ease-standard",
+									"flex min-h-control-touch sm:min-h-control-md min-w-0 items-center justify-between rounded-md px-3 typo-label-md transition-colors duration-fast ease-standard",
 									item.active
 										? "bg-selected text-selected-fg"
 										: "text-fg-muted hover:bg-ghost-hover hover:text-fg",

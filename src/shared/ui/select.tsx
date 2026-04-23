@@ -19,7 +19,7 @@ function SelectTrigger({
 		<SelectPrimitive.Trigger
 			data-slot="select-trigger"
 			className={cn(
-				"flex min-h-control-touch sm:h-control-md w-full items-center justify-between gap-2 rounded-md border border-outline bg-panel px-3 typo-body-md text-fg outline-none transition-colors duration-[var(--duration-fast)] ease-standard data-[placeholder]:text-fg-subtle hover:border-outline-strong focus-visible:ring-2 focus-visible:ring-focus aria-invalid:border-status-danger-border aria-invalid:bg-status-danger/30 aria-invalid:text-status-danger-fg aria-invalid:hover:border-status-danger-border aria-invalid:[&_svg]:text-status-danger-fg disabled:cursor-not-allowed disabled:opacity-(--interactive-disabled-opacity) [&_svg]:shrink-0",
+				"flex min-h-control-touch sm:h-control-md w-full items-center justify-between gap-2 rounded-md border border-outline bg-panel px-3 typo-body-md text-fg outline-none transition-colors duration-fast ease-standard data-[placeholder]:text-fg-subtle hover:border-outline-strong focus-visible:ring-2 focus-visible:ring-focus aria-invalid:border-status-danger-border aria-invalid:bg-status-danger/30 aria-invalid:text-status-danger-fg aria-invalid:hover:border-status-danger-border aria-invalid:[&_svg]:text-status-danger-fg disabled:cursor-not-allowed disabled:opacity-interactive-disabled [&_svg]:shrink-0",
 				className,
 			)}
 			{...props}
@@ -44,7 +44,7 @@ function SelectContent({
 				data-slot="select-content"
 				position={position}
 				className={cn(
-					"pointer-events-auto z-(--z-dropdown) max-h-80 min-w-[8rem] overflow-hidden rounded-panel border border-outline-subtle bg-panel text-fg shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out",
+					"pointer-events-auto z-dropdown max-h-80 min-w-[8rem] overflow-hidden rounded-panel border border-outline-subtle bg-panel text-fg shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out",
 					position === "popper" &&
 						"data-[side=bottom]:translate-y-1 data-[side=top]:-translate-y-1",
 					className,

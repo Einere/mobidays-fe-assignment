@@ -20,10 +20,22 @@ describe("dashboard shell components", () => {
 		).toContain("cursor-pointer");
 		expect(
 			screen.getByRole("button", { name: "보고서 내보내기" }).className,
+		).toContain("duration-fast");
+		expect(
+			screen.getByRole("button", { name: "보고서 내보내기" }).className,
+		).toContain("disabled:opacity-interactive-disabled");
+		expect(
+			screen.getByRole("button", { name: "보고서 내보내기" }).className,
 		).toContain("min-h-control-touch");
 		expect(
 			screen.getByRole("textbox", { name: "캠페인 검색" }).className,
 		).toContain("cursor-text");
+		expect(
+			screen.getByRole("textbox", { name: "캠페인 검색" }).className,
+		).toContain("duration-fast");
+		expect(
+			screen.getByRole("textbox", { name: "캠페인 검색" }).className,
+		).toContain("disabled:opacity-interactive-disabled");
 		expect(
 			screen.getByRole("textbox", { name: "캠페인 검색" }).className,
 		).toContain("min-h-control-touch");

@@ -24,6 +24,8 @@ describe("Button", () => {
 		expect(button.className).toContain("bg-primary");
 		expect(button.className).toContain("text-primary-fg");
 		expect(button.className).toContain("hover:bg-primary-hover");
+		expect(button.className).toContain("duration-fast");
+		expect(button.className).toContain("disabled:opacity-interactive-disabled");
 		expect(button.className).toContain("min-h-control-touch");
 		expect(button.className).toContain("sm:h-control-md");
 		expect(button.className).toContain("typo-label-md");

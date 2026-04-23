@@ -84,6 +84,12 @@ describe("design tokens", () => {
 		);
 		expect(baseCss).toContain("--spacing-page-max: var(--layout-page-max);");
 		expect(baseCss).toContain("--ease-standard: var(--easing-standard);");
+		expect(baseCss).toContain("--duration-fast: var(--duration-fast);");
+		expect(baseCss).toContain(
+			"--interactive-disabled-opacity: var(--interactive-disabled-opacity);",
+		);
 		expect(baseCss).toContain("--radius-card: var(--radius-lg);");
+		expect(baseCss).toContain("--z-dropdown: var(--z-dropdown);");
+		expect(baseCss).toContain("--z-modal-popover: var(--z-modal-popover);");
 	});
 });

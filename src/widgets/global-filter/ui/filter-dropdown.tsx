@@ -71,7 +71,7 @@ export function FilterDropdown<T extends string>({
 					align="start"
 					sideOffset={8}
 					aria-label={`${groupLabel} 필터`}
-					className="z-(--z-dropdown) w-[min(18rem,calc(100vw-2rem))] rounded-panel border border-outline-subtle bg-panel p-3 shadow-popover"
+					className="z-dropdown w-[min(18rem,calc(100vw-2rem))] rounded-panel border border-outline-subtle bg-panel p-3 shadow-popover"
 				>
 					<div className="flex flex-col gap-2">
 						<button
