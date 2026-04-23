@@ -52,6 +52,14 @@
 	--radius-pill: var(--radius-full);
 	--shadow-panel: var(--panel-shadow);
 	--shadow-popover: var(--shadow-md);
+	--duration-fast: var(--duration-fast);
+	--interactive-disabled-opacity: var(--interactive-disabled-opacity);
+	--z-base: var(--z-base);
+	--z-sticky: var(--z-sticky);
+	--z-dropdown: var(--z-dropdown);
+	--z-overlay: var(--z-overlay);
+	--z-modal: var(--z-modal);
+	--z-modal-popover: var(--z-modal-popover);
 	--spacing-panel: var(--layout-panel-padding);
 	--spacing-panel-gap: var(--layout-panel-gap);
 	--spacing-page-gutter: var(--layout-page-gutter);

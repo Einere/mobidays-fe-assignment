@@ -26,6 +26,10 @@ describe("SelectTrigger", () => {
 		expect(trigger.className).toContain("disabled:cursor-not-allowed");
 		expect(trigger.className).toContain("min-h-control-touch");
 		expect(trigger.className).toContain("sm:h-control-md");
+		expect(trigger.className).toContain("duration-fast");
+		expect(trigger.className).toContain(
+			"disabled:opacity-interactive-disabled",
+		);
 		expect(trigger.className).not.toContain("disabled:pointer-events-none");
 	});
 

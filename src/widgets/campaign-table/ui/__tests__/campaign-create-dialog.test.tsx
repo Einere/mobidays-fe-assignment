@@ -189,7 +189,7 @@ describe("CampaignCreateDialog", () => {
 		);
 
 		expect(selectContent).not.toBeNull();
-		expect(selectContent?.className).toContain("z-(--z-modal-popover)");
+		expect(selectContent?.className).toContain("z-modal-popover");
 	});
 
 	it("blocks close interactions while submitting", async () => {

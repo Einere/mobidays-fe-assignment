@@ -181,7 +181,7 @@ export function CampaignCreateDialog({
 									>
 										<SelectValue placeholder="광고 매체 선택" />
 									</SelectTrigger>
-									<SelectContent className="z-(--z-modal-popover)">
+									<SelectContent className="z-modal-popover">
 										<SelectItem value="Google">Google</SelectItem>
 										<SelectItem value="Meta">Meta</SelectItem>
 										<SelectItem value="Naver">Naver</SelectItem>
