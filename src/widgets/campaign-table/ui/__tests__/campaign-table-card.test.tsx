@@ -249,9 +249,7 @@ describe("CampaignTableCard", () => {
 			tableScope.getByRole("cell", { name: "리타겟팅 세트" }),
 		).toBeVisible();
 
-		expect(
-			screen.queryByRole("status", { name: "동기화 중" }),
-		).not.toBeInTheDocument();
+		expect(screen.queryByRole("status")).not.toBeInTheDocument();
 	});
 
 	it("shows a filtered-empty message when no campaigns exist for the global filter", async () => {
@@ -610,9 +608,7 @@ describe("CampaignTableCard", () => {
 
 		await user.click(screen.getByRole("button", { name: "5월 필터 적용" }));
 
-		expect(
-			await screen.findByRole("status", { name: "동기화 중" }),
-		).toBeVisible();
+		expect(await screen.findByRole("status")).toHaveTextContent("동기화 중");
 		expect(screen.getByText("4월 브랜드 검색")).toBeVisible();
 		expect(
 			screen.getByRole("searchbox", { name: "캠페인 검색" }),

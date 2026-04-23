@@ -3,29 +3,36 @@ import { cn } from "@/shared/lib/utils";
 
 type SyncingIndicatorProps = {
 	className?: string;
-	label?: string;
+	visible?: boolean;
 };
 
 export function SyncingIndicator({
 	className,
-	label = "동기화 중",
+	visible = false,
 }: SyncingIndicatorProps) {
 	return (
 		<span
 			className={cn(
-				"inline-flex shrink-0 items-center justify-center text-fg-muted",
+				"inline-flex size-4 shrink-0 items-center justify-center text-fg-muted",
 				className,
 			)}
-			role="status"
-			aria-label={label}
-			aria-live="polite"
+			aria-hidden="true"
 		>
-			<LoaderCircle
-				aria-hidden="true"
-				className="size-4 animate-spin"
-				strokeWidth={2}
-			/>
-			<span className="sr-only">{label}</span>
+			{visible ? (
+				<LoaderCircle className="size-4 animate-spin" strokeWidth={2} />
+			) : null}
+		</span>
+	);
+}
+
+type SyncingStatusMessageProps = {
+	message: string;
+};
+
+export function SyncingStatusMessage({ message }: SyncingStatusMessageProps) {
+	return (
+		<span role="status" aria-live="polite" className="sr-only">
+			{message}
 		</span>
 	);
 }

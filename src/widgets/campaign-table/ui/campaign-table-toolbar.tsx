@@ -1,5 +1,4 @@
 import { Search } from "lucide-react";
-import type { ReactNode } from "react";
 import type { CampaignStatus } from "@/entities/global-filter/model/types";
 import { Button } from "@/shared/ui/button";
 import { TextInput } from "@/shared/ui/input";
@@ -10,9 +9,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/shared/ui/select";
+import {
+	SyncingIndicator,
+	SyncingStatusMessage,
+} from "@/shared/ui/syncing-indicator";
 
 interface CampaignTableToolbarProps {
-	titleTrailing?: ReactNode;
 	toolbarState: {
 		searchInput: string;
 		filteredCount: number;
@@ -28,12 +30,13 @@ interface CampaignTableToolbarProps {
 		onOpenStatusDialog: () => void;
 		onOpenCreateDialog?: () => void;
 	};
+	isSyncing?: boolean;
 }
 
 export function CampaignTableToolbar({
-	titleTrailing,
 	toolbarState,
 	actions,
+	isSyncing = false,
 }: CampaignTableToolbarProps) {
 	const {
 		searchInput,
@@ -59,7 +62,8 @@ export function CampaignTableToolbar({
 				<div className="flex flex-col gap-1">
 					<div className="flex items-center gap-2">
 						<h2>캠페인 현황</h2>
-						{titleTrailing ?? null}
+						<SyncingIndicator visible={isSyncing} />
+						{isSyncing ? <SyncingStatusMessage message="동기화 중" /> : null}
 					</div>
 					<p className="typo-body-sm text-fg-muted">
 						전역 필터 기준으로 집계한 캠페인별 운영 성과입니다.

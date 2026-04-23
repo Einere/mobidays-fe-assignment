@@ -178,9 +178,7 @@ describe("DailyTrendChartCard", () => {
 				"최신 성과 데이터를 불러오지 못해 마지막 성공 결과를 표시 중입니다.",
 			),
 		).toBeInTheDocument();
-		expect(
-			screen.getByRole("status", { name: "동기화 중" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("status")).toHaveTextContent("동기화 중");
 		expect(screen.getByTestId("daily-trend-chart-content")).toBeInTheDocument();
 	});
 

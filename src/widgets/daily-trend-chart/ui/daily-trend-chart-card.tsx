@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { SyncingIndicator } from "@/shared/ui/syncing-indicator";
 import type { DailyTrendChartViewState } from "@/widgets/daily-trend-chart/model/use-daily-trend-chart-view-model";
 import { useDailyTrendChartViewModel } from "@/widgets/daily-trend-chart/model/use-daily-trend-chart-view-model";
 import { DailyTrendChartContent } from "@/widgets/daily-trend-chart/ui/daily-trend-chart-content";
@@ -61,7 +60,7 @@ export function DailyTrendChartCard() {
 					/>
 				) : null
 			}
-			titleTrailing={isSyncing ? <SyncingIndicator /> : null}
+			isSyncing={isSyncing}
 			status={status}
 		>
 			{isChartState ? (

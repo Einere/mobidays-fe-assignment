@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
-import { SyncingIndicator } from "@/shared/ui/syncing-indicator";
+import {
+	SyncingIndicator,
+	SyncingStatusMessage,
+} from "@/shared/ui/syncing-indicator";
 
 function GlobalFilterSummaryCardFrame({ children }: { children: ReactNode }) {
 	return (
@@ -48,7 +51,7 @@ function GlobalFilterSummaryMetricCard({
 		<div className="rounded-card bg-panel-muted p-4">
 			<div className="mb-2 flex min-h-5 items-center gap-2">
 				<p className="typo-caption text-fg-subtle">{label}</p>
-				{isSyncing ? <SyncingIndicator /> : null}
+				<SyncingIndicator visible={isSyncing} />
 			</div>
 			<p className="typo-metric-lg">{value}</p>
 		</div>
@@ -66,12 +69,11 @@ function GlobalFilterSummarySummaryContent({
 }) {
 	return (
 		<>
-			<p
-				className="sr-only"
-				role="status"
-				aria-live="polite"
-				aria-atomic="true"
-			>
+			{isSyncing ? (
+				<SyncingStatusMessage message="최신 필터 결과를 불러오는 중입니다." />
+			) : null}
+
+			<p className="sr-only" aria-atomic="true">
 				캠페인 결과 {campaignsCount}건, 일별 데이터 결과 {dailyStatsCount}건
 			</p>
 

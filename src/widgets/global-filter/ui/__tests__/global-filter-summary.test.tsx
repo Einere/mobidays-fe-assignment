@@ -215,8 +215,8 @@ describe("GlobalFilterSummary", () => {
 
 		await user.click(screen.getByRole("button", { name: "메타만 보기" }));
 
-		expect(screen.getAllByRole("status", { name: "동기화 중" })).toHaveLength(
-			2,
+		expect(screen.getByRole("status")).toHaveTextContent(
+			"최신 필터 결과를 불러오는 중입니다.",
 		);
 		expect(screen.queryByText("조회 상태")).not.toBeInTheDocument();
 		expect(
@@ -245,9 +245,7 @@ describe("GlobalFilterSummary", () => {
 		expect(
 			within(getDateResultCard() as HTMLElement).getByText("1건"),
 		).toBeInTheDocument();
-		expect(
-			screen.queryByRole("status", { name: "동기화 중" }),
-		).not.toBeInTheDocument();
+		expect(screen.queryByRole("status")).not.toBeInTheDocument();
 	});
 
 	it("shows the initial error state when the first request fails", async () => {
@@ -265,9 +263,7 @@ describe("GlobalFilterSummary", () => {
 			).toBeInTheDocument();
 		});
 		expect(screen.getByText("Request failed: 500")).toBeInTheDocument();
-		expect(
-			screen.queryByRole("status", { name: "동기화 중" }),
-		).not.toBeInTheDocument();
+		expect(screen.queryByRole("status")).not.toBeInTheDocument();
 		expect(screen.queryByText("조회 상태")).not.toBeInTheDocument();
 		expect(screen.queryByText("캠페인 결과")).not.toBeInTheDocument();
 		expect(screen.queryByText("일별 데이터 결과")).not.toBeInTheDocument();

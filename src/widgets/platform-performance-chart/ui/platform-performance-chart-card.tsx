@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { SyncingIndicator } from "@/shared/ui/syncing-indicator";
 import { usePlatformPerformanceChartViewModel } from "@/widgets/platform-performance-chart/model/use-platform-performance-chart-view-model";
 import { PlatformPerformanceChartContent } from "@/widgets/platform-performance-chart/ui/platform-performance-chart-content";
 import { PlatformPerformanceChartFrame } from "@/widgets/platform-performance-chart/ui/platform-performance-chart-frame";
@@ -59,10 +58,7 @@ export function PlatformPerformanceChartCard() {
 	const status = resolvePlatformPerformanceChartStatus(state);
 
 	return (
-		<PlatformPerformanceChartFrame
-			status={status}
-			titleTrailing={isSyncing ? <SyncingIndicator /> : null}
-		>
+		<PlatformPerformanceChartFrame status={status} isSyncing={isSyncing}>
 			{state.kind === "chart" ? (
 				<PlatformPerformanceChartContent
 					activeMetricKey={activeMetricKey}
