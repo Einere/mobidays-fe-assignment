@@ -1,16 +1,10 @@
 import type { CampaignStatus } from "@/entities/global-filter/model/types";
+import {
+	formatCurrencyWithLocale,
+	formatPercentWithLocale,
+} from "@/shared/lib/intl/number";
 
 export type CampaignMetricKind = "currency" | "percent";
-
-const currencyFormatter = new Intl.NumberFormat("ko-KR", {
-	style: "currency",
-	currency: "KRW",
-	maximumFractionDigits: 0,
-});
-
-const percentFormatter = new Intl.NumberFormat("ko-KR", {
-	maximumFractionDigits: 2,
-});
 
 export function formatCampaignStatusLabel(status: CampaignStatus | null) {
 	switch (status) {
@@ -83,8 +77,8 @@ export function formatCampaignMetric(
 
 	switch (kind) {
 		case "currency":
-			return currencyFormatter.format(value);
+			return formatCurrencyWithLocale(value);
 		case "percent":
-			return `${percentFormatter.format(value)}%`;
+			return formatPercentWithLocale(value);
 	}
 }

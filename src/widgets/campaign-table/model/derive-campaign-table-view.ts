@@ -1,4 +1,5 @@
 import type { CampaignTableRow } from "@/entities/campaign/lib/build-campaign-table-rows";
+import { normalizePage, normalizePageSize } from "@/shared/lib/pagination";
 import type {
 	CampaignTableSortKey,
 	CampaignTableSortState,
@@ -22,22 +23,6 @@ interface DeriveCampaignTableViewParams {
 
 function includesSearchTerm(name: string, searchTerm: string) {
 	return name.toLowerCase().includes(searchTerm.toLowerCase());
-}
-
-function normalizeFinitePageValue(value: number) {
-	return Number.isFinite(value) ? value : 1;
-}
-
-function normalizePageSize(pageSize: number) {
-	const normalizedPageSize = normalizeFinitePageValue(pageSize);
-
-	return normalizedPageSize >= 1 ? Math.floor(normalizedPageSize) : 1;
-}
-
-function normalizePage(page: number) {
-	const normalizedPage = normalizeFinitePageValue(page);
-
-	return Math.floor(normalizedPage);
 }
 
 function getSortableValue(left: CampaignTableRow, key: CampaignTableSortKey) {

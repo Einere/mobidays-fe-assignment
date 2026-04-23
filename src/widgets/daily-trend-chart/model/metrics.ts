@@ -2,13 +2,10 @@ import {
 	type DailyTrendMetricKey,
 	dailyTrendMetricKeys,
 } from "@/entities/daily-stat/model/daily-trend-metrics";
-
-const countFormatter = new Intl.NumberFormat("ko-KR");
-const costFormatter = new Intl.NumberFormat("ko-KR", {
-	style: "currency",
-	currency: "KRW",
-	maximumFractionDigits: 0,
-});
+import {
+	formatCurrencyWithLocale,
+	formatNumberWithLocale,
+} from "@/shared/lib/intl/number";
 
 type DailyTrendMetricDefinition = {
 	key: DailyTrendMetricKey;
@@ -18,11 +15,11 @@ type DailyTrendMetricDefinition = {
 };
 
 function formatCount(value: number) {
-	return countFormatter.format(value);
+	return formatNumberWithLocale(value);
 }
 
 function formatCost(value: number) {
-	return costFormatter.format(value);
+	return formatCurrencyWithLocale(value);
 }
 
 const dailyTrendMetricRegistry = {

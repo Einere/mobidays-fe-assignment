@@ -39,7 +39,7 @@ export function PlatformPerformanceDonutLegendItem({
 						/>
 						<span className="typo-body-md">{slice.platform}</span>
 						<span className="ml-auto typo-caption text-fg-subtle">
-							{percentageFormatter.format(slice.sharePercent)}%
+							{percentageFormatter.format(slice.sharePercent)}
 						</span>
 					</div>
 					<div className="typo-body-sm font-medium">
@@ -61,7 +61,7 @@ export function PlatformPerformanceDonutLegendItem({
 						/>
 						<span className="typo-body-md">{slice.platform}</span>
 						<span className="ml-auto typo-caption text-fg-subtle">
-							{percentageFormatter.format(slice.sharePercent)}%
+							{percentageFormatter.format(slice.sharePercent)}
 						</span>
 					</div>
 					<div className="typo-body-sm font-medium">
