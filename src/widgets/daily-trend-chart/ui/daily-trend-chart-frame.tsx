@@ -22,7 +22,7 @@ export function DailyTrendChartFrame({
 						</p>
 					</div>
 					{actions ? (
-						<div className="-mx-1 overflow-x-auto px-1 lg:mx-0 lg:self-start lg:px-0">
+						<div className="-mx-1 px-1 lg:mx-0 lg:self-start lg:px-0">
 							{actions}
 						</div>
 					) : null}
