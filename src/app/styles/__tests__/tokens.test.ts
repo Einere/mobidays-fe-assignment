@@ -86,6 +86,9 @@ describe("design tokens", () => {
 		expect(baseCss).toContain("--ease-standard: var(--easing-standard);");
 		expect(baseCss).toContain("--duration-fast: var(--duration-fast);");
 		expect(baseCss).toContain(
+			"--opacity-interactive-disabled: var(--interactive-disabled-opacity);",
+		);
+		expect(baseCss).not.toContain(
 			"--interactive-disabled-opacity: var(--interactive-disabled-opacity);",
 		);
 		expect(baseCss).toContain("--radius-card: var(--radius-lg);");
