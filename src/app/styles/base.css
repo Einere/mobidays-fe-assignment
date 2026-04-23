@@ -53,7 +53,7 @@
 	--shadow-panel: var(--panel-shadow);
 	--shadow-popover: var(--shadow-md);
 	--duration-fast: var(--duration-fast);
-	--interactive-disabled-opacity: var(--interactive-disabled-opacity);
+	--opacity-interactive-disabled: var(--interactive-disabled-opacity);
 	--z-base: var(--z-base);
 	--z-sticky: var(--z-sticky);
 	--z-dropdown: var(--z-dropdown);
